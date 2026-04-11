@@ -105,7 +105,8 @@
 .nav-hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
 
 /* ── Mobile Drawer ───────────────────────────────────────────────── */
-#drawer-backdrop { z-index:calc(var(--z-nav) - 1); }
+/* Backdrop harus di BAWAH navbar agar hamburger tetap bisa diklik */
+#drawer-backdrop { z-index:calc(var(--z-nav) - 2); }
 
 #app-drawer {
   position:fixed; top:0; left:0; bottom:0;

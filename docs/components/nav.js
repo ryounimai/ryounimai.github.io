@@ -108,7 +108,9 @@ const Nav = (() => {
     const clear     = document.getElementById('nav-search-clear');
     const results   = document.getElementById('nav-search-results');
 
-    hamburger?.addEventListener('click', openDrawer);
+    hamburger?.addEventListener('click', () => {
+      hamburger.classList.contains('open') ? closeDrawer() : openDrawer();
+    });
 
     input?.addEventListener('input', e => {
       const q = e.target.value.trim();
