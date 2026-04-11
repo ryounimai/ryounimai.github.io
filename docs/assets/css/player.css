@@ -1,7 +1,16 @@
 /**
- * player.css — ŘΨØŬ v1.2.0
- * Mobile-first. Diuji pada 360px lebar (HP kecil) sampai TV.
- * Prinsip: semua kontrol HARUS muat di 1 baris, tidak ada yang terpotong.
+ * player.css — ŘΨØŬ v1.3.0
+ * Mobile / Tablet / PC+TV responsive player UI
+ *
+ * Breakpoints (player width via VJS layout classes):
+ *   Mobile  → .vjs-layout-small dan lebih kecil  (< ~425px)
+ *   Tablet  → .vjs-layout-medium / large          (~425–900px)
+ *   PC/TV   → .vjs-layout-x-large / huge          (> ~900px)
+ *
+ * Layout per device:
+ *   Mobile : PLAY VOL | PROGRESS | (-)TIME SPEED CC GEAR FULL
+ *   Tablet : PLAY VOL DUR | PROGRESS | (-)TIME SPEED CC GEAR PIP FULL
+ *   PC/TV  : PLAY (+)TIME/DUR | PROGRESS | (-)TIME SPEED CC GEAR PIP FULL
  */
 
 /* ════════════════════════════════════════════════════════════════════
@@ -15,70 +24,86 @@
 .video-js.vjs-ryou {
   width      : 100%;
   height     : 100%;
-  /* VJS base font: 10px. Semua em relatif terhadap ini. */
-  font-size  : 10px;
+  font-size  : 10px;   /* VJS base — semua em relatif ke ini */
   font-family: Arial, Helvetica, sans-serif;
   color      : #fff;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   2. SEMBUNYIKAN TOMBOL TIDAK PERLU
-   Khususnya skip forward/backward VJS 8 yang muncul otomatis
+   2. SEMBUNYIKAN KONTROL TIDAK DIPAKAI
    ════════════════════════════════════════════════════════════════════ */
-.vjs-ryou .vjs-skip-forward-5,
-.vjs-ryou .vjs-skip-forward-10,
-.vjs-ryou .vjs-skip-forward-30,
-.vjs-ryou .vjs-skip-backward-5,
-.vjs-ryou .vjs-skip-backward-10,
-.vjs-ryou .vjs-skip-backward-30,
+/* Skip forward/backward (VJS 8 default, tidak kita pakai) */
+.vjs-ryou .vjs-skip-forward-5,  .vjs-ryou .vjs-skip-forward-10,
+.vjs-ryou .vjs-skip-forward-30, .vjs-ryou .vjs-skip-backward-5,
+.vjs-ryou .vjs-skip-backward-10,.vjs-ryou .vjs-skip-backward-30,
 .vjs-ryou .vjs-seek-to-live-control,
-.vjs-download-button,
-.vjs-picture-in-picture-control,
-.vjs-cast-button,
-.vjs-airplay-button {
+.vjs-ryou .vjs-download-button,
+.vjs-ryou .vjs-cast-button,
+.vjs-ryou .vjs-airplay-button,
+.vjs-ryou .vjs-audio-button,
+.vjs-ryou .vjs-chapters-button,
+.vjs-ryou .vjs-descriptions-button {
   display: none !important;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   3. CONTROL BAR — 1 baris, tidak boleh wrap
+   3. CONTROL BAR BASE
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-control-bar {
   display     : flex !important;
   flex-wrap   : nowrap !important;
   align-items : center;
-  height      : 3.6em;           /* 36px — cukup touch-friendly */
-  padding     : 0 2px;
+  height      : 3.8em;
+  padding     : 0 4px;
   background  : linear-gradient(to top,
-    rgba(0,0,0,.88) 0%,
-    rgba(0,0,0,.5)  60%,
-    transparent     100%);
-  overflow    : hidden;          /* potong yg overflow, jangan wrap */
+    rgba(0,0,0,.90) 0%,
+    rgba(0,0,0,.55) 55%,
+    transparent 100%);
+  overflow    : hidden;
+  bottom      : 0;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   4. SEMUA TOMBOL — kompak di mobile
+   4. TOMBOL (semua) — base mobile size
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-control {
-  width      : 3.2em;           /* 32px per tombol */
-  flex-shrink: 0;               /* tombol tidak boleh menyusut */
+  flex-shrink: 0;
+  width      : 3.4em;
+  height     : 100%;
 }
 .vjs-ryou .vjs-button > .vjs-icon-placeholder::before {
-  font-size  : 1.6em;
-  line-height: 2.25;            /* 3.6em / 1.6em */
+  font-size  : 1.65em;
+  line-height: 2.3;   /* 3.8em / 1.65em */
+}
+
+/* Volume panel — tetap kompak */
+.vjs-ryou .vjs-volume-panel {
+  flex-shrink: 0;
+  width      : 3.4em;
+}
+.vjs-ryou .vjs-volume-panel .vjs-volume-control.vjs-volume-vertical {
+  display: none !important;
+}
+.vjs-ryou .vjs-volume-panel.vjs-hover,
+.vjs-ryou .vjs-volume-panel:active,
+.vjs-ryou .vjs-volume-panel:focus-within {
+  width: 3.4em; /* jangan expand */
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   5. PROGRESS BAR — flex grow, mengisi sisa ruang
+   5. PROGRESS BAR
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-progress-control {
-  flex       : 1 1 0;           /* ambil semua sisa ruang */
-  min-width  : 40px;            /* minimum tetap ada */
-  align-items: center;
+  flex       : 1 1 0;
+  min-width  : 40px;
   height     : 100%;
+  display    : flex;
+  align-items: center;
 }
 .vjs-ryou .vjs-progress-holder {
-  height    : 3px;
-  margin    : 0 6px;
+  flex  : auto;
+  height: 3px;
+  margin: 0 6px;
   transition: height .15s ease;
 }
 .vjs-ryou .vjs-progress-control:hover .vjs-progress-holder {
@@ -96,24 +121,19 @@
   line-height: 1;
 }
 .vjs-ryou .vjs-load-progress,
-.vjs-ryou .vjs-load-progress div {
-  background: rgba(255,255,255,.18);
-}
-.vjs-ryou .vjs-slider {
-  background: rgba(255,255,255,.22);
-}
+.vjs-ryou .vjs-load-progress div { background: rgba(255,255,255,.18); }
+.vjs-ryou .vjs-slider            { background: rgba(255,255,255,.22); }
 
 /* ════════════════════════════════════════════════════════════════════
-   6. TIME DISPLAY
-   Font mono, ukuran kecil tapi terbaca. flex-shrink:0 agar tidak hilang.
+   6. TIME DISPLAY — flex center, monospace, sinkron speed
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-time-control {
-  flex-shrink         : 0;
   display             : flex !important;
   align-items         : center !important;
+  flex-shrink         : 0;
   font-family         : 'ui-monospace','Roboto Mono','Courier New',monospace;
   font-variant-numeric: tabular-nums;
-  font-size           : 1.15em;
+  font-size           : 1.2em;
   line-height         : normal !important;
   padding             : 0 3px;
   min-width           : 0;
@@ -123,47 +143,68 @@
   display    : flex !important;
   align-items: center !important;
   line-height: normal !important;
-  padding    : 0;
+  padding    : 0 1px;
   min-width  : 0;
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   7. SPEED — flex-shrink:0 agar tidak hilang, ukuran sinkron time
-   ════════════════════════════════════════════════════════════════════ */
+/* Speed — ukuran dan posisi sama dengan time */
 .vjs-ryou .vjs-playback-rate {
   flex-shrink: 0;
-  width      : 3.2em;
-  display    : flex !important;
-  align-items: center !important;
-}
-.vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
-  font-size  : 1.15em;
-  line-height: normal !important;
+  width      : 3.4em;
   display    : flex !important;
   align-items: center !important;
   justify-content: center;
-  width      : 100%;
-  height     : 100%;
+}
+.vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
+  font-family  : 'ui-monospace','Roboto Mono','Courier New',monospace;
+  font-size    : 1.2em;
+  line-height  : normal !important;
+  display      : flex !important;
+  align-items  : center !important;
+  justify-content: center;
+  width        : 100%;
+  height       : 100%;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   8. VOLUME PANEL — horizontal saja, sembunyikan slider vertikal
+   7. GEAR BUTTON (custom) — ikon ⚙
    ════════════════════════════════════════════════════════════════════ */
-.vjs-ryou .vjs-volume-panel {
-  flex-shrink: 0;
-  width      : 3.2em;
+.vjs-ryou .vjs-gear-button .vjs-icon-placeholder::before {
+  content    : '\2699';
+  font-family: Arial, sans-serif;
+  font-size  : 1.5em;
+  line-height: 2.53;
+  display    : block;
+  text-align : center;
 }
-.vjs-ryou .vjs-volume-panel .vjs-volume-control.vjs-volume-vertical {
+
+/* ════════════════════════════════════════════════════════════════════
+   8. PIP — MOBILE: sembunyikan. Tablet+: tampilkan.
+   ════════════════════════════════════════════════════════════════════ */
+/* Default sembunyikan dulu */
+.vjs-ryou .vjs-picture-in-picture-control {
   display: none !important;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   9. BIG PLAY BUTTON
+   9. CURRENT TIME + DIVIDER + DURATION
+   VJS default: currentTime & duration display:none
+   Kita override per breakpoint di bawah.
+   ════════════════════════════════════════════════════════════════════ */
+/* Sembunyikan semua dulu (override VJS default display:none tetap) */
+.vjs-ryou .vjs-current-time,
+.vjs-ryou .vjs-time-divider,
+.vjs-ryou .vjs-duration {
+  display: none !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   10. BIG PLAY BUTTON
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-big-play-button {
   top          : 50%;
   left         : 50%;
-  transform    : translate(-50%, -50%);
+  transform    : translate(-50%,-50%);
   margin       : 0;
   width        : 60px;
   height       : 60px;
@@ -173,9 +214,8 @@
   background   : rgba(0,0,0,.5);
   transition   : all .2s;
 }
-.vjs-ryou:hover .vjs-big-play-button,
-.vjs-ryou:focus .vjs-big-play-button {
-  background  : rgba(34,211,238,.15);
+.vjs-ryou:hover .vjs-big-play-button {
+  background  : rgba(34,211,238,.18);
   border-color: #22d3ee;
 }
 .vjs-ryou .vjs-big-play-button .vjs-icon-placeholder::before {
@@ -185,7 +225,7 @@
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   10. LOADING SPINNER — putar, bukan diam
+   11. LOADING SPINNER
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-loading-spinner {
   border-color    : rgba(255,255,255,.12);
@@ -193,124 +233,157 @@
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   11. SEEK TOOLTIP
+   12. SEEK TOOLTIP
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-time-tooltip {
-  font-family   : 'ui-monospace','Roboto Mono','Courier New',monospace;
-  font-size     : 1.1em;
-  background    : rgba(0,0,0,.88);
-  color         : #fff;
-  border        : 1px solid rgba(34,211,238,.35);
-  border-radius : 4px;
-  padding       : 3px 7px;
+  font-family : 'ui-monospace','Roboto Mono','Courier New',monospace;
+  font-size   : 1.1em;
+  background  : rgba(0,0,0,.88);
+  color       : #fff;
+  border      : 1px solid rgba(34,211,238,.3);
+  border-radius: 4px;
+  padding     : 3px 7px;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   12. SUBTITLE — bukan monospace
+   13. SUBTITLE DISPLAY — bukan monospace
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-text-track-cue > span {
+  font-family  : Arial, sans-serif;
   background   : rgba(0,0,0,.65);
   border-radius: 4px;
   padding      : 2px 8px;
-  font-family  : Arial, sans-serif;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   13. FULLSCREEN
+   14. MENU (playback rate, subtitle)
    ════════════════════════════════════════════════════════════════════ */
-.vjs-ryou.vjs-fullscreen .vjs-control-bar {
-  bottom: 0;
+.vjs-ryou .vjs-menu-content {
+  background: rgba(6,16,30,.96);
+  border    : 1px solid rgba(34,211,238,.2);
+}
+.vjs-ryou .vjs-menu li.vjs-selected {
+  background: #22d3ee;
+  color     : #06101e;
+  font-weight: 700;
+}
+.vjs-ryou .vjs-menu li:not(.vjs-selected):hover {
+  background: rgba(34,211,238,.12);
+  color     : #22d3ee;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   14. LANDSCAPE MOBILE (HP diputar) — control lebih compact
+   15. RESPONSIVE — TABLET (vjs-layout-medium & large, ~425–900px)
+       PLAY VOL DUR | PROGRESS | (-)TIME SPEED CC GEAR PIP FULL
    ════════════════════════════════════════════════════════════════════ */
-@media screen and (orientation: landscape) and (max-height: 480px) {
-  .vjs-ryou .vjs-control-bar {
-    height : 3em;
-    padding: 0 2px;
+.vjs-ryou.vjs-layout-medium .vjs-duration,
+.vjs-ryou.vjs-layout-large  .vjs-duration {
+  display: flex !important;
+}
+.vjs-ryou.vjs-layout-medium .vjs-picture-in-picture-control,
+.vjs-ryou.vjs-layout-large  .vjs-picture-in-picture-control {
+  display: flex !important;
+}
+/* Sedikit lebih besar di tablet */
+.vjs-ryou.vjs-layout-medium .vjs-control-bar,
+.vjs-ryou.vjs-layout-large  .vjs-control-bar {
+  height: 4em;
+}
+.vjs-ryou.vjs-layout-medium .vjs-button > .vjs-icon-placeholder::before,
+.vjs-ryou.vjs-layout-large  .vjs-button > .vjs-icon-placeholder::before {
+  font-size  : 1.75em;
+  line-height: 2.29;
+}
+.vjs-ryou.vjs-layout-medium .vjs-gear-button .vjs-icon-placeholder::before,
+.vjs-ryou.vjs-layout-large  .vjs-gear-button .vjs-icon-placeholder::before {
+  font-size  : 1.6em;
+  line-height: 2.5;
+}
+.vjs-ryou.vjs-layout-medium .vjs-time-control,
+.vjs-ryou.vjs-layout-large  .vjs-time-control {
+  font-size: 1.25em;
+}
+.vjs-ryou.vjs-layout-medium .vjs-playback-rate .vjs-playback-rate-value,
+.vjs-ryou.vjs-layout-large  .vjs-playback-rate .vjs-playback-rate-value {
+  font-size: 1.25em;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   16. RESPONSIVE — PC/TV (vjs-layout-x-large & huge, > ~900px)
+       PLAY (+)TIME/DUR | PROGRESS | (-)TIME SPEED CC GEAR PIP FULL
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou.vjs-layout-x-large .vjs-current-time,
+.vjs-ryou.vjs-layout-huge    .vjs-current-time,
+.vjs-ryou.vjs-layout-x-large .vjs-time-divider,
+.vjs-ryou.vjs-layout-huge    .vjs-time-divider,
+.vjs-ryou.vjs-layout-x-large .vjs-duration,
+.vjs-ryou.vjs-layout-huge    .vjs-duration,
+.vjs-ryou.vjs-layout-x-large .vjs-picture-in-picture-control,
+.vjs-ryou.vjs-layout-huge    .vjs-picture-in-picture-control {
+  display: flex !important;
+}
+.vjs-ryou.vjs-layout-x-large .vjs-control-bar,
+.vjs-ryou.vjs-layout-huge    .vjs-control-bar {
+  height: 4.5em;
+}
+.vjs-ryou.vjs-layout-x-large .vjs-control,
+.vjs-ryou.vjs-layout-huge    .vjs-control,
+.vjs-ryou.vjs-layout-x-large .vjs-volume-panel,
+.vjs-ryou.vjs-layout-huge    .vjs-volume-panel,
+.vjs-ryou.vjs-layout-x-large .vjs-playback-rate,
+.vjs-ryou.vjs-layout-huge    .vjs-playback-rate {
+  width: 4em;
+}
+.vjs-ryou.vjs-layout-x-large .vjs-button > .vjs-icon-placeholder::before,
+.vjs-ryou.vjs-layout-huge    .vjs-button > .vjs-icon-placeholder::before {
+  font-size  : 1.9em;
+  line-height: 2.37;
+}
+.vjs-ryou.vjs-layout-x-large .vjs-gear-button .vjs-icon-placeholder::before,
+.vjs-ryou.vjs-layout-huge    .vjs-gear-button .vjs-icon-placeholder::before {
+  font-size  : 1.8em;
+  line-height: 2.5;
+}
+.vjs-ryou.vjs-layout-x-large .vjs-time-control,
+.vjs-ryou.vjs-layout-huge    .vjs-time-control {
+  font-size: 1.35em;
+  padding  : 0 6px;
+}
+.vjs-ryou.vjs-layout-x-large .vjs-playback-rate .vjs-playback-rate-value,
+.vjs-ryou.vjs-layout-huge    .vjs-playback-rate .vjs-playback-rate-value {
+  font-size: 1.35em;
+}
+.vjs-ryou.vjs-layout-x-large .vjs-big-play-button,
+.vjs-ryou.vjs-layout-huge    .vjs-big-play-button {
+  width      : 76px;
+  height     : 76px;
+  line-height: 76px;
+}
+.vjs-ryou.vjs-layout-x-large .vjs-big-play-button .vjs-icon-placeholder::before,
+.vjs-ryou.vjs-layout-huge    .vjs-big-play-button .vjs-icon-placeholder::before {
+  font-size  : 3.2em;
+  line-height: 76px;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   17. LANDSCAPE PHONE — lebih kompak saat diputar
+   ════════════════════════════════════════════════════════════════════ */
+@media screen and (orientation: landscape) and (max-height: 420px) {
+  .vjs-ryou:not(.vjs-layout-x-large):not(.vjs-layout-huge) .vjs-control-bar {
+    height: 3.2em;
   }
-  .vjs-ryou .vjs-control,
-  .vjs-ryou .vjs-volume-panel,
-  .vjs-ryou .vjs-playback-rate {
-    width: 3em;
-  }
-  .vjs-ryou .vjs-button > .vjs-icon-placeholder::before {
+  .vjs-ryou:not(.vjs-layout-x-large):not(.vjs-layout-huge) .vjs-button > .vjs-icon-placeholder::before {
     font-size  : 1.5em;
-    line-height: 2;
+    line-height: 2.13;
   }
-  .vjs-ryou .vjs-time-control {
-    font-size  : 1.1em;
-  }
-  .vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
-    font-size  : 1.1em;
-  }
-  .vjs-ryou .vjs-play-progress::before {
-    font-size: .8em;
+  .vjs-ryou:not(.vjs-layout-x-large):not(.vjs-layout-huge) .vjs-time-control,
+  .vjs-ryou:not(.vjs-layout-x-large):not(.vjs-layout-huge) .vjs-playback-rate .vjs-playback-rate-value {
+    font-size: 1.1em;
   }
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   15. TABLET / PC (≥768px) — sedikit lebih besar
-   ════════════════════════════════════════════════════════════════════ */
-@media screen and (min-width: 768px) {
-  .vjs-ryou .vjs-control-bar {
-    height : 4em;
-  }
-  .vjs-ryou .vjs-control,
-  .vjs-ryou .vjs-volume-panel,
-  .vjs-ryou .vjs-playback-rate {
-    width: 3.8em;
-  }
-  .vjs-ryou .vjs-button > .vjs-icon-placeholder::before {
-    font-size  : 1.8em;
-    line-height: 2.22;
-  }
-  .vjs-ryou .vjs-time-control {
-    font-size  : 1.3em;
-    padding    : 0 6px;
-  }
-  .vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
-    font-size  : 1.3em;
-  }
-  .vjs-ryou .vjs-big-play-button {
-    width      : 72px;
-    height     : 72px;
-    line-height: 72px;
-  }
-  .vjs-ryou .vjs-big-play-button .vjs-icon-placeholder::before {
-    font-size  : 3em;
-    line-height: 72px;
-  }
-}
-
-/* ════════════════════════════════════════════════════════════════════
-   16. TV / LARGE SCREEN (≥1280px)
-   ════════════════════════════════════════════════════════════════════ */
-@media screen and (min-width: 1280px) {
-  .vjs-ryou .vjs-control-bar {
-    height : 5em;
-  }
-  .vjs-ryou .vjs-control,
-  .vjs-ryou .vjs-volume-panel,
-  .vjs-ryou .vjs-playback-rate {
-    width: 4.5em;
-  }
-  .vjs-ryou .vjs-button > .vjs-icon-placeholder::before {
-    font-size  : 2em;
-    line-height: 2.5;
-  }
-  .vjs-ryou .vjs-time-control {
-    font-size  : 1.5em;
-    padding    : 0 10px;
-  }
-  .vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
-    font-size  : 1.5em;
-  }
-}
-
-/* ════════════════════════════════════════════════════════════════════
-   17. DRM — block save/download
+   18. DRM — block save / user-select
    ════════════════════════════════════════════════════════════════════ */
 .watch-player-box,
 .watch-player-box *,
