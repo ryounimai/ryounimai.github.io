@@ -146,6 +146,20 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} â€
     const settings = Store.Settings.get();
     const lang     = I18n.lang();
 
+    videojs.setFormatTime(function (seconds) {
+  var s = Math.floor(seconds);
+  var h = Math.floor(s / 3600);
+  var m = Math.floor((s % 3600) / 60);
+  var sec = s % 60;
+  var mm  = m  < 10 ? '0' + m  : '' + m;
+  var ss  = sec < 10 ? '0' + sec : '' + sec;
+  if (h > 0) {
+    var hh = h < 10 ? '0' + h : '' + h;
+    return hh + ':' + mm + ':' + ss;
+  }
+  return mm + ':' + ss;
+});
+    
     _player = videojs('ryou-player', {
       controls      : true,
       autoplay      : 'any',
