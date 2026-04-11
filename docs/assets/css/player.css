@@ -151,12 +151,12 @@
 
 /* Speed — ukuran dan posisi sama dengan time */
 .vjs-ryou .vjs-remaining-time {
-  /* Lebar TETAP untuk format terpanjang: -HH:MM:SS (9 karakter monospace) */
-  width        : calc(9ch + 4px);
+  /* Lebar mengikuti konten: MM:SS mepet, HH:MM:SS otomatis lebih lebar */
+  /* Jarak ke speed dijaga oleh margin-left di .vjs-playback-rate */
   flex-shrink  : 0;
-  justify-content: center;
-  padding-right: 0;
-  margin-right : 0;
+  width        : auto;
+  justify-content: flex-start;
+  padding      : 0 2px;
 }
 .vjs-ryou .vjs-playback-rate {
   flex-shrink    : 0;
