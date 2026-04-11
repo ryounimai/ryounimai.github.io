@@ -23,25 +23,25 @@ videojs.setFormatTime(function (seconds, guide) {
 
 /* ══════════════════════════════════════════════════════════════════════
    CUSTOM GEAR BUTTON — buka text track settings (subtitle font/warna)
+   Note: videojs.extend() dihapus di VJS 8 — pakai ES6 class native
    ══════════════════════════════════════════════════════════════════════ */
 (function () {
-  var Button = videojs.getComponent('Button');
-  var GearButton = videojs.extend(Button, {
-    constructor: function (player, options) {
-      Button.call(this, player, options);
+  const Button = videojs.getComponent('Button');
+  class GearButton extends Button {
+    constructor(player, options) {
+      super(player, options);
       this.addClass('vjs-gear-button');
       this.controlText('Subtitle Settings');
-    },
-    handleClick: function () {
-      var ts = this.player_.textTrackSettings;
+    }
+    handleClick() {
+      const ts = this.player_.textTrackSettings;
       if (!ts) return;
       ts.hasClass('vjs-hidden') ? ts.show() : ts.hide();
-    },
-    buildCSSClass: function () {
-      return 'vjs-gear-button vjs-control vjs-button ' +
-             Button.prototype.buildCSSClass.call(this);
     }
-  });
+    buildCSSClass() {
+      return 'vjs-gear-button vjs-control vjs-button ' + super.buildCSSClass();
+    }
+  }
   videojs.registerComponent('GearButton', GearButton);
 })();
 
