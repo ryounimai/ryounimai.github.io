@@ -1,104 +1,77 @@
 /**
- * lib/api.js — ŘΨØŬ v1.0.1
- * Wrapper semua API endpoint backend.
- *
- * Backend berjalan di Termux via Cloudflare Quick Tunnel.
- * URL tunnel disimpan di GitHub Gist dan di-fetch sekali saat init.
- *
- * Konfigurasi:
- *   Edit GIST_ID di bawah sesuai Gist kamu.
+ * lib/api.js — ŘΨØŬ v1.0.2
+ * Kompatibel Android WebView lama (tanpa ?. dan ??)
  */
 
-const API = (() => {
+const API = (function () {
 
   // ── KONFIGURASI ────────────────────────────────────────────────────────────
-  const GIST_ID       = '1a42e63011f4496adb0a4c7821e15bb6';   // sama dengan di start_tunnel.sh
-  const GIST_FILENAME = 'ryou-backend.json';
-  const GIST_URL      = `https://api.github.com/gists/${1a42e63011f4496adb0a4c7821e15bb6}`;
+  var GIST_ID       = '1a42e63011f4496adb0a4c7821e15bb6';
+  var GIST_FILENAME = 'ryou-backend.json';
+  var GIST_URL      = 'https://api.github.com/gists/' + GIST_ID;
   // ──────────────────────────────────────────────────────────────────────────
 
-  let _base        = null;
-  let _initPromise = null;
+  var _base        = null;
+  var _initPromise = null;
 
-  async function _resolveBase() {
-    if (_base) return _base;
+  function _resolveBase() {
+    if (_base) return Promise.resolve(_base);
     if (_initPromise) return _initPromise;
 
-    _initPromise = (async () => {
-      try {
-        const r = await fetch(GIST_URL, {
-          headers: { 'Accept': 'application/vnd.github+json' }
-        });
-        if (!r.ok) throw new Error(`GitHub API ${r.status}`);
+    _initPromise = fetch(GIST_URL, {
+      headers: { 'Accept': 'application/vnd.github+json' }
+    })
+    .then(function (r) {
+      if (!r.ok) throw new Error('GitHub API ' + r.status);
+      return r.json();
+    })
+    .then(function (gist) {
+      var file = gist.files && gist.files[GIST_FILENAME];
+      if (!file) throw new Error('File ' + GIST_FILENAME + ' tidak ada di Gist.');
 
-        const gist = await r.json();
-        const file = gist.files?.[GIST_FILENAME];
-        if (!file) throw new Error(`File "${GIST_FILENAME}" tidak ada di Gist.`);
+      var payload = JSON.parse(file.content);
+      if (!payload.url) throw new Error('Field url tidak ada di Gist content.');
 
-        const payload = JSON.parse(file.content);
-        if (!payload.url) throw new Error('Field "url" tidak ada di Gist content.');
-
-        _base = payload.url.replace(/\/$/, '');
-        console.info(`[API] Backend URL: ${_base} (updated: ${payload.updated ?? '?'})`);
-        return _base;
-
-      } catch (err) {
-        _initPromise = null;
-        throw new Error(`[API] Gagal resolve backend URL: ${err.message}`);
-      }
-    })();
+      _base = payload.url.replace(/\/$/, '');
+      console.info('[API] Backend URL: ' + _base + ' (updated: ' + (payload.updated || '?') + ')');
+      return _base;
+    })
+    .catch(function (err) {
+      _initPromise = null;
+      throw new Error('[API] Gagal resolve backend URL: ' + err.message);
+    });
 
     return _initPromise;
   }
 
-  async function _get(path) {
-    const base = await _resolveBase();
-    const r    = await fetch(base + path);
-    if (!r.ok) throw new Error(`HTTP ${r.status}: ${path}`);
-    return r.json();
+  function _get(path) {
+    return _resolveBase().then(function (base) {
+      return fetch(base + path);
+    }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status + ': ' + path);
+      return r.json();
+    });
   }
 
   return {
-    /* Resolve URL backend (untuk debugging) */
-    resolveBase: () => _resolveBase(),
+    resolveBase: function () { return _resolveBase(); },
 
-    /* Library */
-    library: () => _get('/api/library'),
+    library:    function () { return _get('/api/library'); },
+    episodes:   function (id) { return _get('/api/episodes/' + id); },
+    scan:       function (force) { return _get('/api/scan?force=' + (force ? 1 : 0)); },
+    scanStatus: function () { return _get('/api/scan/status'); },
+    settings:   function () { return _get('/api/settings'); },
+    clearCache: function (type) { return _get('/api/clear_cache?type=' + (type || 'all')); },
+    dirlist:    function (path) { return _get('/api/dirlist?path=' + encodeURIComponent(path || '')); },
+    chapters:   function (mediaPath) { return _get('/api/chapters?path=' + encodeURIComponent(mediaPath)); },
 
-    /* Episodes */
-    episodes: (id) => _get(`/api/episodes/${id}`),
-
-    /* Scan */
-    scan:       (force = false) => _get(`/api/scan?force=${force ? 1 : 0}`),
-    scanStatus: ()              => _get('/api/scan/status'),
-
-    /* Settings */
-    settings: () => _get('/api/settings'),
-
-    /* Clear cache */
-    clearCache: (type = 'all') => _get(`/api/clear_cache?type=${type}`),
-
-    /* Dir listing */
-    dirlist: (path = '') => _get(`/api/dirlist?path=${encodeURIComponent(path)}`),
-
-    /* Chapters */
-    chapters: (mediaPath) => _get(`/api/chapters?path=${encodeURIComponent(mediaPath)}`),
-
-    /**
-     * URL absolut untuk media/stream.
-     * Video player butuh URL absolut, bukan relative.
-     * Pakai: const src = await API.mediaUrl('/media/Movies/...')
-     */
-    mediaUrl: async (path) => {
-      const base = await _resolveBase();
-      return base + path;
+    mediaUrl: function (path) {
+      return _resolveBase().then(function (base) {
+        return base + path;
+      });
     },
 
-    /**
-     * Paksa refresh URL dari Gist.
-     * Panggil ini jika tunnel sudah di-restart dan URL berubah.
-     */
-    refresh: () => {
+    refresh: function () {
       _base        = null;
       _initPromise = null;
       return _resolveBase();
