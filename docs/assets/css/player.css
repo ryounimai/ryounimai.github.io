@@ -131,6 +131,7 @@
    mengubahnya ke 'none' menyebabkan Video.js salah deteksi
    user-activity sehingga HUD muncul saat sentuh di luar area video */
 
+/* ── Monospace font untuk time display ──────────────────────────────── */
 .vjs-ryou .vjs-current-time-display,
 .vjs-ryou .vjs-duration-display,
 .vjs-ryou .vjs-remaining-time-display,
@@ -140,6 +141,4 @@
                 'Courier New', monospace;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
-  font-size : 1.3em;
-  line-height: 3em;
 }
