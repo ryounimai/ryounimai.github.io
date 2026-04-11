@@ -22,28 +22,9 @@ videojs.setFormatTime(function (seconds, guide) {
 });
 
 /* ══════════════════════════════════════════════════════════════════════
-   CUSTOM GEAR BUTTON — buka text track settings (subtitle font/warna)
-   Note: videojs.extend() dihapus di VJS 8 — pakai ES6 class native
+   GEAR BUTTON — placeholder untuk Quality Selector
+   TODO: implementasikan saat backend mendukung multi-resolusi
    ══════════════════════════════════════════════════════════════════════ */
-(function () {
-  const Button = videojs.getComponent('Button');
-  class GearButton extends Button {
-    constructor(player, options) {
-      super(player, options);
-      this.addClass('vjs-gear-button');
-      this.controlText('Subtitle Settings');
-    }
-    handleClick() {
-      const ts = this.player_.textTrackSettings;
-      if (!ts) return;
-      ts.hasClass('vjs-hidden') ? ts.show() : ts.hide();
-    }
-    buildCSSClass() {
-      return 'vjs-gear-button vjs-control vjs-button ' + super.buildCSSClass();
-    }
-  }
-  videojs.registerComponent('GearButton', GearButton);
-})();
 
 /* ══════════════════════════════════════════════════════════════════════
    WATCH COMPONENT
@@ -227,7 +208,6 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} �
           'remainingTimeDisplay', // (-) — selalu
           'playbackRateMenuButton',
           'subsCapsButton',
-          'GearButton',
           'pictureInPictureToggle',  // tampil tablet+ via CSS
           'fullscreenToggle',
         ],

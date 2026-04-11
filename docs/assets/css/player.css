@@ -113,10 +113,11 @@
   background: #22d3ee;
 }
 .vjs-ryou .vjs-play-progress::before {
+  position   : absolute;
   color      : #22d3ee;
   font-size  : .85em;
   top        : 50%;
-  right      : -.5em;
+  right      : -.45em;           /* lebih presisi: setengah lebar dot (.85em/2) */
   transform  : translateY(-50%);
   line-height: 1;
 }
@@ -148,6 +149,9 @@
 }
 
 /* Speed — ukuran dan posisi sama dengan time */
+.vjs-ryou .vjs-remaining-time {
+  padding-right: 6px;   /* gap antara waktu dan speed, cegah tabrakan */
+}
 .vjs-ryou .vjs-playback-rate {
   flex-shrink: 0;
   width      : 3.4em;
@@ -167,7 +171,7 @@
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   7. GEAR BUTTON (custom) — ikon ⚙
+   7. GEAR BUTTON (custom) — ikon ⚙ (reserved, tidak aktif)
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-gear-button .vjs-icon-placeholder::before {
   content    : '\2699';
@@ -176,6 +180,26 @@
   line-height: 2.53;
   display    : block;
   text-align : center;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   7b. SUBTITLE / CC BUTTON — paksa tampil sebagai ikon, bukan garis
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-subs-caps-button {
+  width           : 3.4em;
+  background      : transparent !important;
+  border          : none !important;
+  position        : relative;
+}
+/* Sembunyikan indikator "aktif" VJS 8 (garis/dot biru di bawah ikon) */
+.vjs-ryou .vjs-subs-caps-button::after,
+.vjs-ryou .vjs-subs-caps-button .vjs-icon-placeholder::after {
+  display: none !important;
+}
+/* Ikon CC: paksa ukuran & alignment konsisten */
+.vjs-ryou .vjs-subs-caps-button .vjs-icon-placeholder::before {
+  font-size  : 1.65em;
+  line-height: 2.3;
 }
 
 /* ════════════════════════════════════════════════════════════════════
