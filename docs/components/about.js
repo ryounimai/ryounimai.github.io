@@ -1,15 +1,34 @@
 /**
- * components/about.js — ŘΨØŬ v1.0.1
+ * components/about.js — ŘΨØŬ v1.4.0
  * About page + Changelog accordion
  */
 const AboutComp = {
   /* Changelog — sync dengan changelogs.md di root */
   _changelogs: [
     {
-      version: 'v1.0.1',
-      date: '2026-04-11',
+      version: 'v1.4.0',
+      date: '2026-04-12',
       tag: 'latest',
       open: true,
+      changes: [
+        'Fix: watch page kosong — videojs.extend() dihapus di VJS 8, ganti ke ES6 class',
+        'Fix: overflow:hidden pada control-bar & watch-player-box halangi menu speed & CC',
+        'Fix: GearButton membuka subtitle settings bukan quality — dihapus sementara (TODO: quality selector)',
+        'Fix: CC/subtitle button tampil sebagai garis biru (indikator aktif VJS 8 disembunyikan)',
+        'Fix: jarak waktu & speed tabrakan saat durasi lebih dari 1 jam',
+        'Fix: volume slider meluap ke atas — overflow:visible + inline panel fix',
+        'Fix: hamburger X tidak bisa diklik untuk tutup drawer (hanya bind openDrawer, tidak toggle)',
+        'Fix: backdrop z-index terlalu mepet navbar, bisa nutupin hamburger di beberapa device',
+        'Fix: preload bar terlalu mencolok — opacity dikurangi',
+        'Improvement: remaining-time lebar mengikuti konten, gap ke speed fixed 8px',
+        'Improvement: letter-spacing digit waktu diperapat, hemat ruang di mobile',
+      ]
+    },
+    {
+      version: 'v1.0.1',
+      date: '2026-04-11',
+      tag: 'stable',
+      open: false,
       changes: [
         'Fix: gap kosong di watch page portrait (remove overflow:hidden + min-height layout)',
         'Fix: carousel pagination dot gelap (Swiper inactive bullet warna #000 default)',
@@ -28,7 +47,7 @@ const AboutComp = {
       tag: 'initial',
       open: false,
       changes: [
-        'Rilis pertama ŘΨØŬ v1.0.0',
+        'Rilis pertama ŘΨØŬ v1.4.0',
         'Frontend: HTML + Vanilla JS + Bootstrap 5 + Swiper + Video.js 8',
         'Backend: Python stdlib only, tidak perlu install dependency eksternal',
         'Metadata: integrasi Jikan (MAL), TMDB, MDL',
@@ -47,6 +66,7 @@ const AboutComp = {
   _tagStyle(tag) {
     const map = {
       latest : { bg:'rgba(34,211,238,.12)', color:'var(--clr-accent)',   border:'var(--clr-accent)' },
+      stable : { bg:'rgba(168,85,247,.12)', color:'#a855f7',             border:'#a855f7' },
       initial: { bg:'rgba(34,197,94,.12)',  color:'var(--clr-success)',  border:'var(--clr-success)' },
     };
     const s = map[tag] || { bg:'var(--bg-float)', color:'var(--txt-secondary)', border:'var(--bdr-subtle)' };
@@ -111,7 +131,7 @@ const AboutComp = {
     const page = document.getElementById('about-page');
     if (!page) return;
     page.classList.add('active');
-    let version = 'v1.0.1';
+    let version = 'v1.4.0';
     try { const s = await API.settings(); version = s.version || version; } catch {}
     const vEl = document.getElementById('about-version');
     if (vEl) vEl.textContent = version;

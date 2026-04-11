@@ -1,5 +1,5 @@
 /**
- * lib/store.js — ŘΨØŬ v1.0.0 new
+ * lib/store.js — ŘΨØŬ v1.4.0
  * localStorage: history, continue watching, user settings
  */
 const Store = (() => {

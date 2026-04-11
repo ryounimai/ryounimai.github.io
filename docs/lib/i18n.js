@@ -1,5 +1,5 @@
 /**
- * lib/i18n.js — ŘΨØŬ v1.0.0 new
+ * lib/i18n.js — ŘΨØŬ v1.4.0
  * Internasionalisasi ID / EN / JA
  */
 const I18n = (() => {

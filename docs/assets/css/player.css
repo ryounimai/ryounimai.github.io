@@ -1,5 +1,5 @@
 /**
- * player.css — ŘΨØŬ v1.3.0
+ * player.css — ŘΨØŬ v1.4.0
  * Mobile / Tablet / PC+TV responsive player UI
  *
  * Breakpoints (player width via VJS layout classes):
@@ -217,19 +217,7 @@
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   7. GEAR BUTTON (custom) — ikon ⚙ (reserved, tidak aktif)
-   ════════════════════════════════════════════════════════════════════ */
-.vjs-ryou .vjs-gear-button .vjs-icon-placeholder::before {
-  content    : '\2699';
-  font-family: Arial, sans-serif;
-  font-size  : 1.5em;
-  line-height: 2.53;
-  display    : block;
-  text-align : center;
-}
-
-/* ════════════════════════════════════════════════════════════════════
-   7b. SUBTITLE / CC BUTTON — paksa tampil sebagai ikon, bukan garis
+   7. SUBTITLE / CC BUTTON — paksa tampil sebagai ikon, bukan garis
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-subs-caps-button {
   width           : 3.4em;
@@ -364,11 +352,6 @@
   font-size  : 1.75em;
   line-height: 2.29;
 }
-.vjs-ryou.vjs-layout-medium .vjs-gear-button .vjs-icon-placeholder::before,
-.vjs-ryou.vjs-layout-large  .vjs-gear-button .vjs-icon-placeholder::before {
-  font-size  : 1.6em;
-  line-height: 2.5;
-}
 .vjs-ryou.vjs-layout-medium .vjs-time-control,
 .vjs-ryou.vjs-layout-large  .vjs-time-control {
   font-size: 1.15em;
@@ -409,11 +392,6 @@
 .vjs-ryou.vjs-layout-huge    .vjs-button > .vjs-icon-placeholder::before {
   font-size  : 1.9em;
   line-height: 2.37;
-}
-.vjs-ryou.vjs-layout-x-large .vjs-gear-button .vjs-icon-placeholder::before,
-.vjs-ryou.vjs-layout-huge    .vjs-gear-button .vjs-icon-placeholder::before {
-  font-size  : 1.8em;
-  line-height: 2.5;
 }
 .vjs-ryou.vjs-layout-x-large .vjs-time-control,
 .vjs-ryou.vjs-layout-huge    .vjs-time-control {

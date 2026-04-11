@@ -2,7 +2,27 @@
 
 ---
 
-## v1.0.1 — 2026-04-10 `latest`
+## v1.4.0 — 2026-04-12 `latest`
+
+### Bug Fixes
+- Fix: watch page kosong — `videojs.extend()` dihapus di VJS 8, ganti ke ES6 class
+- Fix: `overflow:hidden` pada `.vjs-control-bar` & `.watch-player-box` menghalangi menu speed & CC
+- Fix: GearButton membuka subtitle settings bukan quality — dihapus sementara (TODO: quality selector)
+- Fix: CC/subtitle button tampil sebagai garis biru (indikator aktif VJS 8 disembunyikan)
+- Fix: jarak waktu & speed tabrakan saat durasi lebih dari 1 jam
+- Fix: volume slider meluap ke atas — overflow:visible + inline panel fix
+- Fix: hamburger X tidak bisa diklik untuk tutup drawer (hanya bind `openDrawer`, tidak toggle)
+- Fix: `#drawer-backdrop` z-index terlalu mepet navbar, bisa nutupin hamburger di beberapa device
+- Fix: preload bar terlalu mencolok — opacity dikurangi
+
+### Improvements
+- `remaining-time` lebar mengikuti konten, gap ke speed button fixed 8px
+- Letter-spacing digit waktu diperapat, hemat ruang di mobile
+- Hapus dead CSS `.vjs-gear-button` (3 selector) — tidak lagi dipakai
+
+---
+
+## v1.0.1 — 2026-04-11 `stable`
 
 ### Bug Fixes
 - Fix: bug pagination vertikal — `#main-pagination` tidak dapat flex row karena tidak ada class `.pagination`

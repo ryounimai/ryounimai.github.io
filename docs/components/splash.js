@@ -1,5 +1,5 @@
 /**
- * components/splash.js — ŘΨØŬ v1.0.0 new
+ * components/splash.js — ŘΨØŬ v1.4.0
  */
 const Splash = {
   hide(delay = 800) {

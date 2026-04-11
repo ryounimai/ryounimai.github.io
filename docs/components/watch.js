@@ -1,5 +1,5 @@
 /**
- * components/watch.js — ŘΨØŬ v1.3.0
+ * components/watch.js — ŘΨØŬ v1.4.0
  * Responsive control bar: Mobile / Tablet / PC+TV
  */
 
