@@ -1,7 +1,6 @@
 /**
- * player.css — ŘΨØŬ v1.0.0 new
- * Video.js default CSS + thin Navy/Cyan theme layer only.
- * Relies on video-js.min.css for all structural layout.
+ * player.css — ŘΨØŬ v1.0.2
+ * Hanya structural layout. Semua styling pakai default video-js.min.css.
  */
 
 /* ── Container wrapper ────────────────────────────────────────────── */
@@ -13,104 +12,11 @@
 
 /* ── Video.js fill ────────────────────────────────────────────────── */
 .video-js.vjs-ryou {
-  width      : 100%;
-  height     : 100%;
-  font-family: var(--font-sans);
+  width : 100%;
+  height: 100%;
 }
 
-/* ── Big play button — centered ──────────────────────────────────── */
-.vjs-ryou .vjs-big-play-button {
-  top          : 50%;
-  left         : 50%;
-  margin       : 0;
-  transform    : translate(-50%, -50%);
-  width        : 64px;
-  height       : 64px;
-  border-radius: 50%;
-  border       : 2px solid rgba(34, 211, 238, .45);
-  background   : rgba(0, 0, 0, .5);
-  line-height  : 64px;
-  transition   : all .2s;
-}
-.vjs-ryou:hover .vjs-big-play-button {
-  background  : rgba(34, 211, 238, .15);
-  border-color: var(--clr-accent);
-  transform   : translate(-50%, -50%) scale(1.06);
-}
-.vjs-ryou .vjs-big-play-button .vjs-icon-placeholder::before {
-  font-size  : 30px;
-  color      : var(--clr-accent);
-  line-height: 64px;
-}
-
-/* ── Control bar gradient ─────────────────────────────────────────── */
-.vjs-ryou .vjs-control-bar {
-  background: linear-gradient(to top, rgba(0,0,0,.82) 0%, transparent 100%);
-}
-
-/* ── Accent color: progress & volume ─────────────────────────────── */
-.vjs-ryou .vjs-play-progress,
-.vjs-ryou .vjs-volume-level {
-  background: var(--clr-accent);
-}
-.vjs-ryou .vjs-play-progress::before,
-.vjs-ryou .vjs-volume-level::before {
-  color: var(--clr-accent);
-}
-
-/* ── Seek tooltip ─────────────────────────────────────────────────── */
-.vjs-ryou .vjs-time-tooltip {
-  background   : rgba(6, 16, 30, .95);
-  border       : 1px solid var(--bdr-strong);
-  border-radius: var(--r-sm);
-  color        : var(--txt-primary);
-  font-weight  : 600;
-}
-
-/* ── Menu (playback rate, captions) ──────────────────────────────── */
-.vjs-ryou .vjs-menu-content {
-  background: rgba(8, 18, 36, .96);
-  border    : 1px solid var(--bdr-strong);
-}
-.vjs-ryou .vjs-menu li.vjs-selected,
-.vjs-ryou .vjs-menu li.vjs-selected:focus,
-.vjs-ryou .vjs-menu li.vjs-selected:hover {
-  background : var(--clr-accent);
-  color      : var(--txt-inverse);
-  font-weight: 700;
-}
-.vjs-ryou .vjs-menu li:not(.vjs-selected):hover {
-  background: var(--clr-accent-subtle);
-  color     : var(--clr-accent);
-}
-
-/* ── Loading spinner ─────────────────────────────────────────────── */
-.vjs-ryou .vjs-loading-spinner {
-  border-color    : rgba(255, 255, 255, .1);
-  border-top-color: var(--clr-accent);
-}
-
-/* ── Subtitles / captions ─────────────────────────────────────────── */
-.vjs-ryou .vjs-text-track-cue > span {
-  background   : rgba(0, 0, 0, .62);
-  border-radius: 4px;
-  padding      : 2px 8px;
-}
-
-/* ── Mobile (<=600px) ─────────────────────────────────────────────── */
-@media (max-width: 600px) {
-  .vjs-ryou .vjs-big-play-button {
-    width      : 52px;
-    height     : 52px;
-    line-height: 52px;
-  }
-  .vjs-ryou .vjs-big-play-button .vjs-icon-placeholder::before {
-    font-size  : 24px;
-    line-height: 52px;
-  }
-}
-
-/* ── DRM: block all download / save interaction ─────────────────────── */
+/* ── DRM: block all download / save interaction ───────────────────── */
 .watch-player-box,
 .watch-player-box *,
 .video-js,
@@ -118,48 +24,17 @@
   -webkit-user-select : none;
   -moz-user-select    : none;
   user-select         : none;
-  -webkit-touch-callout: none;   /* iOS long-press callout */
+  -webkit-touch-callout: none;
 }
-/* Hide any download/pip/cast buttons Video.js might render */
 .vjs-download-button,
 .vjs-picture-in-picture-control,
 .vjs-cast-button,
 .vjs-airplay-button {
   display: none !important;
 }
-/* pointer-events dibiarkan default pada video element —
-   mengubahnya ke 'none' menyebabkan Video.js salah deteksi
-   user-activity sehingga HUD muncul saat sentuh di luar area video */
 
-/* ── Monospace font untuk semua teks di control bar (icon tetap aman) ── */
-/* Tidak pakai !important agar font-family:VideoJS pada icon tidak tertimpa */
-.vjs-ryou .vjs-control-bar {
-  font-family: 'ui-monospace', 'Cascadia Code', 'Roboto Mono',
-               'Courier New', monospace;
-}
-
-/* ── Time control: besarkan font, flex centering supaya tidak meleset ───── */
-/* VJS default: font-size:1em(10px), line-height:3em → pakai flex saja.     */
+/* ── Monospace tabular nums untuk time ────────────────────────────── */
 .vjs-ryou .vjs-time-control {
-  display      : flex !important;
-  align-items  : center !important;
-  line-height  : normal !important;
-  font-size    : 1.35em !important;
-  font-family  : 'ui-monospace', 'Cascadia Code', 'Roboto Mono',
-                 'Courier New', monospace !important;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0;
-}
-
-/* ── Progress bar dot: paksa center vertikal ────────────────────────────── */
-.vjs-ryou .vjs-play-progress::before {
-  top       : 50% !important;
-  transform : translateY(-50%) !important;
-  line-height: 1 !important;
-}
-
-/* ── Time tooltip ───────────────────────────────────────────────────────── */
-.vjs-ryou .vjs-time-tooltip {
   font-family          : 'ui-monospace', 'Cascadia Code', 'Roboto Mono',
                          'Courier New', monospace;
   font-variant-numeric : tabular-nums;
