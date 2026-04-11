@@ -130,3 +130,14 @@
 /* pointer-events dibiarkan default pada video element —
    mengubahnya ke 'none' menyebabkan Video.js salah deteksi
    user-activity sehingga HUD muncul saat sentuh di luar area video */
+
+.vjs-ryou .vjs-current-time-display,
+.vjs-ryou .vjs-duration-display,
+.vjs-ryou .vjs-remaining-time-display,
+.vjs-ryou .vjs-time-divider,
+.vjs-ryou .vjs-time-tooltip {
+  font-family : 'ui-monospace', 'Cascadia Code', 'Roboto Mono',
+                'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
