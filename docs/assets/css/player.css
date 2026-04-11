@@ -1,21 +1,202 @@
 /**
- * player.css — ŘΨØŬ v1.0.4
- * Structural + DRM only. Visual 100% default Video.js.
+ * player.css — ŘΨØŬ v1.1.0
+ * Custom player UI — mobile-first, responsive portrait/landscape/PC
  */
 
-/* ── Structural ──────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════════
+   1. STRUCTURAL
+   ════════════════════════════════════════════════════════════════════ */
 .player-wrap {
-  position : relative;
+  position  : relative;
   width     : 100%;
   background: #000;
 }
 .video-js.vjs-ryou {
   width      : 100%;
   height     : 100%;
-  font-family: Arial, Helvetica, sans-serif;
+  font-size  : 10px;          /* VJS base — jangan ubah, pakai em */
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  color      : #fff;
 }
 
-/* ── DRM: block download / save ──────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════════
+   2. CONTROL BAR
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-control-bar {
+  height    : 4em;            /* 40px — lebih lapang dari default 30px */
+  background: linear-gradient(to top,
+    rgba(0,0,0,.85) 0%,
+    rgba(0,0,0,.4)  70%,
+    transparent     100%);
+  align-items: center;
+  padding    : 0 4px;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   3. PROGRESS BAR
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-progress-control {
+  align-items: center;
+  min-height : 4em;           /* touch area tetap besar */
+}
+.vjs-ryou .vjs-progress-holder {
+  height    : 3px;
+  transition: height .15s ease;
+  margin    : 0 8px;
+}
+.vjs-ryou .vjs-progress-control:hover .vjs-progress-holder,
+.vjs-ryou .vjs-progress-control:active .vjs-progress-holder {
+  height: 5px;
+}
+/* Warna progress */
+.vjs-ryou .vjs-play-progress {
+  background: #22d3ee;
+}
+.vjs-ryou .vjs-play-progress::before {
+  color     : #22d3ee;
+  font-size : .9em;
+  top       : 50%;
+  right     : -.5em;
+  transform : translateY(-50%);
+  line-height: 1;
+}
+.vjs-ryou .vjs-load-progress,
+.vjs-ryou .vjs-load-progress div {
+  background: rgba(255,255,255,.2);
+}
+/* Slider base (loaded track bg) */
+.vjs-ryou .vjs-slider {
+  background: rgba(255,255,255,.25);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   4. TIME DISPLAY — monospace, sinkron dengan speed 1x
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-time-control {
+  font-family          : 'ui-monospace','Roboto Mono','Courier New',monospace;
+  font-variant-numeric : tabular-nums;
+  font-size            : 1.3em;    /* 13px */
+  line-height          : 4em;      /* sesuai control bar height 4em */
+  padding              : 0 4px;
+  min-width            : 0;
+}
+/* Speed "1x" — samakan ukuran dengan time */
+.vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
+  font-size  : 1.3em;
+  line-height: 4;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   5. TOMBOL KONTROL
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-control {
+  width: 3.8em;
+}
+/* Icon ukuran */
+.vjs-ryou .vjs-button > .vjs-icon-placeholder::before {
+  font-size  : 1.8em;
+  line-height: 2.22;   /* 4em / 1.8em */
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   6. BIG PLAY BUTTON
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-big-play-button {
+  top          : 50%;
+  left         : 50%;
+  transform    : translate(-50%, -50%);
+  margin       : 0;
+  width        : 64px;
+  height       : 64px;
+  line-height  : 64px;
+  border-radius: 50%;
+  border       : 2px solid rgba(34,211,238,.5);
+  background   : rgba(0,0,0,.5);
+  transition   : all .2s;
+}
+.vjs-ryou:hover .vjs-big-play-button {
+  background  : rgba(34,211,238,.15);
+  border-color: #22d3ee;
+}
+.vjs-ryou .vjs-big-play-button .vjs-icon-placeholder::before {
+  font-size  : 2.8em;
+  line-height: 64px;
+  color      : #22d3ee;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   7. LOADING SPINNER
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-loading-spinner {
+  border-color    : rgba(255,255,255,.15);
+  border-top-color: #22d3ee;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   8. TOOLTIP SEEK
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-time-tooltip {
+  font-family: 'ui-monospace','Roboto Mono','Courier New',monospace;
+  font-size  : 1.1em;
+  background : rgba(0,0,0,.85);
+  color      : #fff;
+  border     : 1px solid rgba(34,211,238,.3);
+  border-radius: 4px;
+  padding    : 4px 8px;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   9. SUBTITLE
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-text-track-cue > span {
+  background   : rgba(0,0,0,.65);
+  border-radius: 4px;
+  padding      : 2px 8px;
+  font-family  : 'Inter', Arial, sans-serif;  /* bukan mono */
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   10. FULLSCREEN — progress bar & control bar tidak terpotong
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou.vjs-fullscreen .vjs-control-bar {
+  bottom: 0;
+}
+/* Landscape fullscreen: control lebih compact */
+@media (orientation: landscape) and (max-height: 500px) {
+  .vjs-ryou .vjs-control-bar {
+    height: 3.5em;
+  }
+  .vjs-ryou .vjs-time-control {
+    line-height: 3.5em;
+    font-size  : 1.2em;
+  }
+  .vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
+    line-height: 3.5;
+    font-size  : 1.2em;
+  }
+  .vjs-ryou .vjs-button > .vjs-icon-placeholder::before {
+    line-height: 1.94;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   11. PC / TABLET (≥768px)
+   ════════════════════════════════════════════════════════════════════ */
+@media (min-width: 768px) {
+  .vjs-ryou .vjs-big-play-button {
+    width      : 72px;
+    height     : 72px;
+    line-height: 72px;
+  }
+  .vjs-ryou .vjs-big-play-button .vjs-icon-placeholder::before {
+    font-size  : 3em;
+    line-height: 72px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   12. DRM — block save/download
+   ════════════════════════════════════════════════════════════════════ */
 .watch-player-box,
 .watch-player-box *,
 .video-js,
