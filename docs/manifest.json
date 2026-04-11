@@ -3,10 +3,10 @@
   "short_name": "ŘΨØŬ",
   "description": "Server media anime & drama lokal untuk Android Termux",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait",
-  "background_color": "#00000050",
-  "theme_color": "#00000000",
+  "background_color": "#000000",
+  "theme_color": "#0000",
   "lang": "id",
   "scope": "/",
   "icons": [
