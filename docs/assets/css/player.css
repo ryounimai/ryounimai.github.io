@@ -131,14 +131,28 @@
    mengubahnya ke 'none' menyebabkan Video.js salah deteksi
    user-activity sehingga HUD muncul saat sentuh di luar area video */
 
-/* ── Monospace font untuk time display ──────────────────────────────── */
+/* ── Monospace font untuk semua teks di control bar (icon tetap aman) ── */
+/* Tidak pakai !important agar font-family:VideoJS pada icon tidak tertimpa */
+.vjs-ryou .vjs-control-bar {
+  font-family: 'ui-monospace', 'Cascadia Code', 'Roboto Mono',
+               'Courier New', monospace;
+}
+
+/* ── Time display: font + tabular nums. JANGAN sentuh line-height! ─────── */
+/* Video.js pakai line-height:3em pada .vjs-time-control untuk centering.   */
+/* Override line-height di sini akan bikin teks meleset.                    */
 .vjs-ryou .vjs-current-time-display,
 .vjs-ryou .vjs-duration-display,
-.vjs-ryou .vjs-remaining-time-display,
-.vjs-ryou .vjs-time-divider,
+.vjs-ryou .vjs-remaining-time-display {
+  font-family          : 'ui-monospace', 'Cascadia Code', 'Roboto Mono',
+                         'Courier New', monospace;
+  font-variant-numeric : tabular-nums;
+  letter-spacing       : 0;
+}
+
+/* ── Time tooltip ───────────────────────────────────────────────────────── */
 .vjs-ryou .vjs-time-tooltip {
-  font-family : 'ui-monospace', 'Cascadia Code', 'Roboto Mono',
-                'Courier New', monospace;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0;
+  font-family          : 'ui-monospace', 'Cascadia Code', 'Roboto Mono',
+                         'Courier New', monospace;
+  font-variant-numeric : tabular-nums;
 }
