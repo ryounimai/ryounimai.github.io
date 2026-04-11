@@ -1,6 +1,7 @@
 /**
- * player.css — ŘΨØŬ v1.1.0
- * Custom player UI — mobile-first, responsive portrait/landscape/PC
+ * player.css — ŘΨØŬ v1.2.0
+ * Mobile-first. Diuji pada 360px lebar (HP kecil) sampai TV.
+ * Prinsip: semua kontrol HARUS muat di 1 baris, tidak ada yang terpotong.
  */
 
 /* ════════════════════════════════════════════════════════════════════
@@ -14,188 +15,264 @@
 .video-js.vjs-ryou {
   width      : 100%;
   height     : 100%;
-  font-size  : 10px;          /* VJS base — jangan ubah, pakai em */
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  /* VJS base font: 10px. Semua em relatif terhadap ini. */
+  font-size  : 10px;
+  font-family: Arial, Helvetica, sans-serif;
   color      : #fff;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   2. CONTROL BAR
+   2. SEMBUNYIKAN TOMBOL TIDAK PERLU
+   Khususnya skip forward/backward VJS 8 yang muncul otomatis
    ════════════════════════════════════════════════════════════════════ */
-.vjs-ryou .vjs-control-bar {
-  height     : 4em;
-  background : linear-gradient(to top,
-    rgba(0,0,0,.85) 0%,
-    rgba(0,0,0,.4)  70%,
-    transparent     100%);
-  display    : flex !important;
-  flex-wrap  : nowrap !important;     /* WAJIB: cegah wrap jadi vertikal */
-  align-items: center;
-  padding    : 0 4px;
-  overflow   : visible;
+.vjs-ryou .vjs-skip-forward-5,
+.vjs-ryou .vjs-skip-forward-10,
+.vjs-ryou .vjs-skip-forward-30,
+.vjs-ryou .vjs-skip-backward-5,
+.vjs-ryou .vjs-skip-backward-10,
+.vjs-ryou .vjs-skip-backward-30,
+.vjs-ryou .vjs-seek-to-live-control,
+.vjs-download-button,
+.vjs-picture-in-picture-control,
+.vjs-cast-button,
+.vjs-airplay-button {
+  display: none !important;
 }
 
-/* ── Volume panel: paksa horizontal, jangan melebar ke atas ──────────── */
-.vjs-ryou .vjs-volume-panel {
-  display    : flex;
-  align-items: center;
+/* ════════════════════════════════════════════════════════════════════
+   3. CONTROL BAR — 1 baris, tidak boleh wrap
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-control-bar {
+  display     : flex !important;
+  flex-wrap   : nowrap !important;
+  align-items : center;
+  height      : 3.6em;           /* 36px — cukup touch-friendly */
+  padding     : 0 2px;
+  background  : linear-gradient(to top,
+    rgba(0,0,0,.88) 0%,
+    rgba(0,0,0,.5)  60%,
+    transparent     100%);
+  overflow    : hidden;          /* potong yg overflow, jangan wrap */
 }
-/* Sembunyikan volume slider vertikal — pakai horizontal saja */
+
+/* ════════════════════════════════════════════════════════════════════
+   4. SEMUA TOMBOL — kompak di mobile
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-control {
+  width      : 3.2em;           /* 32px per tombol */
+  flex-shrink: 0;               /* tombol tidak boleh menyusut */
+}
+.vjs-ryou .vjs-button > .vjs-icon-placeholder::before {
+  font-size  : 1.6em;
+  line-height: 2.25;            /* 3.6em / 1.6em */
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   5. PROGRESS BAR — flex grow, mengisi sisa ruang
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-progress-control {
+  flex       : 1 1 0;           /* ambil semua sisa ruang */
+  min-width  : 40px;            /* minimum tetap ada */
+  align-items: center;
+  height     : 100%;
+}
+.vjs-ryou .vjs-progress-holder {
+  height    : 3px;
+  margin    : 0 6px;
+  transition: height .15s ease;
+}
+.vjs-ryou .vjs-progress-control:hover .vjs-progress-holder {
+  height: 5px;
+}
+.vjs-ryou .vjs-play-progress {
+  background: #22d3ee;
+}
+.vjs-ryou .vjs-play-progress::before {
+  color      : #22d3ee;
+  font-size  : .85em;
+  top        : 50%;
+  right      : -.5em;
+  transform  : translateY(-50%);
+  line-height: 1;
+}
+.vjs-ryou .vjs-load-progress,
+.vjs-ryou .vjs-load-progress div {
+  background: rgba(255,255,255,.18);
+}
+.vjs-ryou .vjs-slider {
+  background: rgba(255,255,255,.22);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   6. TIME DISPLAY
+   Font mono, ukuran kecil tapi terbaca. flex-shrink:0 agar tidak hilang.
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-time-control {
+  flex-shrink         : 0;
+  display             : flex !important;
+  align-items         : center !important;
+  font-family         : 'ui-monospace','Roboto Mono','Courier New',monospace;
+  font-variant-numeric: tabular-nums;
+  font-size           : 1.15em;
+  line-height         : normal !important;
+  padding             : 0 3px;
+  min-width           : 0;
+  white-space         : nowrap;
+}
+.vjs-ryou .vjs-time-divider {
+  display    : flex !important;
+  align-items: center !important;
+  line-height: normal !important;
+  padding    : 0;
+  min-width  : 0;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   7. SPEED — flex-shrink:0 agar tidak hilang, ukuran sinkron time
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-playback-rate {
+  flex-shrink: 0;
+  width      : 3.2em;
+  display    : flex !important;
+  align-items: center !important;
+}
+.vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
+  font-size  : 1.15em;
+  line-height: normal !important;
+  display    : flex !important;
+  align-items: center !important;
+  justify-content: center;
+  width      : 100%;
+  height     : 100%;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   8. VOLUME PANEL — horizontal saja, sembunyikan slider vertikal
+   ════════════════════════════════════════════════════════════════════ */
+.vjs-ryou .vjs-volume-panel {
+  flex-shrink: 0;
+  width      : 3.2em;
+}
 .vjs-ryou .vjs-volume-panel .vjs-volume-control.vjs-volume-vertical {
   display: none !important;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   3. PROGRESS BAR
-   ════════════════════════════════════════════════════════════════════ */
-.vjs-ryou .vjs-progress-control {
-  align-items: center;
-  min-height : 4em;           /* touch area tetap besar */
-}
-.vjs-ryou .vjs-progress-holder {
-  height    : 3px;
-  transition: height .15s ease;
-  margin    : 0 8px;
-}
-.vjs-ryou .vjs-progress-control:hover .vjs-progress-holder,
-.vjs-ryou .vjs-progress-control:active .vjs-progress-holder {
-  height: 5px;
-}
-/* Warna progress */
-.vjs-ryou .vjs-play-progress {
-  background: #22d3ee;
-}
-.vjs-ryou .vjs-play-progress::before {
-  color     : #22d3ee;
-  font-size : .9em;
-  top       : 50%;
-  right     : -.5em;
-  transform : translateY(-50%);
-  line-height: 1;
-}
-.vjs-ryou .vjs-load-progress,
-.vjs-ryou .vjs-load-progress div {
-  background: rgba(255,255,255,.2);
-}
-/* Slider base (loaded track bg) */
-.vjs-ryou .vjs-slider {
-  background: rgba(255,255,255,.25);
-}
-
-/* ════════════════════════════════════════════════════════════════════
-   4. TIME DISPLAY — monospace, sinkron dengan speed 1x
-   ════════════════════════════════════════════════════════════════════ */
-.vjs-ryou .vjs-time-control {
-  font-family          : 'ui-monospace','Roboto Mono','Courier New',monospace;
-  font-variant-numeric : tabular-nums;
-  font-size            : 1.3em;    /* 13px */
-  line-height          : 4em;      /* sesuai control bar height 4em */
-  padding              : 0 4px;
-  min-width            : 0;
-}
-/* Speed "1x" — samakan ukuran dengan time */
-.vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
-  font-size  : 1.3em;
-  line-height: 4;
-}
-
-/* ════════════════════════════════════════════════════════════════════
-   5. TOMBOL KONTROL
-   ════════════════════════════════════════════════════════════════════ */
-.vjs-ryou .vjs-control {
-  width: 3.8em;
-}
-/* Icon ukuran */
-.vjs-ryou .vjs-button > .vjs-icon-placeholder::before {
-  font-size  : 1.8em;
-  line-height: 2.22;   /* 4em / 1.8em */
-}
-
-/* ════════════════════════════════════════════════════════════════════
-   6. BIG PLAY BUTTON
+   9. BIG PLAY BUTTON
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-big-play-button {
   top          : 50%;
   left         : 50%;
   transform    : translate(-50%, -50%);
   margin       : 0;
-  width        : 64px;
-  height       : 64px;
-  line-height  : 64px;
+  width        : 60px;
+  height       : 60px;
+  line-height  : 60px;
   border-radius: 50%;
   border       : 2px solid rgba(34,211,238,.5);
   background   : rgba(0,0,0,.5);
   transition   : all .2s;
 }
-.vjs-ryou:hover .vjs-big-play-button {
+.vjs-ryou:hover .vjs-big-play-button,
+.vjs-ryou:focus .vjs-big-play-button {
   background  : rgba(34,211,238,.15);
   border-color: #22d3ee;
 }
 .vjs-ryou .vjs-big-play-button .vjs-icon-placeholder::before {
-  font-size  : 2.8em;
-  line-height: 64px;
+  font-size  : 2.6em;
+  line-height: 60px;
   color      : #22d3ee;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   7. LOADING SPINNER
+   10. LOADING SPINNER — putar, bukan diam
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-loading-spinner {
-  border-color    : rgba(255,255,255,.15);
+  border-color    : rgba(255,255,255,.12);
   border-top-color: #22d3ee;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   8. TOOLTIP SEEK
+   11. SEEK TOOLTIP
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-time-tooltip {
-  font-family: 'ui-monospace','Roboto Mono','Courier New',monospace;
-  font-size  : 1.1em;
-  background : rgba(0,0,0,.85);
-  color      : #fff;
-  border     : 1px solid rgba(34,211,238,.3);
-  border-radius: 4px;
-  padding    : 4px 8px;
+  font-family   : 'ui-monospace','Roboto Mono','Courier New',monospace;
+  font-size     : 1.1em;
+  background    : rgba(0,0,0,.88);
+  color         : #fff;
+  border        : 1px solid rgba(34,211,238,.35);
+  border-radius : 4px;
+  padding       : 3px 7px;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   9. SUBTITLE
+   12. SUBTITLE — bukan monospace
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou .vjs-text-track-cue > span {
   background   : rgba(0,0,0,.65);
   border-radius: 4px;
   padding      : 2px 8px;
-  font-family  : 'Inter', Arial, sans-serif;  /* bukan mono */
+  font-family  : Arial, sans-serif;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   10. FULLSCREEN — progress bar & control bar tidak terpotong
+   13. FULLSCREEN
    ════════════════════════════════════════════════════════════════════ */
 .vjs-ryou.vjs-fullscreen .vjs-control-bar {
   bottom: 0;
 }
-/* Landscape fullscreen: control lebih compact */
-@media (orientation: landscape) and (max-height: 500px) {
+
+/* ════════════════════════════════════════════════════════════════════
+   14. LANDSCAPE MOBILE (HP diputar) — control lebih compact
+   ════════════════════════════════════════════════════════════════════ */
+@media screen and (orientation: landscape) and (max-height: 480px) {
   .vjs-ryou .vjs-control-bar {
-    height: 3.5em;
+    height : 3em;
+    padding: 0 2px;
   }
-  .vjs-ryou .vjs-time-control {
-    line-height: 3.5em;
-    font-size  : 1.2em;
-  }
-  .vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
-    line-height: 3.5;
-    font-size  : 1.2em;
+  .vjs-ryou .vjs-control,
+  .vjs-ryou .vjs-volume-panel,
+  .vjs-ryou .vjs-playback-rate {
+    width: 3em;
   }
   .vjs-ryou .vjs-button > .vjs-icon-placeholder::before {
-    line-height: 1.94;
+    font-size  : 1.5em;
+    line-height: 2;
+  }
+  .vjs-ryou .vjs-time-control {
+    font-size  : 1.1em;
+  }
+  .vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
+    font-size  : 1.1em;
+  }
+  .vjs-ryou .vjs-play-progress::before {
+    font-size: .8em;
   }
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   11. PC / TABLET (≥768px)
+   15. TABLET / PC (≥768px) — sedikit lebih besar
    ════════════════════════════════════════════════════════════════════ */
-@media (min-width: 768px) {
+@media screen and (min-width: 768px) {
+  .vjs-ryou .vjs-control-bar {
+    height : 4em;
+  }
+  .vjs-ryou .vjs-control,
+  .vjs-ryou .vjs-volume-panel,
+  .vjs-ryou .vjs-playback-rate {
+    width: 3.8em;
+  }
+  .vjs-ryou .vjs-button > .vjs-icon-placeholder::before {
+    font-size  : 1.8em;
+    line-height: 2.22;
+  }
+  .vjs-ryou .vjs-time-control {
+    font-size  : 1.3em;
+    padding    : 0 6px;
+  }
+  .vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
+    font-size  : 1.3em;
+  }
   .vjs-ryou .vjs-big-play-button {
     width      : 72px;
     height     : 72px;
@@ -208,7 +285,32 @@
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   12. DRM — block save/download
+   16. TV / LARGE SCREEN (≥1280px)
+   ════════════════════════════════════════════════════════════════════ */
+@media screen and (min-width: 1280px) {
+  .vjs-ryou .vjs-control-bar {
+    height : 5em;
+  }
+  .vjs-ryou .vjs-control,
+  .vjs-ryou .vjs-volume-panel,
+  .vjs-ryou .vjs-playback-rate {
+    width: 4.5em;
+  }
+  .vjs-ryou .vjs-button > .vjs-icon-placeholder::before {
+    font-size  : 2em;
+    line-height: 2.5;
+  }
+  .vjs-ryou .vjs-time-control {
+    font-size  : 1.5em;
+    padding    : 0 10px;
+  }
+  .vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
+    font-size  : 1.5em;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   17. DRM — block save/download
    ════════════════════════════════════════════════════════════════════ */
 .watch-player-box,
 .watch-player-box *,
@@ -218,10 +320,4 @@
   -moz-user-select    : none;
   user-select         : none;
   -webkit-touch-callout: none;
-}
-.vjs-download-button,
-.vjs-picture-in-picture-control,
-.vjs-cast-button,
-.vjs-airplay-button {
-  display: none !important;
 }
