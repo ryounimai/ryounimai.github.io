@@ -163,3 +163,23 @@
 @media (min-width: 769px) {
   .nav-hamburger, #app-drawer, #drawer-backdrop { display:none !important; }
 }
+
+/* ── PWA Install button (di drawer footer) ───────────────────────── */
+.btn-pwa-install {
+  display    : none;       /* default hidden, ditampilkan via JS */
+  width      : 100%;
+  margin-top : 12px;
+  padding    : 10px 0;
+  border-radius: var(--r-md);
+  border     : 1.5px solid var(--clr-accent);
+  background : var(--clr-accent-subtle);
+  color      : var(--clr-accent);
+  font-size  : var(--font-size-sm);
+  font-weight: 600;
+  cursor     : pointer;
+  transition : background var(--dur-fast);
+}
+.btn-pwa-install:hover {
+  background: var(--clr-accent);
+  color     : var(--txt-inverse);
+}
