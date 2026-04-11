@@ -154,6 +154,22 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} �
     const src       = ep.src;
     const isNative  = _isNative(src);
 
+    // ── Set default subtitle preferences (hanya jika belum pernah diset user) ──
+    var TTS_KEY = 'vjs-text-track-settings';
+    if (!localStorage.getItem(TTS_KEY)) {
+      localStorage.setItem(TTS_KEY, JSON.stringify({
+        backgroundColor  : '#000000',
+        backgroundOpacity: '0',       // Text bg: Transparent
+        color            : '#ffffff', // Text color: White
+        edgeStyle        : 'uniform', // Edge: Uniform
+        fontFamily       : 'proportionalSansSerif',
+        fontPercent      : 1,         // Font size: 100%
+        textOpacity      : '1',       // Text opacity: Opaque
+        windowColor      : '#000000',
+        windowOpacity    : '0'        // Caption area: Transparent
+      }));
+    }
+
     if (_player) {
       _player.dispose();
       _player = null;

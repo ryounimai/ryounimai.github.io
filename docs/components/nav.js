@@ -86,8 +86,20 @@ const Nav = (() => {
       ${['id','en','ja'].map(l=>`<button class="drawer-lang-btn${I18n.lang()===l?' active':''}" data-lang="${l}">${l.toUpperCase()}</button>`).join('')}
     </div>
   </div>
+  <button id="btn-pwa-install" class="btn-pwa-install" style="display:none">
+    ⬇ Install App
+  </button>
 </div>`;
     _bindDrawer();
+
+    // Tampilkan tombol install kalau prompt tersedia
+    var installBtn = document.getElementById('btn-pwa-install');
+    if (installBtn) {
+      if (window._pwaPrompt) installBtn.style.display = 'block';
+      window.addEventListener('pwaPromptReady', function () {
+        installBtn.style.display = 'block';
+      });
+    }
   }
 
   function _bindNav() {
