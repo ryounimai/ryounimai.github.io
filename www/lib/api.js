@@ -12,9 +12,9 @@
 const API = (() => {
 
   // ── KONFIGURASI ────────────────────────────────────────────────────────────
-  const GIST_ID       = 'GANTI_DENGAN_GIST_ID_KAMU';   // sama dengan di start_tunnel.sh
+  const GIST_ID       = '1a42e63011f4496adb0a4c7821e15bb6';   // sama dengan di start_tunnel.sh
   const GIST_FILENAME = 'ryou-backend.json';
-  const GIST_URL      = `https://api.github.com/gists/${GIST_ID}`;
+  const GIST_URL      = `https://api.github.com/gists/${1a42e63011f4496adb0a4c7821e15bb6}`;
   // ──────────────────────────────────────────────────────────────────────────
 
   let _base        = null;
