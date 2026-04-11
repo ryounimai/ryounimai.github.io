@@ -19,6 +19,9 @@
 - `remaining-time` lebar mengikuti konten, gap ke speed button fixed 8px
 - Letter-spacing digit waktu diperapat, hemat ruang di mobile
 - Hapus dead CSS `.vjs-gear-button` (3 selector) — tidak lagi dipakai
+- Fix: `about.html` version span hardcode `v1.0.1` → `v1.4.0`
+- Hapus teks ŘΨØŬ di splash & about — logo.svg sudah mewakili
+- Bersihkan komentar redundan di `watch.js`, `index.js`, `player.css`
 
 ---
 

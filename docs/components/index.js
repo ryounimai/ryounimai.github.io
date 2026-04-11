@@ -72,7 +72,6 @@ const IndexComp = (() => {
       document.getElementById('settings-backdrop')?.addEventListener('click', () => this.close());
       document.getElementById('settings-close')?.addEventListener('click', () => this.close());
 
-      // Lang
       this._el.querySelectorAll('[data-setlang]').forEach(btn => {
         btn.addEventListener('click', () => {
           I18n.setLang(btn.dataset.setlang);
@@ -81,11 +80,9 @@ const IndexComp = (() => {
         });
       });
 
-      // Autoplay toggle
       document.getElementById('setting-autoplay')?.addEventListener('change', e => Store.Settings.set('autoplay', e.target.checked));
       document.getElementById('setting-subtitle')?.addEventListener('change', e => Store.Settings.set('subtitles', e.target.checked));
 
-      // Scan
       document.getElementById('btn-scan')?.addEventListener('click', async () => {
         document.getElementById('btn-scan').disabled = true;
         document.getElementById('btn-scan').textContent = I18n.t('settings_scanning');
@@ -109,7 +106,6 @@ const IndexComp = (() => {
         try { await API.clearCache('all'); Utils.Toast.success(I18n.t('toast_cache_done')); } catch { Utils.Toast.error(I18n.t('toast_error')); }
       });
 
-      // Fill saved settings
       const s = Store.Settings.get();
       const ap = document.getElementById('setting-autoplay');
       const sb = document.getElementById('setting-subtitle');
@@ -169,11 +165,9 @@ const IndexComp = (() => {
   };
 
   async function init() {
-    // Expose history/settings to Nav via global
     window.History  = HistoryPanel;
     window.Settings = SettingsPanel;
 
-    // Render skeleton immediately
     const gridEl = document.getElementById('main-grid');
     if (gridEl) gridEl.innerHTML = Section.skeletonGrid(10);
 
@@ -195,20 +189,17 @@ const IndexComp = (() => {
       Nav.setLibrary(_library);
       Carousel.render(_library);
 
-      // Continue watching
       const cwEl = document.getElementById('continue-wrap');
       if (cwEl) {
         Section.renderContinue(cwEl);
         if (!Store.Continue.getAll().length) cwEl.closest('.section')?.remove();
       }
 
-      // Horizontal scroll sections
       const hsSeriesEl = document.getElementById('hs-series');
       const hsMovieEl  = document.getElementById('hs-movies');
       if (hsSeriesEl) Section.renderHScroll(hsSeriesEl, _library, 'TV');
       if (hsMovieEl)  Section.renderHScroll(hsMovieEl, _library, 'Movie');
 
-      // Main grid
       const paginEl = document.getElementById('main-pagination');
       Section.renderGrid(_library, gridEl, paginEl);
       FilterPanel.build();

@@ -76,28 +76,25 @@
   line-height: 2.3;   /* 3.8em / 1.65em */
 }
 
-/* Volume panel — inline horizontal slider */
+/* Volume panel — inline horizontal, expand on hover */
 .vjs-ryou .vjs-volume-panel {
   flex-shrink : 0;
   width       : 3.4em;
-  overflow    : hidden;          /* sembunyikan slider saat collapsed */
+  overflow    : hidden; /* hide slider when collapsed */
   transition  : width .18s ease;
   display     : flex !important;
   align-items : center;
 }
-/* Expand saat hover/touch untuk tampilkan slider */
 .vjs-ryou .vjs-volume-panel.vjs-hover,
 .vjs-ryou .vjs-volume-panel:active,
 .vjs-ryou .vjs-volume-panel:focus-within {
   width: 8em;
 }
-/* Mute button di dalam panel */
 .vjs-ryou .vjs-volume-panel .vjs-mute-control {
   flex-shrink: 0;
   width      : 3.4em;
   height     : 100%;
 }
-/* Slider horizontal */
 .vjs-ryou .vjs-volume-panel .vjs-volume-control.vjs-volume-horizontal {
   display     : flex !important;
   align-items : center;
@@ -123,7 +120,6 @@
   transform  : translateY(-50%);
   line-height: 1;
 }
-/* Tetap sembunyikan vertikal */
 .vjs-ryou .vjs-volume-panel .vjs-volume-control.vjs-volume-vertical {
   display: none !important;
 }
@@ -172,10 +168,10 @@
   flex-shrink         : 0;
   font-family         : 'ui-monospace','Roboto Mono','Courier New',monospace;
   font-variant-numeric: tabular-nums;
-  font-size           : 1.1em;          /* lebih kecil: hemat ruang HH:MM:SS */
-  letter-spacing      : -0.04em;        /* perapat digit, kurangi lebar total */
+  font-size           : 1.1em;
+  letter-spacing      : -0.04em;
   line-height         : normal !important;
-  padding             : 0 2px;          /* padding lebih tipis */
+  padding             : 0 2px;
   min-width           : 0;
   white-space         : nowrap;
 }
@@ -187,19 +183,16 @@
   min-width  : 0;
 }
 
-/* Speed — ukuran dan posisi sama dengan time */
 .vjs-ryou .vjs-remaining-time {
-  /* Lebar mengikuti konten: MM:SS mepet, HH:MM:SS otomatis lebih lebar */
-  /* Jarak ke speed dijaga oleh margin-left di .vjs-playback-rate */
-  flex-shrink  : 0;
-  width        : auto;
+  flex-shrink    : 0;
+  width          : auto;
   justify-content: flex-start;
-  padding      : 0 2px;
+  padding        : 0 2px;
 }
 .vjs-ryou .vjs-playback-rate {
   flex-shrink    : 0;
   width          : 3.2em;
-  margin-left    : 8px;   /* jarak TETAP dari time ke speed, tidak auto */
+  margin-left    : 8px; /* fixed gap — tidak auto */
   display        : flex !important;
   align-items    : center !important;
   justify-content: center;

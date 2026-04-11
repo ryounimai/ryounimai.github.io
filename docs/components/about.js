@@ -20,8 +20,12 @@ const AboutComp = {
         'Fix: hamburger X tidak bisa diklik untuk tutup drawer (hanya bind openDrawer, tidak toggle)',
         'Fix: backdrop z-index terlalu mepet navbar, bisa nutupin hamburger di beberapa device',
         'Fix: preload bar terlalu mencolok — opacity dikurangi',
-        'Improvement: remaining-time lebar mengikuti konten, gap ke speed fixed 8px',
-        'Improvement: letter-spacing digit waktu diperapat, hemat ruang di mobile',
+        'Improvement: remaining-time lebar konten, gap ke speed fixed 8px',
+        'Improvement: letter-spacing digit waktu diperapat, hemat ruang mobile',
+        'Hapus dead CSS vjs-gear-button (3 selector)',
+        'Fix: about.html version span hardcode v1.0.1 → v1.4.0',
+        'Hapus teks ŘΨØŬ di splash & about — logo.svg sudah mewakili',
+        'Bersihkan komentar redundan di watch.js, index.js, player.css',
       ]
     },
     {

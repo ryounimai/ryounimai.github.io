@@ -16,7 +16,6 @@
 #splash.out { opacity:0; transform:scale(1.04); pointer-events:none; }
 .splash-content { display:flex; flex-direction:column; align-items:center; gap:16px; }
 .splash-logo { width:120px; filter:drop-shadow(0 0 24px var(--clr-accent-glow)); }
-.splash-title { font-size:var(--font-size-xl); font-weight:800; letter-spacing:-.02em; }
 .splash-sub { font-size:var(--font-size-xs); color:var(--txt-secondary); letter-spacing:.14em; text-transform:uppercase; }
 .splash-dots { display:flex; gap:8px; }
 .splash-dots span { width:7px; height:7px; border-radius:50%; background:var(--clr-accent); animation:pulse 1.2s ease-in-out infinite; }
@@ -345,7 +344,6 @@
 .about-wrap { max-width:900px; margin:0 auto; padding:40px 24px 80px; }
 .about-hero { text-align:center; margin-bottom:48px; }
 .about-logo { width:100px; margin:0 auto 14px; filter:drop-shadow(0 0 20px var(--clr-accent-glow)); }
-.about-logo-title { font-size:var(--font-size-2xl); font-weight:800; margin-bottom:6px; }
 .about-sub   { color:var(--txt-secondary); font-size:var(--font-size-sm); }
 .about-section { margin-bottom:32px; }
 .about-section h2 { font-size:var(--font-size-md); font-weight:700; margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid var(--bdr-subtle); }

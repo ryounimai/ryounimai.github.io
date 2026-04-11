@@ -22,11 +22,6 @@ videojs.setFormatTime(function (seconds, guide) {
 });
 
 /* ══════════════════════════════════════════════════════════════════════
-   GEAR BUTTON — placeholder untuk Quality Selector
-   TODO: implementasikan saat backend mendukung multi-resolusi
-   ══════════════════════════════════════════════════════════════════════ */
-
-/* ══════════════════════════════════════════════════════════════════════
    WATCH COMPONENT
    ══════════════════════════════════════════════════════════════════════ */
 const WatchComp = (() => {
@@ -201,14 +196,14 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} �
         children: [
           'playToggle',
           'volumePanel',
-          'currentTimeDisplay',   // (+) — tampil tablet+ & PC
-          'timeDivider',          //  /  — tampil PC saja
-          'durationDisplay',      // total dur — tampil tablet+
-          'progressControl',      // selalu
-          'remainingTimeDisplay', // (-) — selalu
+          'currentTimeDisplay',
+          'timeDivider',
+          'durationDisplay',
+          'progressControl',
+          'remainingTimeDisplay',
           'playbackRateMenuButton',
           'subsCapsButton',
-          'pictureInPictureToggle',  // tampil tablet+ via CSS
+          'pictureInPictureToggle',
           'fullscreenToggle',
         ],
         volumePanel: { inline: true },
