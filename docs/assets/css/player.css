@@ -59,7 +59,7 @@
     rgba(0,0,0,.90) 0%,
     rgba(0,0,0,.55) 55%,
     transparent 100%);
-  overflow    : hidden;
+  overflow    : visible;   /* JANGAN hidden — menu speed/CC muncul di atas bar */
   bottom      : 0;
 }
 
