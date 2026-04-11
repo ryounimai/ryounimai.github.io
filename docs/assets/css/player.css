@@ -138,16 +138,24 @@
                'Courier New', monospace;
 }
 
-/* ── Time display: font + tabular nums. JANGAN sentuh line-height! ─────── */
-/* Video.js pakai line-height:3em pada .vjs-time-control untuk centering.   */
-/* Override line-height di sini akan bikin teks meleset.                    */
-.vjs-ryou .vjs-current-time-display,
-.vjs-ryou .vjs-duration-display,
-.vjs-ryou .vjs-remaining-time-display {
-  font-family          : 'ui-monospace', 'Cascadia Code', 'Roboto Mono',
-                         'Courier New', monospace;
-  font-variant-numeric : tabular-nums;
-  letter-spacing       : 0;
+/* ── Time control: besarkan font, flex centering supaya tidak meleset ───── */
+/* VJS default: font-size:1em(10px), line-height:3em → pakai flex saja.     */
+.vjs-ryou .vjs-time-control {
+  display      : flex !important;
+  align-items  : center !important;
+  line-height  : normal !important;
+  font-size    : 1.35em !important;
+  font-family  : 'ui-monospace', 'Cascadia Code', 'Roboto Mono',
+                 'Courier New', monospace !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+/* ── Progress bar dot: paksa center vertikal ────────────────────────────── */
+.vjs-ryou .vjs-play-progress::before {
+  top       : 50% !important;
+  transform : translateY(-50%) !important;
+  line-height: 1 !important;
 }
 
 /* ── Time tooltip ───────────────────────────────────────────────────────── */
