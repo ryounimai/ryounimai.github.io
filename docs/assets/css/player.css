@@ -134,9 +134,10 @@
   flex-shrink         : 0;
   font-family         : 'ui-monospace','Roboto Mono','Courier New',monospace;
   font-variant-numeric: tabular-nums;
-  font-size           : 1.2em;
+  font-size           : 1.1em;          /* lebih kecil: hemat ruang HH:MM:SS */
+  letter-spacing      : -0.04em;        /* perapat digit, kurangi lebar total */
   line-height         : normal !important;
-  padding             : 0 3px;
+  padding             : 0 2px;          /* padding lebih tipis */
   min-width           : 0;
   white-space         : nowrap;
 }
@@ -144,30 +145,32 @@
   display    : flex !important;
   align-items: center !important;
   line-height: normal !important;
-  padding    : 0 1px;
+  padding    : 0;
   min-width  : 0;
 }
 
 /* Speed — ukuran dan posisi sama dengan time */
 .vjs-ryou .vjs-remaining-time {
-  padding-right: 6px;   /* gap antara waktu dan speed, cegah tabrakan */
+  margin-right: 8px;   /* gap bersih antara waktu dan tombol speed */
+  padding-right: 0;
 }
 .vjs-ryou .vjs-playback-rate {
   flex-shrink: 0;
-  width      : 3.4em;
+  width      : 3.2em;  /* sedikit lebih sempit */
   display    : flex !important;
   align-items: center !important;
   justify-content: center;
 }
 .vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
-  font-family  : 'ui-monospace','Roboto Mono','Courier New',monospace;
-  font-size    : 1.2em;
-  line-height  : normal !important;
-  display      : flex !important;
-  align-items  : center !important;
+  font-family    : 'ui-monospace','Roboto Mono','Courier New',monospace;
+  font-size      : 1.1em;
+  letter-spacing : -0.03em;
+  line-height    : normal !important;
+  display        : flex !important;
+  align-items    : center !important;
   justify-content: center;
-  width        : 100%;
-  height       : 100%;
+  width          : 100%;
+  height         : 100%;
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -325,11 +328,12 @@
 }
 .vjs-ryou.vjs-layout-medium .vjs-time-control,
 .vjs-ryou.vjs-layout-large  .vjs-time-control {
-  font-size: 1.25em;
+  font-size: 1.15em;
+  padding  : 0 3px;
 }
 .vjs-ryou.vjs-layout-medium .vjs-playback-rate .vjs-playback-rate-value,
 .vjs-ryou.vjs-layout-large  .vjs-playback-rate .vjs-playback-rate-value {
-  font-size: 1.25em;
+  font-size: 1.15em;
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -370,12 +374,12 @@
 }
 .vjs-ryou.vjs-layout-x-large .vjs-time-control,
 .vjs-ryou.vjs-layout-huge    .vjs-time-control {
-  font-size: 1.35em;
-  padding  : 0 6px;
+  font-size: 1.25em;
+  padding  : 0 5px;
 }
 .vjs-ryou.vjs-layout-x-large .vjs-playback-rate .vjs-playback-rate-value,
 .vjs-ryou.vjs-layout-huge    .vjs-playback-rate .vjs-playback-rate-value {
-  font-size: 1.35em;
+  font-size: 1.25em;
 }
 .vjs-ryou.vjs-layout-x-large .vjs-big-play-button,
 .vjs-ryou.vjs-layout-huge    .vjs-big-play-button {
