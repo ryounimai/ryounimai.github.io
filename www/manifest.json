@@ -1,0 +1,18 @@
+{
+  "name": "ŘΨØŬ — Anime & Drama",
+  "short_name": "ŘΨØŬ",
+  "description": "Server media anime & drama lokal untuk Android Termux",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#06101e",
+  "theme_color": "#06101e",
+  "lang": "id",
+  "scope": "/",
+  "icons": [
+    {"src":"res/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"res/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ],
+  "shortcuts": [{"name":"Beranda","url":"/","description":"Halaman utama"}],
+  "categories": ["entertainment","video"]
+}
