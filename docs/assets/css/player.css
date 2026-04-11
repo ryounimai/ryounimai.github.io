@@ -1,49 +1,18 @@
 /**
- * player.css — ŘΨØŬ v1.0.3
- * Minimal override. Default VJS untuk semua styling visual.
+ * player.css — ŘΨØŬ v1.0.4
+ * Structural + DRM only. Visual 100% default Video.js.
  */
 
-/* ── Structural: container & fill ───────────────────────────────────── */
+/* ── Structural ──────────────────────────────────────────────────────── */
 .player-wrap {
   position : relative;
   width     : 100%;
   background: #000;
 }
 .video-js.vjs-ryou {
-  width : 100%;
-  height: 100%;
-}
-
-/* ── Reset font agar tidak inherit warna/font dari app theme ─────────── */
-/* VJS default pakai font-size:10px dan font-family:Arial di .video-js   */
-.video-js.vjs-ryou {
+  width      : 100%;
+  height     : 100%;
   font-family: Arial, Helvetica, sans-serif;
-  color      : #fff;
-}
-
-/* ── Sinkronkan ukuran speed "1x" dengan time display ───────────────── */
-/* VJS default: time=1em(10px), speed-value=1.5em(15px) → beda.         */
-/* Samakan speed ke 1em supaya visually sejajar dengan time.             */
-.vjs-ryou .vjs-playback-rate .vjs-playback-rate-value {
-  font-size  : 1em;
-  line-height: 3;
-}
-
-/* ── Monospace tabular nums untuk time ───────────────────────────────── */
-.vjs-ryou .vjs-time-control {
-  font-family          : 'ui-monospace', 'Cascadia Code', 'Roboto Mono',
-                         'Courier New', monospace;
-  font-variant-numeric : tabular-nums;
-}
-
-/* ── Progress control: paksa center vertikal di semua kondisi ────────── */
-.vjs-ryou .vjs-progress-control {
-  align-items: center;
-}
-
-/* ── Fullscreen: pastikan control bar tidak terpotong ────────────────── */
-.vjs-ryou.vjs-fullscreen .vjs-control-bar {
-  bottom: 0;
 }
 
 /* ── DRM: block download / save ──────────────────────────────────────── */
