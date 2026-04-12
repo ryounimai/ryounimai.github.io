@@ -41,7 +41,7 @@ const WatchComp = (() => {
         title="${title.replace(/"/g, '&quot;')}"
         crossorigin
         playsinline
-        class="ryou-player">
+        class="ryou-player dark">
         <media-provider></media-provider>
         <media-video-layout></media-video-layout>
       </media-player>
