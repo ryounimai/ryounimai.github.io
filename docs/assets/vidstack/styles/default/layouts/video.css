@@ -549,7 +549,7 @@
 }
 
 .vds-video-layout .vds-start-duration .vds-time {
-  padding: var(--video-sm-start-duration-padding, 3px 6px);
+  padding: var(--video-sm-start-duration-padding, 12px 6px);
   color: var(--video-sm-start-duration-color, var(--video-controls-color));
   background-color: var(--video-sm-start-duration-bg, rgba(0 0 0 / 0.64));
 }
