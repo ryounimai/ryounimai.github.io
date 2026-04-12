@@ -2,7 +2,38 @@
 
 ---
 
-## v1.4.0 — 2026-04-12 `latest`
+## v2.0.0 — 2026-04-12 `latest` 🎉 Reborn
+
+### Breaking Changes
+- Player diganti total: **Video.js → Vidstack v1.12.13**
+- `assets/videojs/` dihapus (menghemat ~720KB)
+- `components/watch.js` & `assets/css/player.css` ditulis ulang dari nol
+
+### What's New
+- Vidstack Web Components: `<media-player>`, `<media-video-layout>`
+- Default layout Vidstack: quality selector, speed, subtitle, PiP, fullscreen, volume slider — semua built-in
+- `icons.js` lokal dari media-icons v0.10.0 (104 ikon, tanpa CDN)
+- Semua Vidstack assets offline: core, chunks, providers, styles
+- Brand color `#22d3ee` di-inject via CSS vars Vidstack
+- Subtitle, HLS/DASH/MP4, autoplay next episode, resume progress tetap terjaga
+
+---
+
+## v1.4.1 — 2026-04-12 `latest`
+
+### Bug Fixes
+- Fix: versi di about diambil dari backend API bukan frontend — ganti ke frontend-only
+- Fix: entry v1.0.0 changelog salah tulis `"Rilis pertama v1.4.0"`
+
+### Improvements
+- Tambah font JetBrains Mono offline (woff2, latin subset, via Fontsource)
+- Semua versi angka pakai font mono + letter-spacing rapat (utility class `.ver`)
+- Update deskripsi & kredit di about page
+- Hapus referensi platform spesifik dari deskripsi & kredit
+
+---
+
+## v1.4.0 — 2026-04-12 `stable`
 
 ### Bug Fixes
 - Fix: watch page kosong — `videojs.extend()` dihapus di VJS 8, ganti ke ES6 class

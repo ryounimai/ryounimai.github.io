@@ -1,8 +1,8 @@
 /**
- * sw.js — ŘΨØŬ v1.4.0
+ * sw.js — ŘΨØŬ v2.0.0
  * Cache-first untuk static assets, network-first untuk API & media
  */
-const CACHE = 'ryou-v1.4.0';
+const CACHE = 'ryou-v2.0.0';
 const PRECACHE = [
   '/', '/index.html', '/details.html', '/watch.html', '/about.html',
   '/manifest.json',
@@ -12,22 +12,26 @@ const PRECACHE = [
   '/assets/fonts/inter/inter-latin-500-normal.woff2',
   '/assets/fonts/inter/inter-latin-600-normal.woff2',
   '/assets/fonts/inter/inter-latin-700-normal.woff2',
+  '/assets/fonts/jetbrains-mono/jetbrains-mono-latin-400-normal.woff2',
+  '/assets/fonts/jetbrains-mono/jetbrains-mono-latin-500-normal.woff2',
+  '/assets/fonts/jetbrains-mono/jetbrains-mono-latin-700-normal.woff2',
   /* CSS */
   '/assets/bootstrap/bootstrap.min.css',
   '/assets/swiper/swiper-bundle.min.css',
-  '/assets/videojs/video-js.min.css',
   '/assets/css/vars.css',
   '/assets/css/base.css',
   '/assets/css/nav.css',
   '/assets/css/player.css',
   '/assets/css/pages.css',
+  /* Vidstack v1.12.13 */
+  '/assets/vidstack/vidstack.js',
+  '/assets/vidstack/icons.js',
+  '/assets/vidstack/styles/base.css',
+  '/assets/vidstack/styles/default/theme.css',
+  '/assets/vidstack/styles/default/layouts/video.css',
   /* JS */
   '/assets/bootstrap/bootstrap.bundle.min.js',
   '/assets/swiper/swiper-bundle.min.js',
-  '/assets/videojs/video.min.js',
-  '/assets/videojs/lang/id.js',
-  '/assets/videojs/lang/en.js',
-  '/assets/videojs/lang/ja.js',
   '/assets/js/utils.js',
   /* Lib */
   '/lib/store.js',

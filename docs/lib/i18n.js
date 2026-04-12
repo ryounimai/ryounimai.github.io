@@ -1,5 +1,5 @@
 /**
- * lib/i18n.js — ŘΨØŬ v1.4.0
+ * lib/i18n.js — ŘΨØŬ v2.0.0
  * Internasionalisasi ID / EN / JA
  */
 const I18n = (() => {
@@ -33,7 +33,7 @@ const I18n = (() => {
       filter_year:'Tahun', filter_status:'Status', filter_apply:'Terapkan',
       filter_reset:'Reset', filter_active:'Filter aktif',
       ep_short:'EP', ep_watched:'Ditonton', ep_playing:'Sedang diputar',
-      about_desc:'Server media anime & drama lokal untuk Android (Termux)',
+      about_desc:'Pemutar media anime & drama lokal berbasis web',
       about_tech:'Teknologi', about_credits:'Kredit',
       toast_scan_started:'Scan library dimulai...', toast_scan_done:'Scan selesai!',
       toast_cache_done:'Cache dihapus.', toast_error:'Terjadi kesalahan',
@@ -68,7 +68,7 @@ const I18n = (() => {
       filter_year:'Year', filter_status:'Status', filter_apply:'Apply',
       filter_reset:'Reset', filter_active:'Active filters',
       ep_short:'EP', ep_watched:'Watched', ep_playing:'Now playing',
-      about_desc:'Local anime & drama media server for Android (Termux)',
+      about_desc:'Local anime & drama media player, web-based',
       about_tech:'Tech Stack', about_credits:'Credits',
       toast_scan_started:'Library scan started...', toast_scan_done:'Scan complete!',
       toast_cache_done:'Cache cleared.', toast_error:'An error occurred',
@@ -104,7 +104,7 @@ const I18n = (() => {
       filter_year:'年', filter_status:'状態', filter_apply:'適用', filter_reset:'リセット',
       filter_active:'フィルター中',
       ep_short:'EP', ep_watched:'視聴済み', ep_playing:'再生中',
-      about_desc:'Android (Termux) 用ローカルアニメ・ドラマメディアサーバー',
+      about_desc:'ローカルアニメ・ドラマウェブメディアプレイヤー',
       about_tech:'技術スタック', about_credits:'クレジット',
       toast_scan_started:'スキャン開始...', toast_scan_done:'スキャン完了!',
       toast_cache_done:'キャッシュ削除済み。', toast_error:'エラーが発生しました',

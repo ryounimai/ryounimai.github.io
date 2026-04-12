@@ -1,47 +1,69 @@
 /**
- * components/about.js — ŘΨØŬ v1.4.0
+ * components/about.js — ŘΨØŬ v2.0.0
  * About page + Changelog accordion
  */
 const AboutComp = {
   /* Changelog — sync dengan changelogs.md di root */
   _changelogs: [
     {
-      version: 'v1.4.0',
+      version: 'v2.0.0',
       date: '2026-04-12',
       tag: 'latest',
       open: true,
       changes: [
+        'REBORN: Migrasi player dari Video.js ke Vidstack v1.12.13 (Web Components)',
+        'Hapus semua Video.js (video.min.js 672KB, video-js.min.css 47KB, lang files)',
+        'Install Vidstack offline penuh: core, default layout, providers, icons',
+        'Buat icons.js lokal dari media-icons v0.10.0 (104 ikon, tanpa CDN)',
+        'Patch vidstack.js — ganti cdn.vidstack.io/icons ke lokal',
+        'Rombak total watch.js: pakai Vidstack Web Components API',
+        'Rombak total player.css: Vidstack CSS vars theming, brand #22d3ee',
+        'Quality selector sekarang built-in dari Vidstack default layout',
+        'Subtitle, HLS/DASH/MP4 support, autoplay next, resume progress tetap terjaga',
+        'Naik versi: v2.0.0 Reborn',
+      ]
+    },
+        {
+      version: 'v2.0.0',
+      date: '2026-04-12',
+      tag: 'latest',
+      open: true,
+      changes: [
+        'Fix: versi di about diambil dari backend API bukan frontend — ganti ke frontend-only',
+        'Fix: entry v1.0.0 changelog salah tulis "Rilis pertama v1.4.0"',
+        'Tambah font JetBrains Mono offline (woff2, latin subset)',
+        'Semua versi angka pakai font mono + letter-spacing rapat (.ver class)',
+        'Update deskripsi & kredit di about page',
+        'Hapus referensi platform spesifik dari deskripsi & kredit',
+      ]
+    },
+    {
+      version: 'v1.4.0',
+      date: '2026-04-12',
+      tag: 'stable',
+      open: false,
+      changes: [
         'Fix: watch page kosong — videojs.extend() dihapus di VJS 8, ganti ke ES6 class',
         'Fix: overflow:hidden pada control-bar & watch-player-box halangi menu speed & CC',
-        'Fix: GearButton membuka subtitle settings bukan quality — dihapus sementara (TODO: quality selector)',
-        'Fix: CC/subtitle button tampil sebagai garis biru (indikator aktif VJS 8 disembunyikan)',
+        'Fix: CC/subtitle button tampil sebagai garis biru (indikator aktif VJS 8)',
         'Fix: jarak waktu & speed tabrakan saat durasi lebih dari 1 jam',
-        'Fix: volume slider meluap ke atas — overflow:visible + inline panel fix',
-        'Fix: hamburger X tidak bisa diklik untuk tutup drawer (hanya bind openDrawer, tidak toggle)',
-        'Fix: backdrop z-index terlalu mepet navbar, bisa nutupin hamburger di beberapa device',
-        'Fix: preload bar terlalu mencolok — opacity dikurangi',
-        'Improvement: remaining-time lebar konten, gap ke speed fixed 8px',
-        'Improvement: letter-spacing digit waktu diperapat, hemat ruang mobile',
-        'Hapus dead CSS vjs-gear-button (3 selector)',
-        'Fix: about.html version span hardcode v1.0.1 → v1.4.0',
-        'Hapus teks ŘΨØŬ di splash & about — logo.svg sudah mewakili',
+        'Fix: volume slider meluap ke atas',
+        'Fix: hamburger X tidak bisa diklik untuk tutup drawer',
+        'Fix: backdrop z-index nutupin hamburger di beberapa device',
+        'Hapus teks ŘΨØŬ duplikat di splash & about',
         'Bersihkan komentar redundan di watch.js, index.js, player.css',
       ]
     },
     {
       version: 'v1.0.1',
       date: '2026-04-11',
-      tag: 'stable',
+      tag: 'old',
       open: false,
       changes: [
-        'Fix: gap kosong di watch page portrait (remove overflow:hidden + min-height layout)',
-        'Fix: carousel pagination dot gelap (Swiper inactive bullet warna #000 default)',
+        'Fix: carousel pagination dot gelap',
         'Fix: next episode gagal karena videojs.dispose() hapus elemen dari DOM',
         'Fix: episode selector klik tidak respon — diganti event delegation',
-        'Fix: video blank saat ganti episode',
-        'Fix: gap kosong sebelum/sesudah video di watch page',
         'Fix: judul tampil sebagai folder name (titleOf prioritas terbalik)',
-        'Versi sync ke v1.0.1 di semua halaman',
         'Changelog about page: format accordion expand/collapse',
       ]
     },
@@ -51,27 +73,25 @@ const AboutComp = {
       tag: 'initial',
       open: false,
       changes: [
-        'Rilis pertama ŘΨØŬ v1.4.0',
+        'Rilis pertama ŘΨØŬ v2.0.0',
         'Frontend: HTML + Vanilla JS + Bootstrap 5 + Swiper + Video.js 8',
-        'Backend: Python stdlib only, tidak perlu install dependency eksternal',
+        'Backend: Python stdlib only',
         'Metadata: integrasi Jikan (MAL), TMDB, MDL',
         'PWA: manifest + service worker + offline cache',
         'Multi bahasa: ID, EN, JA',
         'Fitur: lanjut nonton, riwayat, autoplay next episode',
         'Player: HLS, DASH, MP4, MKV support',
         'Subtitle: VTT, SRT, ASS/SSA',
-        'CSS: rekonstruksi player.css & Swiper pakai native CSS vars',
-        'Admin lock: tombol scan/clear dikunci PIN',
-        'Logo navbar: hapus teks nama, pakai SVG saja',
       ]
     },
   ],
 
   _tagStyle(tag) {
     const map = {
-      latest : { bg:'rgba(34,211,238,.12)', color:'var(--clr-accent)',   border:'var(--clr-accent)' },
-      stable : { bg:'rgba(168,85,247,.12)', color:'#a855f7',             border:'#a855f7' },
-      initial: { bg:'rgba(34,197,94,.12)',  color:'var(--clr-success)',  border:'var(--clr-success)' },
+      latest : { bg:'rgba(34,211,238,.12)', color:'var(--clr-accent)',  border:'var(--clr-accent)' },
+      stable : { bg:'rgba(168,85,247,.12)', color:'#a855f7',            border:'#a855f7' },
+      old    : { bg:'rgba(255,255,255,.05)', color:'var(--txt-tertiary)', border:'var(--bdr-subtle)' },
+      initial: { bg:'rgba(34,197,94,.12)',  color:'var(--clr-success)', border:'var(--clr-success)' },
     };
     const s = map[tag] || { bg:'var(--bg-float)', color:'var(--txt-secondary)', border:'var(--bdr-subtle)' };
     return `background:${s.bg};color:${s.color};border:1px solid ${s.border}`;
@@ -91,7 +111,7 @@ const AboutComp = {
       style="flex-shrink:0;transition:transform .2s;transform:${log.open ? 'rotate(90deg)' : 'rotate(0deg)'}">
       <path d="M9 18l6-6-6-6"/>
     </svg>
-    <span style="font-size:var(--font-size-md);font-weight:800;color:var(--txt-primary)">${log.version}</span>
+    <span style="font-size:var(--font-size-md);font-weight:800;color:var(--txt-primary)" class="ver">${log.version}</span>
     <span style="font-size:10px;padding:2px 8px;border-radius:var(--r-pill);font-weight:700;
       text-transform:uppercase;${this._tagStyle(log.tag)}">${log.tag}</span>
     <span style="font-size:var(--font-size-xs);color:var(--txt-tertiary);margin-left:auto">${log.date}</span>
@@ -135,10 +155,9 @@ const AboutComp = {
     const page = document.getElementById('about-page');
     if (!page) return;
     page.classList.add('active');
-    let version = 'v1.4.0';
-    try { const s = await API.settings(); version = s.version || version; } catch {}
+    /* Versi frontend — tidak pakai API.settings() agar tidak override */
     const vEl = document.getElementById('about-version');
-    if (vEl) vEl.textContent = version;
+    if (vEl) vEl.textContent = 'v2.0.0';
     this._renderChangelogs();
   }
 };

@@ -1,5 +1,5 @@
 /**
- * components/index.js — ŘΨØŬ v1.4.0
+ * components/index.js — ŘΨØŬ v2.0.0
  * Homepage: library loading, hero carousel, sections, filter, history panel, settings panel
  */
 const IndexComp = (() => {

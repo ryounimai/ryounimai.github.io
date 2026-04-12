@@ -1,5 +1,5 @@
 /**
- * base.css — ŘΨØŬ v1.4.0
+ * base.css — ŘΨØŬ v2.0.0
  * Reset, typography, utility, animation, scrollbar
  */
 
@@ -174,3 +174,10 @@ input,select,textarea { font-family: var(--font-sans); }
   opacity:0; pointer-events:none; transition:opacity var(--dur-base);
 }
 .backdrop.show { opacity:1; pointer-events:all; }
+
+/* Version number — mono font, tight tracking, used everywhere */
+.ver {
+  font-family   : var(--font-mono);
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
