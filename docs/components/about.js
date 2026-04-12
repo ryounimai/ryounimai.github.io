@@ -1,15 +1,27 @@
 /**
- * components/about.js — ŘΨØŬ v2.0.1
+ * components/about.js — ŘΨØŬ v2.0.2
  * About page + Changelog accordion
  */
 const AboutComp = {
   /* Changelog — sync dengan changelogs.md di root */
   _changelogs: [
     {
-      version: 'v2.0.1',
-      date: '2026-04-12',
+      version: 'v2.0.2',
+      date: '2026-04-13',
       tag: 'latest',
       open: true,
+      changes: [
+        'Fix: fullscreen notch/punch-hole asimetris — override safe-area padding dengan max(left, right) kedua sisi',
+        'Fix: overlay next episode tidak terlihat di fullscreen — overlay kini ditempel ke media-player (fullscreen root)',
+        'Fix: portrait mobile — video + judul sticky di atas saat scroll episode list',
+        'Semua tag changelog lama di-update: latest→stable, stable→unstable',
+      ]
+    },
+        {
+      version: 'v2.0.1',
+      date: '2026-04-12',
+      tag: 'stable',
+      open: false,
       changes: [
         'Fix: floating tooltip/time/volume box squished 2px — hapus line-height:0 warisan Video.js',
         'Fix: vds-time tidak terlihat — tambah class .dark + --media-time-color eksplisit',
@@ -21,7 +33,7 @@ const AboutComp = {
         {
       version: 'v2.0.0',
       date: '2026-04-12',
-      tag: 'stable',
+      tag: 'unstable',
       open: false,
       changes: [
         'REBORN: Migrasi player dari Video.js ke Vidstack v1.12.13 (Web Components)',
@@ -39,7 +51,7 @@ const AboutComp = {
         {
       version: 'v2.0.0',
       date: '2026-04-12',
-      tag: 'stable',
+      tag: 'unstable',
       open: false,
       changes: [
         'Fix: versi di about diambil dari backend API bukan frontend — ganti ke frontend-only',
@@ -53,7 +65,7 @@ const AboutComp = {
     {
       version: 'v1.4.0',
       date: '2026-04-12',
-      tag: 'stable',
+      tag: 'unstable',
       open: false,
       changes: [
         'Fix: watch page kosong — videojs.extend() dihapus di VJS 8, ganti ke ES6 class',
@@ -86,7 +98,7 @@ const AboutComp = {
       tag: 'initial',
       open: false,
       changes: [
-        'Rilis pertama ŘΨØŬ v2.0.1',
+        'Rilis pertama ŘΨØŬ v2.0.2',
         'Frontend: HTML + Vanilla JS + Bootstrap 5 + Swiper + Video.js 8',
         'Backend: Python stdlib only',
         'Metadata: integrasi Jikan (MAL), TMDB, MDL',
@@ -102,7 +114,8 @@ const AboutComp = {
   _tagStyle(tag) {
     const map = {
       latest : { bg:'rgba(34,211,238,.12)', color:'var(--clr-accent)',  border:'var(--clr-accent)' },
-      stable : { bg:'rgba(168,85,247,.12)', color:'#a855f7',            border:'#a855f7' },
+      stable  : { bg:'rgba(168,85,247,.12)', color:'#a855f7',            border:'#a855f7' },
+      unstable: { bg:'rgba(245,158,11,.10)',  color:'var(--clr-warning)', border:'var(--clr-warning)' },
       old    : { bg:'rgba(255,255,255,.05)', color:'var(--txt-tertiary)', border:'var(--bdr-subtle)' },
       initial: { bg:'rgba(34,197,94,.12)',  color:'var(--clr-success)', border:'var(--clr-success)' },
     };
@@ -170,7 +183,7 @@ const AboutComp = {
     page.classList.add('active');
     /* Versi frontend — tidak pakai API.settings() agar tidak override */
     const vEl = document.getElementById('about-version');
-    if (vEl) vEl.textContent = 'v2.0.1';
+    if (vEl) vEl.textContent = 'v2.0.2';
     this._renderChangelogs();
   }
 };

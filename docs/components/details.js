@@ -1,5 +1,5 @@
 /**
- * components/details.js — ŘΨØŬ v2.0.1
+ * components/details.js — ŘΨØŬ v2.0.2
  */
 const Details = (() => {
   async function init(animeId) {

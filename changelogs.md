@@ -2,7 +2,21 @@
 
 ---
 
-## v2.0.1 — 2026-04-12 `latest`
+## v2.0.2 — 2026-04-13 `latest`
+
+### Bug Fixes
+- Fix: fullscreen notch/punch-hole asimetris — Vidstack set `env(safe-area-inset-left/right)` masing-masing sisi, punch-hole kiri → kanan kosong. Override dengan `max(inset-left, inset-right)` untuk kedua sisi agar selalu simetris
+- Fix: overlay next episode tidak muncul di fullscreen — overlay ditempel ke `.watch-player-box` bukan `media-player` (fullscreen root). Dipindah ke `_player` element
+
+### Features
+- Portrait mobile: video + judul episode `position: sticky` di atas saat scroll episode list
+
+### Changelogs
+- Tag semua entry lama diupdate: `latest` → `stable`, `stable` → `unstable`
+
+---
+
+## v2.0.1 — 2026-04-12 `stable`
 
 ### Bug Fixes
 - Fix: floating tooltip / time / volume box squished 2px — `line-height:0` pada `.watch-player-box` diwarisi seluruh child Vidstack
@@ -18,7 +32,7 @@
 
 ---
 
-## v2.0.0 — 2026-04-12 `latest` 🎉 Reborn
+## v2.0.0 — 2026-04-12 `unstable` 🎉 Reborn
 
 ### Breaking Changes
 - Player diganti total: **Video.js → Vidstack v1.12.13**

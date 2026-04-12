@@ -1,5 +1,5 @@
 /**
- * player.css — ŘΨØŬ v2.0.1
+ * player.css — ŘΨØŬ v2.0.2
  * Vidstack v1.12.13 — default layout theming
  * Brand: #22d3ee (cyan), dark bg #06101e
  */
@@ -71,6 +71,23 @@
 .ryou-player[data-fullscreen] {
   --video-border-radius: 0;
   --video-border: none;
+}
+
+/* Fix notch/punch-hole: Vidstack set padding-left/right dari
+   safe-area-inset masing-masing sisi → asimetris di punch-hole kiri.
+   Override: pakai max(left, right) untuk kedua sisi agar selalu simetris. */
+.ryou-player[data-fullscreen] .vds-controls {
+  padding-left  : max(env(safe-area-inset-left), env(safe-area-inset-right)) !important;
+  padding-right : max(env(safe-area-inset-left), env(safe-area-inset-right)) !important;
+  padding-top   : env(safe-area-inset-top) !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
+}
+
+/* Next episode overlay dalam fullscreen — z-index harus di atas controls (z=10) */
+.ryou-player #next-ep-overlay {
+  position: absolute;
+  inset    : 0;
+  z-index  : 50;
 }
 
 /* ════════════════════════════════════════════════════════════

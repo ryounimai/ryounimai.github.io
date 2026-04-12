@@ -1,5 +1,5 @@
 /**
- * pages.css — ŘΨØŬ v2.0.1
+ * pages.css — ŘΨØŬ v2.0.2
  * Layout: splash, hero, grid, watch, detail, about, settings
  */
 
@@ -430,6 +430,33 @@
   #settings-panel { width:100%; border-left:none; border-top:1px solid var(--bdr-strong); top:auto; bottom:0; height:85vh; border-radius:var(--r-xl) var(--r-xl) 0 0; transform:translateY(100%); }
   #settings-panel.open { transform:none; }
 }
+
+/* ── Portrait mobile: video + title FIXED, episode list scrolls ─── */
+@media (max-width: 768px) and (orientation: portrait) {
+  /* Layout jadi block biasa, page body yang scroll */
+  .page-body--watch {
+    overflow: visible;
+    min-height: unset;
+  }
+  /* Player + info nempel di atas saat scroll */
+  .watch-col-main {
+    position: sticky;
+    top: var(--nav-h);
+    z-index: 10;
+    background: var(--bg-base);
+  }
+  /* Sidebar tampil di bawah, ikut scroll halaman */
+  .watch-sidebar {
+    position: static;
+    height: auto;
+    max-height: none;
+  }
+  .ws-list {
+    overflow-y: visible;
+    max-height: none;
+  }
+}
+
 @media (max-width:480px) {
   .hero-desc { display:none; }
   .detail-poster { width:100px; }
