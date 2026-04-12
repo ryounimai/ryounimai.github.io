@@ -134,26 +134,26 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} �
 
   /* ── Init Vidstack player ── */
   async function _initPlayer(ep, anime) {
-    /* Wait for custom element to be defined */
     await customElements.whenDefined('media-player');
 
     const playerEl = document.getElementById('ryou-player');
     if (!playerEl) return;
 
-    /* ── Cleanup previous episode listeners via AbortController ── */
+    /* ── Cleanup previous episode listeners ── */
     if (_evtCtrl) { _evtCtrl.abort(); _evtCtrl = null; }
     _evtCtrl = new AbortController();
     const sig = { signal: _evtCtrl.signal };
 
     _player = playerEl;
 
+    /* load="eager" — mulai load segera saat src diset,
+       bukan tunggu IntersectionObserver (default: visible) */
+    _player.setAttribute('load', 'eager');
+
     const src  = ep.src;
     const mime = _mimeFor(src);
 
-    /* Autoplay ON — set before src so Vidstack knows intent */
-    _player.autoplay = true;
-
-    /* Set source — Vidstack handles loading + autoplay internally */
+    /* Set source — Vidstack deteksi provider dari src + type */
     _player.src = [{ src, type: mime }];
 
     /* Subtitles */
@@ -171,13 +171,16 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} �
       });
     }
 
-    /* Resume from saved progress */
+    /* ── can-play: seek resume + autoplay ──
+       Jangan andalkan internal Vidstack autoplay karena setelah episode
+       pertama selesai, state `started=true` tidak di-reset → autoplay
+       condition `!started() && autoPlay()` selalu false.
+       Fix: panggil play() eksplisit di sini. */
     const savedTime = Store.Continue.getProgress(anime.id, ep.ep);
-    if (savedTime > 5) {
-      _player.addEventListener('can-play', () => {
-        _player.currentTime = savedTime;
-      }, { once: true, ...sig });
-    }
+    _player.addEventListener('can-play', () => {
+      if (savedTime > 5) _player.currentTime = savedTime;
+      _player.play().catch(() => {});
+    }, { once: true, ...sig });
 
     /* Fullscreen → landscape lock */
     _player.addEventListener('fullscreen-change', e => {
@@ -203,7 +206,7 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} �
         Store.Continue.save(anime.id, ep.ep, anime.title, ep.title, anime.poster, ct, dur);
     }, sig);
 
-    /* Autoplay next episode — overlay countdown 3s */
+    /* Ended — show next episode overlay */
     _player.addEventListener('ended', () => {
       const ct = _player.currentTime, dur = _player.duration;
       if (ct && dur && isFinite(dur))
