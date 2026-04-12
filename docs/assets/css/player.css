@@ -52,6 +52,7 @@
 
   /* Font */
   --media-font-family        : 'Inter', system-ui, sans-serif;
+  line-height                : normal; /* guard: jangan inherit line-height:0 dari parent */
 
   /* Time display — explicit color so it's always visible */
   --media-time-color         : #e4edf7;

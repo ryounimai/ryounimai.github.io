@@ -214,8 +214,7 @@
   width       : 100%;
   aspect-ratio: 16/9;
   position    : relative;
-  overflow    : visible;  /* JANGAN hidden — popup menu VJS perlu keluar kotak */
-  line-height : 0;        /* kill ghost whitespace gap */
+  overflow    : visible;  /* JANGAN hidden — menu Vidstack perlu keluar kotak */
 }
 /* Video.js must fill the box absolutely */
 .watch-player-box .video-js {
