@@ -2297,7 +2297,7 @@ iframe.vds-youtube[data-no-controls] {
   color: var(--media-time-color, var(--default-color));
   background-color: var(--media-time-bg);
   border: var(--media-time-border);
-  padding: var(--media-time-padding, 2px);
+  padding: var(--media-time-padding, 8px);
 }
 
 :where(.vds-time:focus-visible) {
