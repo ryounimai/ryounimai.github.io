@@ -55,7 +55,7 @@
 
   /* Time display — explicit color so it's always visible */
   --media-time-color         : #e4edf7;
-  --media-time-font-size     : 13px;
+  --media-time-font-size     : 10px;
   --media-time-divider-color : rgba(228,237,247,.5);
 
   /* Captions */
