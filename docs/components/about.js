@@ -1,15 +1,28 @@
 /**
- * components/about.js — ŘΨØŬ v2.0.0
+ * components/about.js — ŘΨØŬ v2.0.1
  * About page + Changelog accordion
  */
 const AboutComp = {
   /* Changelog — sync dengan changelogs.md di root */
   _changelogs: [
     {
-      version: 'v2.0.0',
+      version: 'v2.0.1',
       date: '2026-04-12',
       tag: 'latest',
       open: true,
+      changes: [
+        'Fix: floating tooltip/time/volume box squished 2px — hapus line-height:0 warisan Video.js',
+        'Fix: vds-time tidak terlihat — tambah class .dark + --media-time-color eksplisit',
+        'Feature: Autoplay next episode dengan overlay countdown 3 detik',
+        'Feature: Tombol Putar Sekarang & Batal di overlay next episode',
+        'Update about page: info teknologi diperbarui (Vidstack, media-icons, DASH format)',
+      ]
+    },
+        {
+      version: 'v2.0.0',
+      date: '2026-04-12',
+      tag: 'stable',
+      open: false,
       changes: [
         'REBORN: Migrasi player dari Video.js ke Vidstack v1.12.13 (Web Components)',
         'Hapus semua Video.js (video.min.js 672KB, video-js.min.css 47KB, lang files)',
@@ -26,8 +39,8 @@ const AboutComp = {
         {
       version: 'v2.0.0',
       date: '2026-04-12',
-      tag: 'latest',
-      open: true,
+      tag: 'stable',
+      open: false,
       changes: [
         'Fix: versi di about diambil dari backend API bukan frontend — ganti ke frontend-only',
         'Fix: entry v1.0.0 changelog salah tulis "Rilis pertama v1.4.0"',
@@ -73,7 +86,7 @@ const AboutComp = {
       tag: 'initial',
       open: false,
       changes: [
-        'Rilis pertama ŘΨØŬ v2.0.0',
+        'Rilis pertama ŘΨØŬ v2.0.1',
         'Frontend: HTML + Vanilla JS + Bootstrap 5 + Swiper + Video.js 8',
         'Backend: Python stdlib only',
         'Metadata: integrasi Jikan (MAL), TMDB, MDL',
@@ -157,7 +170,7 @@ const AboutComp = {
     page.classList.add('active');
     /* Versi frontend — tidak pakai API.settings() agar tidak override */
     const vEl = document.getElementById('about-version');
-    if (vEl) vEl.textContent = 'v2.0.0';
+    if (vEl) vEl.textContent = 'v2.0.1';
     this._renderChangelogs();
   }
 };

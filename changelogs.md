@@ -2,6 +2,22 @@
 
 ---
 
+## v2.0.1 — 2026-04-12 `latest`
+
+### Bug Fixes
+- Fix: floating tooltip / time / volume box squished 2px — `line-height:0` pada `.watch-player-box` diwarisi seluruh child Vidstack
+- Fix: `vds-time` tidak terlihat — tambah class `.dark` pada `<media-player>` + set `--media-time-color` eksplisit
+
+### Features
+- Autoplay next episode selalu ON
+- Overlay countdown 3 detik sebelum episode berikutnya diputar
+- Tombol **Putar Sekarang** & **Batal** di overlay
+
+### Improvements
+- Update info teknologi di About: Vidstack v1.12.13, media-icons v0.10.0, tambah format DASH
+
+---
+
 ## v2.0.0 — 2026-04-12 `latest` 🎉 Reborn
 
 ### Breaking Changes

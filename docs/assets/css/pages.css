@@ -1,5 +1,5 @@
 /**
- * pages.css — ŘΨØŬ v2.0.0
+ * pages.css — ŘΨØŬ v2.0.1
  * Layout: splash, hero, grid, watch, detail, about, settings
  */
 
@@ -224,7 +224,38 @@
   height   : 100% !important;
 }
 
-/* Info below player */
+/* Next episode countdown overlay */
+#next-ep-overlay {
+  position:absolute; inset:0; z-index:20;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(6,16,30,.82); backdrop-filter:blur(4px);
+  animation:fadeIn .25s ease both;
+}
+.nxt-inner {
+  display:flex; flex-direction:column; align-items:center;
+  gap:10px; padding:24px 28px;
+  background:var(--bg-raised); border:1px solid var(--bdr-mid);
+  border-radius:var(--r-lg); text-align:center; max-width:300px;
+}
+.nxt-label  { font-size:var(--font-size-xs); color:var(--txt-tertiary); text-transform:uppercase; letter-spacing:.1em; }
+.nxt-title  { font-size:var(--font-size-sm); font-weight:600; color:var(--txt-primary); }
+.nxt-ring   { position:relative; width:52px; height:52px; margin:4px 0; }
+.nxt-ring svg { width:52px; height:52px; transform:rotate(-90deg); }
+.nxt-track  { fill:none; stroke:var(--bdr-subtle); stroke-width:3; }
+.nxt-progress {
+  fill:none; stroke:var(--clr-accent); stroke-width:3;
+  stroke-linecap:round;
+  transition:stroke-dashoffset .9s linear;
+}
+.nxt-ring span {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:var(--font-size-md); font-weight:700; color:var(--clr-accent);
+  font-family:var(--font-mono);
+}
+.nxt-actions { display:flex; gap:8px; margin-top:4px; }
+
+
 .watch-info { padding:16px 20px; background:var(--bg-raised); border-bottom:1px solid var(--bdr-subtle); }
 .watch-info-title { font-size:var(--font-size-lg); font-weight:700; margin-bottom:4px; }
 .watch-info-ep    { font-size:var(--font-size-sm); color:var(--txt-secondary); margin-bottom:14px; }
