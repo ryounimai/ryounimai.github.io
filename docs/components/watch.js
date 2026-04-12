@@ -4,8 +4,9 @@
  */
 
 const WatchComp = (() => {
-  let _player = null, _anime = null, _eps = [], _ep = null;
+  let _player  = null, _anime = null, _eps = [], _ep = null;
   let _vidstackLoaded = false;
+  let _evtCtrl = null;   /* AbortController — cleanup listeners between episodes */
 
   const _MIME = {
     m3u8: 'application/x-mpegurl',
@@ -133,37 +134,39 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} �
 
   /* ── Init Vidstack player ── */
   async function _initPlayer(ep, anime) {
-    const playerEl = document.getElementById('ryou-player');
-    if (!playerEl) return;
-
-    /* Dispose previous instance */
-    if (_player) {
-      _player.destroy();
-      _player = null;
-    }
-
     /* Wait for custom element to be defined */
     await customElements.whenDefined('media-player');
 
+    const playerEl = document.getElementById('ryou-player');
+    if (!playerEl) return;
+
+    /* ── Cleanup previous episode listeners via AbortController ── */
+    if (_evtCtrl) { _evtCtrl.abort(); _evtCtrl = null; }
+    _evtCtrl = new AbortController();
+    const sig = { signal: _evtCtrl.signal };
+
     _player = playerEl;
 
-    const src      = ep.src;
-    const mime     = _mimeFor(src);
-    const settings = Store.Settings.get();
+    const src  = ep.src;
+    const mime = _mimeFor(src);
 
-    /* Set source */
+    /* Autoplay ON — set before src so Vidstack knows intent */
+    _player.autoplay = true;
+
+    /* Set source — Vidstack handles loading + autoplay internally */
     _player.src = [{ src, type: mime }];
 
     /* Subtitles */
+    const settings = Store.Settings.get();
     if (settings.subtitles !== false && ep.subtitles?.length) {
       _player.textTracks.clear?.();
       ep.subtitles.forEach(sub => {
         _player.textTracks.add({
-          kind   : 'subtitles',
-          label  : sub.label || sub.lang || 'Sub',
+          kind    : 'subtitles',
+          label   : sub.label || sub.lang || 'Sub',
           language: sub.lang || 'id',
-          src    : sub.src,
-          default: sub.default || false,
+          src     : sub.src,
+          default : sub.default || false,
         });
       });
     }
@@ -173,7 +176,7 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} �
     if (savedTime > 5) {
       _player.addEventListener('can-play', () => {
         _player.currentTime = savedTime;
-      }, { once: true });
+      }, { once: true, ...sig });
     }
 
     /* Fullscreen → landscape lock */
@@ -182,12 +185,12 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} �
         screen.orientation.lock('landscape').catch(() => {});
       else if (!e.detail && screen.orientation?.unlock)
         screen.orientation.unlock();
-    });
+    }, sig);
 
     /* History on first play */
     _player.addEventListener('play', () => {
       Store.History.add(anime.id, ep.ep, anime.title, ep.title, anime.poster);
-    }, { once: true });
+    }, { once: true, ...sig });
 
     /* Progress save — debounced 5s */
     let _lastSave = 0;
@@ -198,7 +201,7 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} �
       const ct = _player.currentTime, dur = _player.duration;
       if (ct && dur && isFinite(dur))
         Store.Continue.save(anime.id, ep.ep, anime.title, ep.title, anime.poster, ct, dur);
-    });
+    }, sig);
 
     /* Autoplay next episode — overlay countdown 3s */
     _player.addEventListener('ended', () => {
@@ -208,18 +211,15 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} �
       const idx  = _eps.findIndex(e => e.ep === ep.ep);
       const next = _eps[idx + 1];
       if (next) _showNextOverlay(next);
-    });
+    }, sig);
 
     /* Error */
     _player.addEventListener('error', () => {
       Utils.Toast.error(I18n.t('error_video'));
-    });
+    }, sig);
 
-    /* Apply brand color via CSS var */
+    /* Brand color */
     _player.style.setProperty('--video-brand', '#22d3ee');
-
-    /* Autoplay */
-    _player.play().catch(() => {});
   }
 
   /* ── Next episode overlay countdown ── */
@@ -316,7 +316,8 @@ ${next ? `<button class="btn btn-ghost btn-sm" id="btn-next-ep">EP ${next.ep} �
   }
 
   function destroy() {
-    if (_player) { _player.destroy?.(); _player = null; }
+    if (_evtCtrl) { _evtCtrl.abort(); _evtCtrl = null; }
+    if (_player)  { _player.src = []; _player = null; }
     _anime = null; _eps = []; _ep = null;
   }
 
