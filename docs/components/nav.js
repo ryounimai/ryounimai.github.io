@@ -1,5 +1,5 @@
 /**
- * components/nav.js — ŘΨØŬ v2.0.2
+ * components/nav.js — ŘΨØŬ v2.0.3
  * Navbar + Mobile Drawer + Search + Language switcher
  */
 const Nav = (() => {
@@ -131,11 +131,9 @@ const Nav = (() => {
 
     document.querySelectorAll('#nav-lang .nav-lang-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        if (I18n.lang() === btn.dataset.lang) return;
         I18n.setLang(btn.dataset.lang);
-        document.querySelectorAll('.nav-lang-btn,.drawer-lang-btn').forEach(b => {
-          b.classList.toggle('active', b.dataset.lang === btn.dataset.lang);
-        });
-        document.dispatchEvent(new CustomEvent('ryou:langchange'));
+        location.reload();
       });
     });
   }
@@ -151,11 +149,9 @@ const Nav = (() => {
     input?.addEventListener('input', e => _searchDebounced(e.target.value.trim(), results));
     document.querySelectorAll('.drawer-lang-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        if (I18n.lang() === btn.dataset.lang) return;
         I18n.setLang(btn.dataset.lang);
-        document.querySelectorAll('.nav-lang-btn,.drawer-lang-btn').forEach(b => {
-          b.classList.toggle('active', b.dataset.lang === btn.dataset.lang);
-        });
-        document.dispatchEvent(new CustomEvent('ryou:langchange'));
+        location.reload();
       });
     });
   }

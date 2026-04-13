@@ -1,5 +1,5 @@
 /**
- * components/index.js — ŘΨØŬ v2.0.2
+ * components/index.js — ŘΨØŬ v2.0.3
  * Homepage: library loading, hero carousel, sections, filter, history panel, settings panel
  */
 const IndexComp = (() => {
@@ -74,9 +74,9 @@ const IndexComp = (() => {
 
       this._el.querySelectorAll('[data-setlang]').forEach(btn => {
         btn.addEventListener('click', () => {
+          if (I18n.lang() === btn.dataset.setlang) return;
           I18n.setLang(btn.dataset.setlang);
-          this._el.querySelectorAll('[data-setlang]').forEach(b => b.classList.toggle('active', b.dataset.setlang === btn.dataset.setlang));
-          document.querySelectorAll('.nav-lang-btn,.drawer-lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === btn.dataset.setlang));
+          location.reload();
         });
       });
 

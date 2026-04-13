@@ -1,5 +1,5 @@
 /**
- * components/watch.js — ŘΨØŬ v2.0.2
+ * components/watch.js — ŘΨØŬ v2.0.3
  * Vidstack v1.12.13 player — Web Components API
  */
 

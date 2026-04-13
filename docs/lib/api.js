@@ -1,5 +1,5 @@
 /**
- * lib/api.js — ŘΨØŬ v2.0.2
+ * lib/api.js — ŘΨØŬ v2.0.3
  * Kompatibel Android WebView lama (tanpa ?. dan ??)
  */
 

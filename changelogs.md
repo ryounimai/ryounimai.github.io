@@ -2,6 +2,15 @@
 
 ---
 
+## v2.0.3 — 2026-04-13 `latest`
+
+### Bug Fixes
+- Fix: ganti bahasa tidak me-refresh halaman — konten lama tetap tampil dalam bahasa lama
+- Berlaku di 3 titik: tombol bahasa navbar, drawer mobile, dan settings panel
+- Guard: jika bahasa yang dipilih sama dengan aktif, reload tidak terjadi
+
+---
+
 ## v2.0.2 — 2026-04-13 `latest`
 
 ### Bug Fixes

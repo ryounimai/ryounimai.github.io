@@ -1,15 +1,26 @@
 /**
- * components/about.js — ŘΨØŬ v2.0.2
+ * components/about.js — ŘΨØŬ v2.0.3
  * About page + Changelog accordion
  */
 const AboutComp = {
   /* Changelog — sync dengan changelogs.md di root */
   _changelogs: [
     {
-      version: 'v2.0.2',
+      version: 'v2.0.3',
       date: '2026-04-13',
       tag: 'latest',
       open: true,
+      changes: [
+        'Fix: ganti bahasa tidak refresh halaman — konten lama tetap tampil dalam bahasa sebelumnya',
+        'Sekarang setiap ganti bahasa otomatis reload halaman (berlaku di navbar, drawer, dan settings)',
+        'Jika bahasa yang dipilih sama dengan yang aktif, reload tidak terjadi',
+      ]
+    },
+        {
+      version: 'v2.0.2',
+      date: '2026-04-13',
+      tag: 'stable',
+      open: false,
       changes: [
         'Fix: fullscreen notch/punch-hole asimetris — override safe-area padding dengan max(left, right) kedua sisi',
         'Fix: overlay next episode tidak terlihat di fullscreen — overlay kini ditempel ke media-player (fullscreen root)',
@@ -98,7 +109,7 @@ const AboutComp = {
       tag: 'initial',
       open: false,
       changes: [
-        'Rilis pertama ŘΨØŬ v2.0.2',
+        'Rilis pertama ŘΨØŬ v2.0.3',
         'Frontend: HTML + Vanilla JS + Bootstrap 5 + Swiper + Video.js 8',
         'Backend: Python stdlib only',
         'Metadata: integrasi Jikan (MAL), TMDB, MDL',
@@ -183,7 +194,7 @@ const AboutComp = {
     page.classList.add('active');
     /* Versi frontend — tidak pakai API.settings() agar tidak override */
     const vEl = document.getElementById('about-version');
-    if (vEl) vEl.textContent = 'v2.0.2';
+    if (vEl) vEl.textContent = 'v2.0.3';
     this._renderChangelogs();
   }
 };
