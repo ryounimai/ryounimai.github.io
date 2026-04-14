@@ -1,5 +1,5 @@
 /**
- * components/nav.js — ŘΨØŬ v2.0.3
+ * components/nav.js — ŘΨØŬ v2.1.0
  * Navbar + Mobile Drawer + Search + Language switcher
  */
 const Nav = (() => {

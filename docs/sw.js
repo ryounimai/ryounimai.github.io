@@ -1,8 +1,8 @@
 /**
- * sw.js — ŘΨØŬ v2.0.3
+ * sw.js — ŘΨØŬ v2.1.0
  * Cache-first untuk static assets, network-first untuk API & media
  */
-const CACHE = 'ryou-v2.0.3';
+const CACHE = 'ryou-v2.1.0';
 const PRECACHE = [
   '/', '/index.html', '/details.html', '/watch.html', '/about.html',
   '/manifest.json',

@@ -22,12 +22,23 @@
 <div class="page-body">
   <div id="about-page" class="active">
     <div class="about-wrap">
+
+      <!-- Hero -->
       <div class="about-hero">
         <img class="about-logo" src="/res/logo.svg" alt="RYOU">
         <p class="about-sub" data-i18n="about_desc">Pemutar media anime &amp; drama lokal berbasis web</p>
-        <p style="font-size:12px;color:var(--txt-tertiary);margin-top:8px">Versi <span id="about-version" class="ver">v1.4.1</span></p>
+        <p style="font-size:12px;color:var(--txt-tertiary);margin-top:6px">
+          <span id="about-version" class="ver">v2.1.0</span>
+        </p>
       </div>
 
+      <!-- Final notice -->
+      <div class="about-final-notice">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--clr-warning)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>Ini adalah rilis final. Pembaruan berikutnya tidak akan dalam waktu dekat.</span>
+      </div>
+
+      <!-- Tech stack -->
       <div class="about-section">
         <h2 data-i18n="about_tech">Teknologi</h2>
         <div class="about-stack-grid">
@@ -43,13 +54,13 @@
         </div>
       </div>
 
-
+      <!-- Changelog -->
       <div class="about-section">
         <h2>Changelog</h2>
-        <div id="changelog-list" style="display:flex;flex-direction:column;gap:16px">
-          <!-- Diisi oleh about.js -->
-        </div>
+        <div id="changelog-list" style="display:flex;flex-direction:column;gap:10px"></div>
       </div>
+
+      <!-- Credits -->
       <div class="about-section">
         <h2 data-i18n="about_credits">Kredit</h2>
         <p style="font-size:14px;line-height:1.8;color:var(--txt-secondary)">
@@ -58,6 +69,7 @@
           Font oleh Inter &amp; JetBrains Mono via Fontsource.
         </p>
       </div>
+
     </div>
   </div>
 </div>

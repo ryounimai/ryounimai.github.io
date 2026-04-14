@@ -137,25 +137,46 @@
     <button class="btn btn-icon btn-ghost" id="settings-close">✕</button>
   </div>
   <div class="settings-body">
+
+    <!-- Bahasa -->
     <div class="settings-section">
       <div class="settings-section-label" data-i18n="settings_lang">Bahasa</div>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-ghost btn-sm" data-setlang="id">ID</button>
-        <button class="btn btn-ghost btn-sm" data-setlang="en">EN</button>
-        <button class="btn btn-ghost btn-sm" data-setlang="ja">JA</button>
+      <div class="settings-lang-grid">
+        <button class="settings-lang-btn" data-setlang="id">
+          <span class="settings-lang-code">ID</span>
+          <span class="settings-lang-name">Indonesia</span>
+        </button>
+        <button class="settings-lang-btn" data-setlang="en">
+          <span class="settings-lang-code">EN</span>
+          <span class="settings-lang-name">English</span>
+        </button>
+        <button class="settings-lang-btn" data-setlang="ja">
+          <span class="settings-lang-code">JA</span>
+          <span class="settings-lang-name">日本語</span>
+        </button>
       </div>
     </div>
+
+    <!-- Pemutaran -->
     <div class="settings-section">
-      <div class="settings-section-label">Pemutaran</div>
+      <div class="settings-section-label" data-i18n="settings_autoplay">Pemutaran</div>
       <div class="settings-row">
-        <div><div class="settings-row-label" data-i18n="settings_autoplay">Autoplay next</div></div>
+        <div>
+          <div class="settings-row-label">Autoplay episode berikutnya</div>
+          <div class="settings-row-sub">Putar otomatis saat episode selesai</div>
+        </div>
         <input type="checkbox" id="setting-autoplay" style="width:18px;height:18px;accent-color:var(--clr-accent)">
       </div>
       <div class="settings-row">
-        <div><div class="settings-row-label" data-i18n="settings_subtitle">Subtitle</div></div>
+        <div>
+          <div class="settings-row-label" data-i18n="settings_subtitle">Subtitle</div>
+          <div class="settings-row-sub">Aktifkan subtitle otomatis</div>
+        </div>
         <input type="checkbox" id="setting-subtitle" style="width:18px;height:18px;accent-color:var(--clr-accent)">
       </div>
     </div>
+
+    <!-- Library (Admin) -->
     <div class="settings-section">
       <div class="settings-section-label" style="display:flex;align-items:center;justify-content:space-between">
         <span data-i18n="settings_scan">Library</span>
@@ -166,21 +187,25 @@
       </div>
       <div style="display:flex;flex-direction:column;gap:8px">
         <button class="btn btn-outline admin-btn" id="btn-scan" data-i18n="settings_scan" disabled>Scan Library</button>
-        <button class="btn btn-ghost admin-btn" id="btn-force-scan" data-i18n="settings_force_scan" disabled>Scan Ulang (paksa)</button>
-      </div>
-    </div>
-    <div class="settings-section">
-      <div class="settings-section-label" data-i18n="settings_clear_cache">Cache</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-ghost admin-btn" id="btn-force-scan" data-i18n="settings_force_scan" disabled>Scan Ulang</button>
         <button class="btn btn-ghost admin-btn" id="btn-clear-lib" data-i18n="settings_clear_lib" disabled>Hapus Cache Library</button>
         <button class="btn btn-danger btn-sm admin-btn" id="btn-clear-all" data-i18n="settings_clear_all" disabled>Hapus Semua Cache</button>
       </div>
     </div>
+
+    <!-- Versi -->
     <div class="settings-section">
-      <div class="settings-section-label">Server Info</div>
-      <div class="settings-row"><span class="settings-row-label" data-i18n="settings_version">Versi</span><span class="settings-row-val" id="info-version">—</span></div>
-      <div class="settings-row"><span class="settings-row-label" data-i18n="settings_path">SD Card</span><span class="settings-row-val" id="info-path" style="font-size:11px;word-break:break-all">—</span></div>
+      <div class="settings-section-label">Tentang</div>
+      <div class="settings-row">
+        <span class="settings-row-label">Versi</span>
+        <span class="settings-row-val ver">v2.1.0</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-row-label">Server</span>
+        <span class="settings-row-val ver" id="info-version">—</span>
+      </div>
     </div>
+
   </div>
 </aside>
 

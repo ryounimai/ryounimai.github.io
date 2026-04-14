@@ -1,134 +1,49 @@
 /**
- * components/about.js — ŘΨØŬ v2.0.3
- * About page + Changelog accordion
+ * components/about.js — ŘΨØŬ v2.1.0
+ * About page + Changelog
  */
 const AboutComp = {
-  /* Changelog — sync dengan changelogs.md di root */
   _changelogs: [
     {
-      version: 'v2.0.3',
+      version: 'v2.1.0',
       date: '2026-04-13',
-      tag: 'latest',
+      tag: 'final',
       open: true,
       changes: [
-        'Fix: ganti bahasa tidak refresh halaman — konten lama tetap tampil dalam bahasa sebelumnya',
-        'Sekarang setiap ganti bahasa otomatis reload halaman (berlaku di navbar, drawer, dan settings)',
-        'Jika bahasa yang dipilih sama dengan yang aktif, reload tidak terjadi',
-      ]
-    },
-        {
-      version: 'v2.0.2',
-      date: '2026-04-13',
-      tag: 'stable',
-      open: false,
-      changes: [
-        'Fix: fullscreen notch/punch-hole asimetris — override safe-area padding dengan max(left, right) kedua sisi',
-        'Fix: overlay next episode tidak terlihat di fullscreen — overlay kini ditempel ke media-player (fullscreen root)',
-        'Fix: portrait mobile — video + judul sticky di atas saat scroll episode list',
-        'Semua tag changelog lama di-update: latest→stable, stable→unstable',
-      ]
-    },
-        {
-      version: 'v2.0.1',
-      date: '2026-04-12',
-      tag: 'stable',
-      open: false,
-      changes: [
-        'Fix: floating tooltip/time/volume box squished 2px — hapus line-height:0 warisan Video.js',
-        'Fix: vds-time tidak terlihat — tambah class .dark + --media-time-color eksplisit',
-        'Feature: Autoplay next episode dengan overlay countdown 3 detik',
-        'Feature: Tombol Putar Sekarang & Batal di overlay next episode',
-        'Update about page: info teknologi diperbarui (Vidstack, media-icons, DASH format)',
-      ]
-    },
-        {
-      version: 'v2.0.0',
-      date: '2026-04-12',
-      tag: 'unstable',
-      open: false,
-      changes: [
-        'REBORN: Migrasi player dari Video.js ke Vidstack v1.12.13 (Web Components)',
-        'Hapus semua Video.js (video.min.js 672KB, video-js.min.css 47KB, lang files)',
-        'Install Vidstack offline penuh: core, default layout, providers, icons',
-        'Buat icons.js lokal dari media-icons v0.10.0 (104 ikon, tanpa CDN)',
-        'Patch vidstack.js — ganti cdn.vidstack.io/icons ke lokal',
-        'Rombak total watch.js: pakai Vidstack Web Components API',
-        'Rombak total player.css: Vidstack CSS vars theming, brand #22d3ee',
-        'Quality selector sekarang built-in dari Vidstack default layout',
-        'Subtitle, HLS/DASH/MP4 support, autoplay next, resume progress tetap terjaga',
-        'Naik versi: v2.0.0 Reborn',
-      ]
-    },
-        {
-      version: 'v2.0.0',
-      date: '2026-04-12',
-      tag: 'unstable',
-      open: false,
-      changes: [
-        'Fix: versi di about diambil dari backend API bukan frontend — ganti ke frontend-only',
-        'Fix: entry v1.0.0 changelog salah tulis "Rilis pertama v1.4.0"',
-        'Tambah font JetBrains Mono offline (woff2, latin subset)',
-        'Semua versi angka pakai font mono + letter-spacing rapat (.ver class)',
-        'Update deskripsi & kredit di about page',
-        'Hapus referensi platform spesifik dari deskripsi & kredit',
+        'Rilis final ŘΨØŬ — pembaruan mendatang tidak akan dalam waktu dekat',
+        'Changelogs dibersihkan, entri lama dihapus',
+        'Tag versi disederhanakan',
+        'Settings panel dirancang ulang',
       ]
     },
     {
-      version: 'v1.4.0',
+      version: 'v2.0.x',
       date: '2026-04-12',
-      tag: 'unstable',
+      tag: 'legacy',
       open: false,
       changes: [
-        'Fix: watch page kosong — videojs.extend() dihapus di VJS 8, ganti ke ES6 class',
-        'Fix: overflow:hidden pada control-bar & watch-player-box halangi menu speed & CC',
-        'Fix: CC/subtitle button tampil sebagai garis biru (indikator aktif VJS 8)',
-        'Fix: jarak waktu & speed tabrakan saat durasi lebih dari 1 jam',
-        'Fix: volume slider meluap ke atas',
-        'Fix: hamburger X tidak bisa diklik untuk tutup drawer',
-        'Fix: backdrop z-index nutupin hamburger di beberapa device',
-        'Hapus teks ŘΨØŬ duplikat di splash & about',
-        'Bersihkan komentar redundan di watch.js, index.js, player.css',
+        'v2.0.3 — Ganti bahasa otomatis reload halaman',
+        'v2.0.2 — Fix notch fullscreen asimetris, overlay next ep di fullscreen, portrait sticky',
+        'v2.0.1 — Fix floating box squished, autoplay next + overlay countdown 3s',
+        'v2.0.0 — Reborn: migrasi player Video.js → Vidstack v1.12.13 (offline penuh)',
       ]
     },
     {
-      version: 'v1.0.1',
-      date: '2026-04-11',
-      tag: 'old',
-      open: false,
-      changes: [
-        'Fix: carousel pagination dot gelap',
-        'Fix: next episode gagal karena videojs.dispose() hapus elemen dari DOM',
-        'Fix: episode selector klik tidak respon — diganti event delegation',
-        'Fix: judul tampil sebagai folder name (titleOf prioritas terbalik)',
-        'Changelog about page: format accordion expand/collapse',
-      ]
-    },
-    {
-      version: 'v1.0.0',
+      version: 'v1.x',
       date: '2026-04-10',
-      tag: 'initial',
+      tag: 'legacy',
       open: false,
       changes: [
-        'Rilis pertama ŘΨØŬ v2.0.3',
-        'Frontend: HTML + Vanilla JS + Bootstrap 5 + Swiper + Video.js 8',
-        'Backend: Python stdlib only',
-        'Metadata: integrasi Jikan (MAL), TMDB, MDL',
-        'PWA: manifest + service worker + offline cache',
-        'Multi bahasa: ID, EN, JA',
-        'Fitur: lanjut nonton, riwayat, autoplay next episode',
-        'Player: HLS, DASH, MP4, MKV support',
-        'Subtitle: VTT, SRT, ASS/SSA',
+        'v1.4.x — Fix watch page, player CSS, hamburger, volume, time display',
+        'v1.0.x — Rilis awal ŘΨØŬ: Vidstack, Bootstrap, Swiper, PWA, multi-bahasa',
       ]
     },
   ],
 
   _tagStyle(tag) {
     const map = {
-      latest : { bg:'rgba(34,211,238,.12)', color:'var(--clr-accent)',  border:'var(--clr-accent)' },
-      stable  : { bg:'rgba(168,85,247,.12)', color:'#a855f7',            border:'#a855f7' },
-      unstable: { bg:'rgba(245,158,11,.10)',  color:'var(--clr-warning)', border:'var(--clr-warning)' },
-      old    : { bg:'rgba(255,255,255,.05)', color:'var(--txt-tertiary)', border:'var(--bdr-subtle)' },
-      initial: { bg:'rgba(34,197,94,.12)',  color:'var(--clr-success)', border:'var(--clr-success)' },
+      final : { bg:'rgba(239,68,68,.12)',   color:'#ef4444',           border:'#ef4444' },
+      legacy: { bg:'rgba(255,255,255,.05)', color:'var(--txt-tertiary)', border:'var(--bdr-subtle)' },
     };
     const s = map[tag] || { bg:'var(--bg-float)', color:'var(--txt-secondary)', border:'var(--bdr-subtle)' };
     return `background:${s.bg};color:${s.color};border:1px solid ${s.border}`;
@@ -167,14 +82,12 @@ const AboutComp = {
   </div>
 </div>`).join('');
 
-    /* bind toggle */
     el.querySelectorAll('.cl-toggle').forEach(btn => {
       btn.addEventListener('click', () => {
         const idx  = +btn.dataset.idx;
         const body = el.querySelector(`.cl-body[data-idx="${idx}"]`);
         const chev = el.querySelector(`.cl-chevron[data-idx="${idx}"]`);
         const isOpen = body.style.maxHeight !== '0px' && body.style.maxHeight !== '0';
-
         if (isOpen) {
           body.style.maxHeight = '0';
           body.style.padding   = '0 16px';
@@ -192,9 +105,8 @@ const AboutComp = {
     const page = document.getElementById('about-page');
     if (!page) return;
     page.classList.add('active');
-    /* Versi frontend — tidak pakai API.settings() agar tidak override */
     const vEl = document.getElementById('about-version');
-    if (vEl) vEl.textContent = 'v2.0.3';
+    if (vEl) vEl.textContent = 'v2.1.0';
     this._renderChangelogs();
   }
 };

@@ -1,5 +1,5 @@
 /**
- * components/section.js — ŘΨØŬ v2.0.3
+ * components/section.js — ŘΨØŬ v2.1.0
  * Grid, horizontal scroll, continue watching, filter, pagination
  */
 const Section = (() => {

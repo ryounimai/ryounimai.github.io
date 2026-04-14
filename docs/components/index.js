@@ -1,5 +1,5 @@
 /**
- * components/index.js — ŘΨØŬ v2.0.3
+ * components/index.js — ŘΨØŬ v2.1.0
  * Homepage: library loading, hero carousel, sections, filter, history panel, settings panel
  */
 const IndexComp = (() => {
@@ -79,6 +79,13 @@ const IndexComp = (() => {
           location.reload();
         });
       });
+      /* Highlight active lang button */
+      const _markLang = () => {
+        this._el.querySelectorAll('[data-setlang]').forEach(b =>
+          b.classList.toggle('active', b.dataset.setlang === I18n.lang())
+        );
+      };
+      _markLang();
 
       document.getElementById('setting-autoplay')?.addEventListener('change', e => Store.Settings.set('autoplay', e.target.checked));
       document.getElementById('setting-subtitle')?.addEventListener('change', e => Store.Settings.set('subtitles', e.target.checked));
