@@ -11,16 +11,13 @@
   position:fixed; inset:0; z-index:var(--z-splash);
   display:flex; align-items:center; justify-content:center;
   background:var(--bg-base);
-  transition:opacity .5s var(--ease), transform .5s var(--ease);
+  will-change: opacity, transform; /* Anime.js mengontrol exit */
 }
-#splash.out { opacity:0; transform:scale(1.04); pointer-events:none; }
 .splash-content { display:flex; flex-direction:column; align-items:center; gap:16px; }
-.splash-logo { width:120px; filter:drop-shadow(0 0 24px var(--clr-accent-glow)); }
-.splash-sub { font-size:var(--font-size-xs); color:var(--txt-secondary); letter-spacing:.14em; text-transform:uppercase; }
+.splash-logo { width:120px; filter:drop-shadow(0 0 24px var(--clr-accent-glow)); will-change: opacity, transform; }
+.splash-sub { font-size:var(--font-size-xs); color:var(--txt-secondary); letter-spacing:.14em; text-transform:uppercase; will-change: opacity, transform; }
 .splash-dots { display:flex; gap:8px; }
-.splash-dots span { width:7px; height:7px; border-radius:50%; background:var(--clr-accent); animation:pulse 1.2s ease-in-out infinite; }
-.splash-dots span:nth-child(2) { animation-delay:.2s; }
-.splash-dots span:nth-child(3) { animation-delay:.4s; }
+.splash-dots span { width:7px; height:7px; border-radius:50%; background:var(--clr-accent); will-change: opacity, transform; }
 
 /* ── Hero Carousel ───────────────────────────────────────────────── */
 .hero-section { overflow:hidden; min-height:unset !important; }
