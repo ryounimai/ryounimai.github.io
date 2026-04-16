@@ -1,13 +1,14 @@
 /**
- * components/section.js — ŘΨØŬ v2.1.0
+ * components/section.js — ŘΨØŬ v3.0.0
  * Grid, horizontal scroll, continue watching, filter, pagination
+ * Phase 3: kartu muncul stagger via Anim.staggerIn()
  */
 const Section = (() => {
   /* ── Card builders ── */
   function _animeCard(item, pct = 0) {
     const title = I18n.titleOf(item);
     return `
-<div class="anime-card fade-up" data-id="${item.id}">
+<div class="anime-card" data-id="${item.id}">
   <div class="ac-poster">
     <img src="${item.poster||''}" alt="${title}" loading="lazy" onerror="this.style.display='none'">
     <div class="ac-overlay">
@@ -39,6 +40,17 @@ const Section = (() => {
     });
   }
 
+  /* ── Stagger helper — dipanggil setelah setiap innerHTML diset ── */
+  function _animStagger(container, selector, staggerMs) {
+    requestAnimationFrame(() => {
+      Anim.staggerIn(container.querySelectorAll(selector), {
+        stagger : staggerMs,
+        from    : 12,
+        duration: 280,
+      });
+    });
+  }
+
   /* ── Continue Watching ── */
   function renderContinue(container) {
     const list = Store.Continue.getAll();
@@ -49,7 +61,7 @@ ${list.map(item => `
   <div class="cw-poster">
     <img src="${item.poster||''}" alt="" loading="lazy" onerror="this.style.display='none'">
     <div class="cw-progress"><div class="cw-progress-bar" style="width:${item.pct||0}%"></div></div>
-    <button class="cw-remove" data-remove="${item.animeId}" title="Hapus">✕</button>
+    <button class="cw-remove" data-remove="${item.animeId}" title="Hapus">X</button>
   </div>
   <div class="cw-body">
     <div class="cw-title line-clamp-2">${item.animeTitle||''}</div>
@@ -64,8 +76,13 @@ ${list.map(item => `
       });
     });
     container.querySelectorAll('.cw-remove').forEach(btn => {
-      btn.addEventListener('click', e => { e.stopPropagation(); Store.Continue.remove(btn.dataset.remove); renderContinue(container); });
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        Store.Continue.remove(btn.dataset.remove);
+        renderContinue(container);
+      });
     });
+    _animStagger(container, '.cw-card', 55);
   }
 
   /* ── Horizontal scroll section ── */
@@ -79,16 +96,19 @@ ${items.map((item, i) => `
   <div class="hs-poster">
     <img src="${item.poster}" alt="" loading="lazy" onerror="this.style.display='none'">
     <div class="hs-rank${i<3?' gold':''}">
-      ${i<9?i+1:i+1}
+      ${i+1}
     </div>
   </div>
   <div class="hs-body">
     <div class="hs-title line-clamp-2">${I18n.titleOf(item)}</div>
-    <div class="hs-meta">${item.year||''} ${item.rating>0?`· ⭐${Number(item.rating).toFixed(1)}`:''}</div>
+    <div class="hs-meta">${item.year||''} ${item.rating>0?`· ${Number(item.rating).toFixed(1)}`:''}</div>
   </div>
 </div>`).join('')}
 </div>`;
-    container.querySelectorAll('.hs-card').forEach(c => c.addEventListener('click', () => App.goDetail(c.dataset.id)));
+    container.querySelectorAll('.hs-card').forEach(c =>
+      c.addEventListener('click', () => App.goDetail(c.dataset.id))
+    );
+    _animStagger(container, '.hs-card', 35);
   }
 
   /* ── Main grid with pagination + filter ── */
@@ -114,11 +134,15 @@ ${items.map((item, i) => `
     const start = (_page - 1) * _perPage, end = start + _perPage;
     const slice = _filtered.slice(start, end);
     if (!slice.length) {
-      _gridContainer.innerHTML = `<div class="no-results"><div class="no-results-icon">🔍</div><h3>${I18n.t('no_results')}</h3></div>`;
+      _gridContainer.innerHTML = `<div class="no-results"><div class="no-results-icon">&#x1F50D;</div><h3>${I18n.t('no_results')}</h3></div>`;
       return;
     }
-    _gridContainer.innerHTML = `<div class="anime-grid">${slice.map(a => _animeCard(a, Store.Continue.getPct(a.id, Store.Continue.getAll().find(c=>c.animeId===a.id)?.ep||1))).join('')}</div>`;
+    _gridContainer.innerHTML = `<div class="anime-grid">${slice.map(a =>
+      _animeCard(a, Store.Continue.getPct(a.id,
+        Store.Continue.getAll().find(c => c.animeId === a.id)?.ep || 1))
+    ).join('')}</div>`;
     _bindCards(_gridContainer);
+    _animStagger(_gridContainer, '.anime-card', 40);
   }
 
   function _renderPagination() {
@@ -128,39 +152,55 @@ ${items.map((item, i) => `
     let html = '';
     const btn = (p, label, active, disabled) =>
       `<button class="pg-btn${active?' active':''}${disabled?' disabled':''}" ${disabled?'disabled':''} data-page="${p}">${label}</button>`;
-    html += btn(_page - 1, '‹', false, _page === 1);
+    html += btn(_page - 1, '<', false, _page === 1);
     for (let p = 1; p <= pages; p++) {
       if (p === 1 || p === pages || Math.abs(p - _page) <= 2) html += btn(p, p, p === _page, false);
-      else if (Math.abs(p - _page) === 3) html += '<span class="pg-ellipsis">…</span>';
+      else if (Math.abs(p - _page) === 3) html += '<span class="pg-ellipsis">...</span>';
     }
-    html += btn(_page + 1, '›', false, _page === pages);
+    html += btn(_page + 1, '>', false, _page === pages);
     _paginationContainer.innerHTML = html;
     _paginationContainer.querySelectorAll('.pg-btn:not([disabled])').forEach(b => {
-      b.addEventListener('click', () => { _page = +b.dataset.page; _renderGrid(); _renderPagination(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+      b.addEventListener('click', () => {
+        _page = +b.dataset.page;
+        _renderGrid();
+        _renderPagination();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     });
   }
 
   function renderGrid(library, gridEl, paginEl) {
-    _allItems = library; _filtered = library; _gridContainer = gridEl; _paginationContainer = paginEl;
+    _allItems = library; _filtered = library;
+    _gridContainer = gridEl; _paginationContainer = paginEl;
     _page = 1;
     if (!library.length) { gridEl.innerHTML = _skeletonGrid(); return; }
-    _renderGrid(); _renderPagination();
+    _renderGrid();
+    _renderPagination();
   }
 
   function applyFilter(filters) { Object.assign(_activeFilters, filters); _applyFilters(); }
-  function resetFilters() { _activeFilters = { type:null, genre:null, year:null, status:null }; _applyFilters(); }
+  function resetFilters()        { _activeFilters = { type:null, genre:null, year:null, status:null }; _applyFilters(); }
   function filterBy(q) {
     if (!q) { _filtered = _allItems; }
-    else { const ql = q.toLowerCase(); _filtered = _allItems.filter(a => `${a.title} ${a.title_en||''} ${a.title_ja||''}`.toLowerCase().includes(ql)); }
+    else {
+      const ql = q.toLowerCase();
+      _filtered = _allItems.filter(a =>
+        (a.title + ' ' + (a.title_en||'') + ' ' + (a.title_ja||'')).toLowerCase().includes(ql)
+      );
+    }
     _page = 1; _renderGrid(); _renderPagination();
   }
   function getFilterData() {
     const genres = [...new Set(_allItems.flatMap(a => a.genres||[]))].sort();
-    const years  = [...new Set(_allItems.map(a=>a.year).filter(Boolean))].sort().reverse();
+    const years  = [...new Set(_allItems.map(a => a.year).filter(Boolean))].sort().reverse();
     return { genres, years };
   }
 
-  return { renderContinue, renderHScroll, renderGrid, applyFilter, resetFilters, filterBy, getFilterData, skeletonGrid: _skeletonGrid, animeCard: _animeCard, bindCards: _bindCards };
+  return {
+    renderContinue, renderHScroll, renderGrid,
+    applyFilter, resetFilters, filterBy, getFilterData,
+    skeletonGrid: _skeletonGrid, animeCard: _animeCard, bindCards: _bindCards,
+  };
 })();
 
 window.Section = Section;
