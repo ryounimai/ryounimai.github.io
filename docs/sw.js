@@ -32,6 +32,10 @@ const PRECACHE = [
   /* JS */
   '/assets/bootstrap/bootstrap.bundle.min.js',
   '/assets/swiper/swiper-bundle.min.js',
+  /* Anime.js v4.3.6 */
+  '/assets/animejs/anime.umd.min.js',
+  /* JS */
+  '/assets/js/anim.js',
   '/assets/js/utils.js',
   /* Lib */
   '/lib/store.js',
