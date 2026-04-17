@@ -242,7 +242,7 @@
 .nxt-progress {
   fill:none; stroke:var(--clr-accent); stroke-width:3;
   stroke-linecap:round;
-  transition:stroke-dashoffset .9s linear;
+  /* stroke-dashoffset dikontrol Anime.js — tidak pakai CSS transition */
 }
 .nxt-ring span {
   position:absolute; inset:0;
