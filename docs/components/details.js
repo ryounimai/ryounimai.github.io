@@ -1,5 +1,5 @@
 /**
- * components/details.js — ŘΨØŬ v2.1.0
+ * components/details.js — ŘΨØŬ v3.0.0
  */
 const Details = (() => {
   async function init(animeId) {
@@ -87,6 +87,9 @@ const Details = (() => {
     document.getElementById('btn-play-first')?.addEventListener('click', () => App.goWatch(anime.id, eps[0]?.ep || 1));
     document.getElementById('btn-back-home')?.addEventListener('click', () => App.goHome());
 
+    // ── Phase 5: sequential entrance timeline ──
+    requestAnimationFrame(() => _animEntrance(page));
+
     if (isManyEps) {
       page.querySelectorAll('.ep-num-chip').forEach(chip => {
         chip.addEventListener('click', () => App.goWatch(anime.id, +chip.dataset.ep));
@@ -94,6 +97,53 @@ const Details = (() => {
     } else {
       page.querySelectorAll('.ep-card').forEach(card => {
         card.addEventListener('click', () => App.goWatch(anime.id, +card.dataset.ep));
+      });
+    }
+  }
+
+  /* ── Phase 5: sequential entrance timeline ── */
+  function _animEntrance(page) {
+    if (Anim.reduced) return;
+
+    const poster  = page.querySelector('.detail-poster');
+    const title   = page.querySelector('.detail-title');
+    const badges  = page.querySelector('.detail-badges');
+    const genres  = page.querySelector('.detail-genres-row');
+    const actions = page.querySelector('.detail-actions');
+    const cells   = page.querySelectorAll('.info-cell');
+    const epItems = page.querySelectorAll('.ep-card, .ep-num-chip');
+
+    const A  = Anim.raw();
+    const tl = Anim.timeline({ defaults: { ease: 'out(2)' } });
+
+    if (poster) tl.add(poster, {
+      opacity   : [0, 1],
+      translateX: [-24, 0],
+      duration  : 380,
+    }, 0);
+
+    const headerEls = [badges, title, genres, actions].filter(Boolean);
+    headerEls.forEach((el, i) => {
+      tl.add(el, { opacity: [0, 1], translateY: [12, 0], duration: 280 }, 80 + i * 70);
+    });
+
+    if (cells.length) {
+      A.animate(cells, {
+        opacity   : [0, 1],
+        translateY: [10, 0],
+        duration  : 260,
+        delay     : A.stagger(30, { start: 360 }),
+        ease      : 'out(2)',
+      });
+    }
+
+    if (epItems.length) {
+      A.animate(epItems, {
+        opacity   : [0, 1],
+        translateY: [8, 0],
+        duration  : 220,
+        delay     : A.stagger(25, { start: 500 }),
+        ease      : 'out(2)',
       });
     }
   }
