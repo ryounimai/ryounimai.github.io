@@ -137,14 +137,24 @@ const Details = (() => {
       });
     }
 
-    if (epItems.length) {
-      A.animate(epItems, {
+    /* Ep items langsung di-animasi hanya 24 pertama (in-view),
+       sisanya pakai scroll-trigger — Phase 7 */
+    const epVisible = Array.from(epItems).slice(0, 24);
+    const epBelow   = Array.from(epItems).slice(24);
+
+    if (epVisible.length) {
+      A.animate(epVisible, {
         opacity   : [0, 1],
         translateY: [8, 0],
         duration  : 220,
         delay     : A.stagger(25, { start: 500 }),
         ease      : 'out(2)',
       });
+    }
+
+    /* Phase 7: scroll-triggered untuk episode setelah fold */
+    if (epBelow.length) {
+      Anim.onEnter(epBelow, el => Anim.fadeUp(el, { duration: 200, from: 8 }));
     }
   }
 

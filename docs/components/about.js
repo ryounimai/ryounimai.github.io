@@ -1,5 +1,5 @@
 /**
- * components/about.js — ŘΨØŬ v2.1.0
+ * components/about.js — ŘΨØŬ v3.0.0
  * About page + Changelog
  */
 const AboutComp = {
@@ -106,8 +106,14 @@ const AboutComp = {
     if (!page) return;
     page.classList.add('active');
     const vEl = document.getElementById('about-version');
-    if (vEl) vEl.textContent = 'v2.1.0';
+    if (vEl) vEl.textContent = 'v3.0.0';
     this._renderChangelogs();
+
+    /* Phase 7: scroll-triggered untuk stack-card dan changelog items */
+    requestAnimationFrame(() => {
+      Anim.onEnter('.stack-card', el => Anim.fadeUp(el, { duration: 260, from: 10 }));
+      Anim.onEnter('.cl-item',    el => Anim.fadeUp(el, { duration: 220, from: 8  }));
+    });
   }
 };
 window.AboutComp = AboutComp;
