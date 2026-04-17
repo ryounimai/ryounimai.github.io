@@ -5,9 +5,26 @@
 const AboutComp = {
   _changelogs: [
     {
+      version: 'v3.0.0',
+      date: '2026-04-17',
+      tag: 'latest',
+      open: true,
+      changes: [
+        'Animasi UI: Anime.js v4.3.6 terintegrasi penuh (offline, 106KB)',
+        'Splash screen: timeline entrance logo → subtitle → dots, exit smooth',
+        'Homepage: kartu anime muncul stagger bergilir (40ms/kartu)',
+        'Drawer mobile: slide in/out via Anime.js (bukan CSS transition)',
+        'Settings panel: slide right (desktop) / slide up (mobile)',
+        'Detail page: sequential entrance — poster, judul, badges, info, episode',
+        'Watch page: sidebar scroll smooth + overlay ring countdown via Anime.js',
+        'About page: stack-card + changelog item scroll-triggered fadeUp',
+        'Semua animasi respek prefers-reduced-motion',
+      ]
+    },
+        {
       version: 'v2.1.0',
       date: '2026-04-13',
-      tag: 'final',
+      tag: 'legacy',
       open: true,
       changes: [
         'Rilis final ŘΨØŬ — pembaruan mendatang tidak akan dalam waktu dekat',

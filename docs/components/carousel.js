@@ -1,5 +1,5 @@
 /**
- * components/carousel.js — ŘΨØŬ v2.1.0
+ * components/carousel.js — ŘΨØŬ v3.0.0
  * Hero Swiper carousel — top 8 highest rated
  */
 const Carousel = (() => {

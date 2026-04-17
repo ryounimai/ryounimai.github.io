@@ -1,5 +1,5 @@
 /**
- * utils.js — ŘΨØŬ v2.1.0
+ * utils.js — ŘΨØŬ v3.0.0
  * Shared utility functions used across all components
  */
 
