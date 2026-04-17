@@ -386,6 +386,20 @@
 .stack-name { font-size:var(--font-size-sm); font-weight:600; }
 .stack-ver  { font-size:var(--font-size-xs); color:var(--txt-secondary); margin-top:2px; }
 
+/* ── HISTORY PANEL ───────────────────────────────────────────────── */
+#history-panel {
+  position:fixed; top:0; right:0; bottom:0; z-index:var(--z-modal);
+  width:min(360px,92vw);
+  background:var(--bg-raised); border-left:1px solid var(--bdr-strong);
+  display:flex; flex-direction:column;
+  transform:translateX(100%);
+  will-change: transform;
+  transition: transform var(--dur-slow) var(--ease);
+}
+#history-panel.open { transform: translateX(0); }
+/* :has() scroll lock */
+body:has(#history-panel.open) { overflow: hidden; }
+
 /* ── SETTINGS PANEL ──────────────────────────────────────────────── */
 #settings-panel {
   position:fixed; top:0; right:0; bottom:0; z-index:var(--z-modal);
@@ -395,7 +409,11 @@
   transform:translateX(100%);
   will-change: transform;
 }
-/* .open dipakai sebagai state marker saja — Anime.js kontrol transform */
+/* CSS open state — fallback reduced motion, Anime.js mengontrol animasi */
+#settings-panel.open { transform: translateX(0); }
+
+/* :has() — scroll lock + backdrop settings */
+body:has(#settings-panel.open) { overflow: hidden; }
 .settings-hd { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--bdr-subtle); flex-shrink:0; }
 .settings-title { font-size:var(--font-size-md); font-weight:700; }
 .settings-body { flex:1; overflow-y:auto; padding:16px 20px; }
@@ -445,6 +463,7 @@
   .main-wrap { padding:20px 14px 48px; }
 
   #settings-panel { width:100%; border-left:none; border-top:1px solid var(--bdr-strong); top:auto; bottom:0; height:85vh; border-radius:var(--r-xl) var(--r-xl) 0 0; transform:translateY(100%); }
+  #settings-panel.open { transform: translateY(0); }
 }
 
 /* ── Portrait mobile: video + title FIXED, episode list scrolls ─── */

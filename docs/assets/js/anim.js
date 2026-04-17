@@ -68,7 +68,7 @@ const Anim = (() => {
     return _a.animate(el, {
       translateX: ['-100%', '0%'],
       duration  : opts.duration ?? DUR.enter,
-      ease      : opts.ease ?? EASE.outExpo,
+      ease      : opts.ease ?? EASE.outE,
     });
   }
 
@@ -92,7 +92,7 @@ const Anim = (() => {
     return _a.animate(el, {
       translateX: ['100%', '0%'],
       duration  : opts.duration ?? DUR.enter,
-      ease      : opts.ease ?? EASE.outExpo,
+      ease      : opts.ease ?? EASE.outE,
     });
   }
 
@@ -116,7 +116,7 @@ const Anim = (() => {
     return _a.animate(el, {
       translateY: ['100%', '0%'],
       duration  : opts.duration ?? DUR.enter,
-      ease      : opts.ease ?? EASE.outExpo,
+      ease      : opts.ease ?? EASE.outE,
     });
   }
 

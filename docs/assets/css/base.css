@@ -170,7 +170,13 @@ input,select,textarea { font-family: var(--font-sans); }
   background:rgba(0,0,0,.7); backdrop-filter:blur(5px);
   opacity:0; pointer-events:none; transition:opacity var(--dur-base);
 }
+/* Klasik — masih dipakai JS untuk panel yang tidak pakai :has() */
 .backdrop.show { opacity:1; pointer-events:all; }
+
+/* :has() — backdrop otomatis tampil ketika panel terbuka, tanpa JS .show */
+body:has(#app-drawer.open)     #drawer-backdrop    { opacity:1; pointer-events:all; }
+body:has(#settings-panel.open) #settings-backdrop  { opacity:1; pointer-events:all; }
+body:has(#history-panel.open)  #history-backdrop   { opacity:1; pointer-events:all; }
 
 /* Version number — mono font, tight tracking, used everywhere */
 .ver {

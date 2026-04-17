@@ -116,7 +116,12 @@
   transform:translateX(-100%);
   will-change: transform;
 }
-/* .open dipakai sebagai state marker saja — Anime.js kontrol transform */
+/* CSS open state — fallback jika Anime.js tidak jalan (reduced motion dll)
+   Anime.js mengontrol animasinya, CSS ini hanya final resting state */
+#app-drawer.open { transform: translateX(0); }
+
+/* :has() — scroll lock body ketika drawer terbuka */
+body:has(#app-drawer.open) { overflow: hidden; }
 
 .drawer-top {
   display:flex; align-items:center; justify-content:space-between;
