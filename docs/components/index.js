@@ -1,5 +1,5 @@
 /**
- * components/index.js — ŘΨØŬ v2.1.0
+ * components/index.js — ŘΨØŬ v3.0.0
  * Homepage: library loading, hero carousel, sections, filter, history panel, settings panel
  */
 const IndexComp = (() => {
@@ -58,13 +58,23 @@ const IndexComp = (() => {
       if (!this._el) this._build();
       this._el.classList.add('open');
       document.getElementById('settings-backdrop')?.classList.add('show');
+      const isMobile = window.matchMedia('(max-width:768px)').matches;
+      isMobile ? Anim.slideInUp(this._el, { duration: 300 })
+               : Anim.slideInRight(this._el, { duration: 300 });
       if (!this._serverInfo) {
         try { this._serverInfo = await API.settings(); this._fillServer(this._serverInfo); } catch {}
       }
     },
     close() {
-      this._el?.classList.remove('open');
-      document.getElementById('settings-backdrop')?.classList.remove('show');
+      if (!this._el?.classList.contains('open')) return;
+      const isMobile = window.matchMedia('(max-width:768px)').matches;
+      const anim = isMobile ? Anim.slideOutDown(this._el, { duration: 240 })
+                            : Anim.slideOutRight(this._el, { duration: 240 });
+      const done = () => {
+        this._el?.classList.remove('open');
+        document.getElementById('settings-backdrop')?.classList.remove('show');
+      };
+      anim && anim.then ? anim.then(done) : done();
     },
     _build() {
       this._el = document.getElementById('settings-panel');

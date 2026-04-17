@@ -1,5 +1,5 @@
 /**
- * components/nav.js — ŘΨØŬ v2.1.0
+ * components/nav.js — ŘΨØŬ v3.0.0
  * Navbar + Mobile Drawer + Search + Language switcher
  */
 const Nav = (() => {
@@ -157,14 +157,28 @@ const Nav = (() => {
   }
 
   function openDrawer() {
-    document.getElementById('app-drawer')?.classList.add('open');
-    document.getElementById('drawer-backdrop')?.classList.add('show');
-    document.getElementById('nav-hamburger')?.classList.add('open');
+    const drawer   = document.getElementById('app-drawer');
+    const backdrop = document.getElementById('drawer-backdrop');
+    const burger   = document.getElementById('nav-hamburger');
+    if (!drawer) return;
+    drawer.classList.add('open');
+    backdrop?.classList.add('show');
+    burger?.classList.add('open');
+    Anim.slideInLeft(drawer, { duration: 300 });
   }
+
   function closeDrawer() {
-    document.getElementById('app-drawer')?.classList.remove('open');
-    document.getElementById('drawer-backdrop')?.classList.remove('show');
-    document.getElementById('nav-hamburger')?.classList.remove('open');
+    const drawer   = document.getElementById('app-drawer');
+    const backdrop = document.getElementById('drawer-backdrop');
+    const burger   = document.getElementById('nav-hamburger');
+    if (!drawer || !drawer.classList.contains('open')) return;
+    const anim = Anim.slideOutLeft(drawer, { duration: 240 });
+    const done = () => {
+      drawer.classList.remove('open');
+      backdrop?.classList.remove('show');
+      burger?.classList.remove('open');
+    };
+    anim && anim.then ? anim.then(done) : done();
   }
 
   function _doSearch(q, resultsEl) {

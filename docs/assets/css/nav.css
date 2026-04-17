@@ -114,9 +114,9 @@
   background:var(--bg-raised); border-right:1px solid var(--bdr-mid);
   display:flex; flex-direction:column;
   transform:translateX(-100%);
-  transition:transform var(--dur-slow) var(--ease);
+  will-change: transform;
 }
-#app-drawer.open { transform:none; }
+/* .open dipakai sebagai state marker saja — Anime.js kontrol transform */
 
 .drawer-top {
   display:flex; align-items:center; justify-content:space-between;
