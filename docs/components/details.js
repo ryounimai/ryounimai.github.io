@@ -114,6 +114,18 @@ const Details = (() => {
     const epItems = page.querySelectorAll('.ep-card, .ep-num-chip');
 
     const A  = Anim.raw();
+
+    /* Set semua ke state awal SYNC sebelum browser paint pertama */
+    const headerEls = [poster, badges, title, genres, actions].filter(Boolean);
+    A.set(headerEls, { opacity: 0 });
+    if (poster) A.set(poster, { translateX: -24 });
+    if (badges) A.set(badges, { translateY: 12 });
+    if (title)  A.set(title,  { translateY: 12 });
+    if (genres) A.set(genres, { translateY: 12 });
+    if (actions)A.set(actions,{ translateY: 12 });
+    if (cells.length)   A.set(cells,   { opacity: 0, translateY: 10 });
+    if (epItems.length) A.set(epItems, { opacity: 0, translateY: 8  });
+
     const tl = Anim.timeline({ defaults: { ease: 'out(2)' } });
 
     if (poster) tl.add(poster, {
@@ -122,8 +134,8 @@ const Details = (() => {
       duration  : 380,
     }, 0);
 
-    const headerEls = [badges, title, genres, actions].filter(Boolean);
-    headerEls.forEach((el, i) => {
+    const animEls = [badges, title, genres, actions].filter(Boolean);
+    animEls.forEach((el, i) => {
       tl.add(el, { opacity: [0, 1], translateY: [12, 0], duration: 280 }, 80 + i * 70);
     });
 

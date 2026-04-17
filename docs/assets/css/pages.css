@@ -400,6 +400,28 @@
 /* :has() scroll lock */
 body:has(#history-panel.open) { overflow: hidden; }
 
+.hist-hd {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 18px; border-bottom:1px solid var(--bdr-subtle); flex-shrink:0;
+}
+.hist-title { font-size:var(--font-size-md); font-weight:700; color:var(--txt-primary); }
+.hist-list  { flex:1; overflow-y:auto; padding:8px; }
+
+.history-item {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 12px; border-radius:var(--r-md);
+  cursor:pointer; transition:background var(--dur-fast);
+}
+.history-item:hover { background:var(--clr-accent-subtle); }
+.history-item img {
+  width:44px; height:62px; object-fit:cover;
+  border-radius:var(--r-xs); flex-shrink:0; background:var(--bg-float);
+}
+.history-empty {
+  padding:40px 20px; text-align:center;
+  color:var(--txt-tertiary); font-size:var(--font-size-sm);
+}
+
 /* ── SETTINGS PANEL ──────────────────────────────────────────────── */
 #settings-panel {
   position:fixed; top:0; right:0; bottom:0; z-index:var(--z-modal);

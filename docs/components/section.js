@@ -42,8 +42,15 @@ const Section = (() => {
 
   /* ── Stagger helper — dipanggil setelah setiap innerHTML diset ── */
   function _animStagger(container, selector, staggerMs) {
+    const els = container.querySelectorAll(selector);
+    if (!els.length) return;
+    /* Set opacity:0 synchronous — sebelum browser paint pertama
+       agar tidak ada flash elemen terlihat sebelum animasi mulai */
+    if (!Anim.reduced) {
+      Anim.raw().set(els, { opacity: 0, translateY: 12 });
+    }
     requestAnimationFrame(() => {
-      Anim.staggerIn(container.querySelectorAll(selector), {
+      Anim.staggerIn(els, {
         stagger : staggerMs,
         from    : 12,
         duration: 280,

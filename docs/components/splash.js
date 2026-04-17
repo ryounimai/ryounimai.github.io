@@ -14,9 +14,14 @@ const Splash = (() => {
     /* Kalau reduced motion — langsung tampil saja */
     if (Anim.reduced) return;
 
-    /* Set state awal — sembunyikan sebelum animasi */
+    /* Set opacity:0 via style langsung — sebelum A.set()
+       agar elemen tidak flash terlihat sama sekali */
+    logo.style.opacity = '0';
+    sub.style.opacity  = '0';
+    dots.forEach(d => { d.style.opacity = '0'; });
+
+    /* Set state awal transform via Anime.js */
     const A = Anim.raw();
-    A.set([logo, sub, ...dots], { opacity: 0 });
     A.set(logo, { scale: 0.8 });
     A.set(sub,  { translateY: 8 });
 
