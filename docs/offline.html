@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Offline — RyouStream</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#07070d;color:#f1f5f9;font-family:'Inter',system-ui,sans-serif;
+      display:flex;align-items:center;justify-content:center;min-height:100dvh;text-align:center;padding:24px}
+    .icon{font-size:64px;margin-bottom:24px}
+    h1{font-size:24px;font-weight:700;margin-bottom:12px;
+      background:linear-gradient(135deg,#7c3aed,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    p{color:#64748b;font-size:14px;line-height:1.7;max-width:300px;margin:0 auto 24px}
+    a{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;
+      background:linear-gradient(135deg,#7c3aed,#3b82f6);border-radius:999px;
+      color:white;font-size:14px;font-weight:600;text-decoration:none}
+    a:active{opacity:0.8}
+  </style>
+</head>
+<body>
+  <div>
+    <div class="icon">📡</div>
+    <h1>Tidak Ada Koneksi</h1>
+    <p>RyouStream tidak dapat terhubung ke server backend.<br>Pastikan server Python sedang berjalan.</p>
+    <a href="/" onclick="location.reload();return false;">
+      🔄 Coba Lagi
+    </a>
+  </div>
+</body>
+</html>

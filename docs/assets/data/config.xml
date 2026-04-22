@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  RyouStream App Configuration
+  Version: 1.0.0 Epsilon
+  Author : Ryounime
+-->
+<config>
+
+  <!-- App Identity -->
+  <app>
+    <name>RyouStream</name>
+    <tagline>Ryounime Stream Platform</tagline>
+    <author>Ryounime</author>
+    <version>1.0.0</version>
+    <codename>Epsilon</codename>
+    <description>Platform streaming anime lokal. Tonton koleksi animemu tanpa batas, kapan saja.</description>
+    <lang>id</lang>
+  </app>
+
+  <!-- API Backend -->
+  <api>
+    <!-- Empty = auto-detect from window.location.origin -->
+    <baseUrl></baseUrl>
+    <timeout>10000</timeout>
+    <retries>2</retries>
+    <endpoints>
+      <library>/api/library</library>
+      <episodes>/api/episodes/</episodes>
+      <scan>/api/scan</scan>
+      <scanStatus>/api/scan/status</scanStatus>
+      <settings>/api/settings</settings>
+      <clearCache>/api/clear_cache</clearCache>
+      <dirlist>/api/dirlist</dirlist>
+      <chapters>/api/chapters</chapters>
+      <fonts>/api/fonts</fonts>
+      <media>/media/</media>
+    </endpoints>
+  </api>
+
+  <!-- Player -->
+  <player>
+    <default>vidstack</default>
+    <autoplay>false</autoplay>
+    <volume>1.0</volume>
+    <playbackRate>1.0</playbackRate>
+    <subtitleEnabled>true</subtitleEnabled>
+    <preferredSubtitleLang>id</preferredSubtitleLang>
+    <rememberPosition>true</rememberPosition>
+    <skipIntroSec>85</skipIntroSec>
+    <skipOutroSec>30</skipOutroSec>
+    <autoNext>true</autoNext>
+    <autoNextDelaySec>5</autoNextDelaySec>
+  </player>
+
+  <!-- Theme / UI -->
+  <ui>
+    <theme>dark</theme>
+    <accentColor>#7c3aed</accentColor>
+    <cardLayout>poster</cardLayout>
+    <cardsPerRow>auto</cardsPerRow>
+    <language>id</language>
+    <descriptionLang>id</descriptionLang>
+    <showTrailer>true</showTrailer>
+    <showRating>true</showRating>
+    <enableAnimations>true</enableAnimations>
+  </ui>
+
+  <!-- PWA -->
+  <pwa>
+    <enableSW>true</enableSW>
+    <offlineMode>true</offlineMode>
+    <cacheImages>true</cacheImages>
+  </pwa>
+
+  <!-- Library -->
+  <library>
+    <sortDefault>title</sortDefault>
+    <sortDir>asc</sortDir>
+    <pageSize>40</pageSize>
+    <showTypes>Movie,TV,OVA,Special</showTypes>
+  </library>
+
+</config>

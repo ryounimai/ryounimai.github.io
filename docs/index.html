@@ -1,296 +1,1068 @@
 <!DOCTYPE html>
-<html lang="id" data-bs-theme="dark">
+<html lang="id" dir="ltr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#06101e">
-  <title>ŘΨØŬ — Anime & Drama</title>
-  <link rel="icon" href="/res/favicon.ico">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="apple-touch-icon" href="/res/icon-192.png">
-  <!-- Fonts -->
-  <link rel="stylesheet" href="/assets/fonts/fonts.css">
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
-  <!-- Swiper -->
-  <link rel="stylesheet" href="/assets/swiper/swiper-bundle.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <!-- SEO / Meta -->
+  <title>RyouStream v1.1.0 — Ryounime Stream Platform</title>
+  <meta name="description" content="Platform streaming anime lokal RyouStream. Tonton koleksi animemu kapan saja dengan tampilan modern dan elegan." />
+  <meta name="author" content="Ryounime" />
+  <meta name="version" content="1.1.0" />
+  <meta name="theme-color" content="#7c3aed" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#7c3aed" />
+  <meta name="color-scheme" content="dark" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.svg" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="RyouStream" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="RyouStream" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="RyouStream — Ryounime Stream Platform" />
+  <meta property="og:description" content="Platform streaming anime lokal dengan koleksi lengkap." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/icons/icon-512.svg" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+  <link rel="shortcut icon" href="assets/icons/favicon.svg" />
+
+  <!-- Fonts (preconnect) -->
+  <!-- Fonts loaded locally -->
+
+  <!-- ── CDN LIBRARIES ────────────────────────────────────────────────── -->
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link rel="stylesheet" href="assets/api/bootstrap/bootstrap-grid.min.css" />
+
+  <!-- Vidstack Player CSS (v1.x) -->
+  <link rel="stylesheet" href="assets/api/vidstack/css/base.css" />
+  <link rel="stylesheet" href="assets/api/vidstack/css/theme.css" />
+  <link rel="stylesheet" href="assets/api/vidstack/css/video.css" />
+
   <!-- App CSS -->
-  <link rel="stylesheet" href="/assets/css/vars.css">
-  <link rel="stylesheet" href="/assets/css/base.css">
-  <link rel="stylesheet" href="/assets/css/nav.css">
-  <link rel="stylesheet" href="/assets/css/pages.css">
-  <!-- Admin lock style -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/player.css" />
+
+  <!-- ── PRELOAD CRITICAL ASSETS ──────────────────────────────────────── -->
+  <link rel="preload" href="assets/icons/logo.svg" as="image" />
+  <link rel="preload" href="assets/data/categories.json" as="fetch" crossorigin />
+
+  <!-- Inline critical CSS (prevent FOUC) -->
   <style>
-    .admin-lock-btn {
-      display:inline-flex; align-items:center; cursor:pointer;
-      padding:3px 8px; border-radius:var(--r-pill);
-      background:var(--bg-float); border:1px solid var(--bdr-subtle);
-      color:var(--txt-tertiary); font-size:10px; font-weight:700;
-      transition:all .15s;
+    body { background: #07070d; }
+    #page-loader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #07070d;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 24px;
     }
-    .admin-lock-btn:hover { border-color:var(--clr-accent); color:var(--clr-accent); }
-    .admin-lock-btn.unlocked { border-color:var(--clr-success); color:var(--clr-success); }
-    .admin-btn:disabled { opacity:.45; cursor:not-allowed; filter:grayscale(.6); }
+    #page-loader img { height: 44px; animation: ld-float 2.5s ease-in-out infinite; }
+    #page-loader .ld-bar {
+      width: 160px; height: 3px; background: #1e1e31; border-radius: 99px; overflow: hidden;
+    }
+    #page-loader .ld-fill {
+      height: 100%;
+      background: linear-gradient(90deg,#7c3aed,#3b82f6,#06b6d4);
+      border-radius: 99px;
+      animation: ld-fill 1.8s ease-in-out infinite;
+    }
+    @keyframes ld-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    @keyframes ld-fill  { 0%{width:0;margin-left:0} 50%{width:80%;margin-left:10%} 100%{width:0;margin-left:100%} }
   </style>
 </head>
-<body data-bs-theme="dark">
 
-<!-- Splash -->
-<div id="splash">
-  <div class="splash-content">
-    <img class="splash-logo" src="/res/logo.svg" alt="RYOU">
-    <div class="splash-sub">Media Server</div>
-    <div class="splash-dots"><span></span><span></span><span></span></div>
-  </div>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE LOADER
+══════════════════════════════════════════════════════════════ -->
+<div id="page-loader" role="status" aria-label="Memuat RyouStream...">
+  <img src="assets/icons/logo.svg" alt="RyouStream" />
+  <div class="ld-bar"><div class="ld-fill"></div></div>
+  <span style="font-size:12px;color:#64748b;font-family:system-ui">Memuat...</span>
 </div>
 
-<!-- Nav -->
-<nav id="app-nav"></nav>
-<div id="drawer-backdrop" class="backdrop"></div>
-<aside id="app-drawer"></aside>
+<!-- ══════════════════════════════════════════════════════════════
+     APP ROOT
+══════════════════════════════════════════════════════════════ -->
+<div id="app" class="app-wrapper" style="visibility:hidden">
 
-<!-- Hero Carousel -->
-<div class="hero-section page-body">
-  <div id="hero-swiper" class="swiper hero-swiper">
-    <div class="swiper-wrapper"></div>
-    <div class="swiper-pagination"></div>
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-button-next"></div>
-  </div>
-</div>
+  <!-- ── DESKTOP SIDEBAR NAVBAR ──────────────────────────────────────── -->
+  <nav class="navbar" id="sidebar" role="navigation" aria-label="Navigasi utama">
 
-<!-- Main content -->
-<div class="main-wrap">
-  <!-- Continue watching -->
-  <section class="section" id="section-continue">
-    <div class="section-hd">
-      <h2 data-i18n="continue_watching">Lanjut Nonton</h2>
+    <!-- Brand -->
+    <div class="navbar-brand">
+      <a href="#home" class="nav-brand-link">
+        <img src="assets/icons/logo.svg" alt="RyouStream" />
+      </a>
     </div>
-    <div id="continue-wrap"></div>
-  </section>
 
-  <!-- Top Series -->
-  <section class="section" id="section-series">
-    <div class="section-hd">
-      <h2 data-i18n="top_series">Top Series</h2>
-    </div>
-    <div id="hs-series"></div>
-  </section>
+    <!-- Primary Nav -->
+    <span class="nav-section-label">Navigasi</span>
+    <ul class="nav-list" id="sidebar-nav-primary">
+      <!-- Generated by JS from categories.json -->
+    </ul>
 
-  <!-- Top Movies -->
-  <section class="section" id="section-movies">
-    <div class="section-hd">
-      <h2 data-i18n="top_movies">Top Film</h2>
-    </div>
-    <div id="hs-movies"></div>
-  </section>
+    <!-- Secondary Nav -->
+    <span class="nav-section-label" style="margin-top:8px">Info</span>
+    <ul class="nav-list" id="sidebar-nav-secondary">
+      <!-- Generated by JS -->
+    </ul>
 
-  <!-- All titles -->
-  <section class="section">
-    <div class="section-hd">
-      <h2 data-i18n="all_titles">Semua Judul</h2>
-      <button class="btn btn-ghost btn-sm" id="btn-filter">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-        Filter
-      </button>
-    </div>
-    <div id="main-grid"></div>
-    <div id="main-pagination"></div>
-  </section>
-</div>
-
-<!-- Filter Panel -->
-<div id="filter-backdrop" class="backdrop"></div>
-<div id="filter-panel" class="filter-panel">
-  <div class="filter-panel-hd">
-    <span class="filter-panel-title">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-      Filter
-    </span>
-    <button class="btn btn-icon btn-ghost" id="filter-close">✕</button>
-  </div>
-  <div class="filter-panel-body" id="filter-body"></div>
-  <div class="filter-panel-ft">
-    <button class="btn btn-ghost" id="filter-reset" style="flex:1" data-i18n="filter_reset">Reset</button>
-    <button class="btn btn-primary" id="filter-apply" style="flex:2" data-i18n="filter_apply">Terapkan</button>
-  </div>
-</div>
-
-<!-- History Panel -->
-<div id="history-backdrop" class="backdrop"></div>
-<aside id="history-panel" class="watch-sidebar" style="width:min(360px,92vw);right:0;top:0;height:100vh;position:fixed;z-index:var(--z-modal);transform:translateX(100%);transition:transform var(--dur-slow) var(--ease);border-left:1px solid var(--bdr-strong)">
-  <div class="ws-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px">
-    <span style="font-size:15px;font-weight:700" data-i18n="history">Riwayat</span>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-ghost btn-sm" id="history-clear-btn" data-i18n="history_clear">Hapus</button>
-      <button class="btn btn-icon btn-ghost" id="history-close">✕</button>
-    </div>
-  </div>
-  <div class="ws-list" id="history-list"></div>
-</aside>
-
-<!-- Settings Panel -->
-<div id="settings-backdrop" class="backdrop"></div>
-<aside id="settings-panel">
-  <div class="settings-hd">
-    <span class="settings-title" data-i18n="settings">Pengaturan</span>
-    <button class="btn btn-icon btn-ghost" id="settings-close">✕</button>
-  </div>
-  <div class="settings-body">
-
-    <!-- Bahasa -->
-    <div class="settings-section">
-      <div class="settings-section-label" data-i18n="settings_lang">Bahasa</div>
-      <div class="settings-lang-grid">
-        <button class="settings-lang-btn" data-setlang="id">
-          <span class="settings-lang-code">ID</span>
-          <span class="settings-lang-name">Indonesia</span>
-        </button>
-        <button class="settings-lang-btn" data-setlang="en">
-          <span class="settings-lang-code">EN</span>
-          <span class="settings-lang-name">English</span>
-        </button>
-        <button class="settings-lang-btn" data-setlang="ja">
-          <span class="settings-lang-code">JA</span>
-          <span class="settings-lang-name">日本語</span>
-        </button>
+    <!-- Server Status -->
+    <div class="navbar-footer">
+      <div class="server-status" id="server-status-indicator" title="Status server backend">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">Menghubungkan...</span>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-3);text-align:center">
+        v1.1.0
       </div>
     </div>
+  </nav>
 
-    <!-- Pemutaran -->
-    <div class="settings-section">
-      <div class="settings-section-label" data-i18n="settings_autoplay">Pemutaran</div>
-      <div class="settings-row">
-        <div>
-          <div class="settings-row-label">Autoplay episode berikutnya</div>
-          <div class="settings-row-sub">Putar otomatis saat episode selesai</div>
+  <!-- ── MAIN CONTENT ──────────────────────────────────────────────────── -->
+  <main class="main-content" id="main-content">
+
+    <!-- ── MOBILE TOPBAR ──────────────────────────────────────────────── -->
+    <header class="topbar" id="topbar" role="banner">
+
+      <!-- Logo (sembunyikan saat ada page title) -->
+      <a class="topbar-logo" id="topbar-logo" href="#home" aria-label="RyouStream Home">
+        <!-- Icon mark saja di mobile -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" width="34" height="34">
+          <defs>
+            <linearGradient id="tg1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#7c3aed"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+          <rect width="40" height="40" rx="10" fill="url(#tg1)"/>
+          <polygon points="14,10 14,30 30,20" fill="white" opacity="0.95"/>
+          <circle cx="32" cy="10" r="4" fill="white" opacity="0.7"/>
+        </svg>
+        <span class="topbar-logo-text">RYOU<span style="color:var(--accent-light)">STREAM</span></span>
+      </a>
+
+      <!-- Page title (muncul saat navigasi ke detail/watch/dll) -->
+      <h1 class="topbar-title" id="topbar-title"></h1>
+
+      <!-- Actions — selalu di kanan -->
+      <div class="topbar-actions">
+        <button class="topbar-btn" id="topbar-search-btn" aria-label="Cari anime">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <button class="topbar-btn" id="topbar-scan-btn" aria-label="Refresh library" title="Scan ulang library">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════════
+         PAGES CONTAINER
+    ══════════════════════════════════════════════════════════ -->
+    <div id="pages-container">
+
+      <!-- ╔══════════════════════════════════════
+           ║  PAGE: HOME (#home)
+           ╚══════════════════════════════════════ -->
+      <section id="page-home" class="page" data-page="home" aria-label="Beranda">
+
+        <!-- Hero Carousel -->
+        <div class="hero" id="hero-carousel" aria-label="Anime unggulan">
+          <div class="hero-bg" id="hero-bg" role="img" aria-label="Banner anime"></div>
+          <div class="hero-overlay"></div>
+          <div class="hero-content" id="hero-content">
+            <div class="hero-badge" id="hero-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              Pilihan Editor
+            </div>
+            <h2 class="hero-title" id="hero-title">—</h2>
+            <div class="hero-meta">
+              <span class="hero-rating" id="hero-rating">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <span>—</span>
+              </span>
+              <span class="hero-year" id="hero-year"></span>
+              <span class="hero-eps" id="hero-eps"></span>
+            </div>
+            <div class="hero-genres" id="hero-genres"></div>
+            <p class="hero-desc" id="hero-desc"></p>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-lg" id="hero-play-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Tonton Sekarang
+              </button>
+              <button class="btn btn-ghost" id="hero-details-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                Detail
+              </button>
+            </div>
+          </div>
+          <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Pilih anime hero"></div>
         </div>
-        <input type="checkbox" id="setting-autoplay" style="width:18px;height:18px;accent-color:var(--clr-accent)">
-      </div>
-      <div class="settings-row">
-        <div>
-          <div class="settings-row-label" data-i18n="settings_subtitle">Subtitle</div>
-          <div class="settings-row-sub">Aktifkan subtitle otomatis</div>
+
+        <!-- Home Content -->
+        <div class="page-pad">
+
+          <!-- Latest / Terbaru -->
+          <div class="section-gap" id="section-latest">
+            <div class="section-header">
+              <h2 class="section-title">
+                <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Terbaru
+                <span class="title-badge" id="latest-count">0</span>
+              </h2>
+              <a href="#archive" class="section-more" data-navto="archive">
+                Lihat semua
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="row-section">
+              <div class="scroll-row" id="row-latest">
+                <!-- Skeleton placeholders initially -->
+                <div class="skeleton skeleton-card" style="width:150px">
+                  <div class="skeleton skeleton-poster" style="aspect-ratio:2/3;border-radius:14px"></div>
+                  <div class="skeleton skeleton-line" style="margin-top:8px;height:12px;border-radius:99px"></div>
+                  <div class="skeleton skeleton-line skeleton-line-short" style="margin-top:6px;height:10px;border-radius:99px;width:60%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TV Series -->
+          <div class="section-gap" id="section-tv">
+            <div class="section-header">
+              <h2 class="section-title">
+                <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg>
+                TV Series
+                <span class="title-badge" id="tv-count">0</span>
+              </h2>
+              <a href="#archive?type=TV" class="section-more" data-navto="archive" data-filter='{"type":"TV"}'>
+                Semua Series
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="row-section">
+              <div class="scroll-row" id="row-tv"></div>
+            </div>
+          </div>
+
+          <!-- Movies -->
+          <div class="section-gap" id="section-movies">
+            <div class="section-header">
+              <h2 class="section-title">
+                <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 7h5M17 17h5"/></svg>
+                Film
+                <span class="title-badge" id="movie-count">0</span>
+              </h2>
+              <a href="#archive?type=Movie" class="section-more" data-navto="archive" data-filter='{"type":"Movie"}'>
+                Semua Film
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="row-section">
+              <div class="scroll-row" id="row-movies"></div>
+            </div>
+          </div>
+
+          <!-- Top Rated -->
+          <div class="section-gap" id="section-toprated">
+            <div class="section-header">
+              <h2 class="section-title">
+                <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                Rating Tertinggi
+              </h2>
+              <a href="#archive?sort=rating_desc" class="section-more" data-navto="archive" data-filter='{"sort":"rating_desc"}'>
+                Lihat semua
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="row-section">
+              <div class="scroll-row" id="row-toprated"></div>
+            </div>
+          </div>
+
+          <!-- OVA / Special -->
+          <div class="section-gap" id="section-ova" style="display:none">
+            <div class="section-header">
+              <h2 class="section-title">
+                <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                OVA &amp; Special
+              </h2>
+              <a href="#archive?type=OVA" class="section-more" data-navto="archive" data-filter='{"type":"OVA"}'>
+                Lihat semua
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="row-section">
+              <div class="scroll-row" id="row-ova"></div>
+            </div>
+          </div>
+
+        </div><!-- /page-pad -->
+      </section>
+
+      <!-- ╔══════════════════════════════════════
+           ║  PAGE: SEARCH (#search)
+           ╚══════════════════════════════════════ -->
+      <section id="page-search" class="page" data-page="search" aria-label="Pencarian">
+        <div class="page-pad">
+
+          <!-- Search Header -->
+          <div style="margin-bottom:var(--sp-5)">
+            <h2 class="font-display fw-700" style="font-size:var(--text-xl);margin-bottom:var(--sp-3)">
+              Pencarian
+            </h2>
+
+            <!-- Search bar -->
+            <div class="search-bar" id="main-search-bar">
+              <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input
+                type="search"
+                class="search-input"
+                id="main-search-input"
+                placeholder="Cari judul, genre, tahun..."
+                autocomplete="off"
+                aria-label="Cari anime"
+              />
+              <button class="search-clear" id="main-search-clear" aria-label="Hapus">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Filter bar -->
+          <div class="filter-bar" id="search-filter-bar" role="group" aria-label="Filter tipe">
+            <!-- Generated by JS -->
+          </div>
+
+          <!-- Results info -->
+          <p class="search-results-count" id="search-count" style="display:none"></p>
+
+          <!-- Search results grid -->
+          <div id="search-results" class="anime-grid">
+            <!-- Empty state -->
+            <div class="empty-state" id="search-empty" style="grid-column:1/-1">
+              <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <h3 class="empty-title">Mulai Mencari</h3>
+              <p class="empty-desc">Ketik judul anime, nama karakter, genre, atau tahun untuk mulai mencari dari koleksimu.</p>
+            </div>
+          </div>
+
         </div>
-        <input type="checkbox" id="setting-subtitle" style="width:18px;height:18px;accent-color:var(--clr-accent)">
-      </div>
-    </div>
+      </section>
 
-    <!-- Library (Admin) -->
-    <div class="settings-section">
-      <div class="settings-section-label" style="display:flex;align-items:center;justify-content:space-between">
-        <span data-i18n="settings_scan">Library</span>
-        <button id="admin-unlock-btn" class="admin-lock-btn" title="Admin" onclick="AdminLock.toggle()">
-          <svg id="admin-lock-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <span id="admin-lock-label" style="font-size:10px;margin-left:4px">Admin</span>
-        </button>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <button class="btn btn-outline admin-btn" id="btn-scan" data-i18n="settings_scan" disabled>Scan Library</button>
-        <button class="btn btn-ghost admin-btn" id="btn-force-scan" data-i18n="settings_force_scan" disabled>Scan Ulang</button>
-        <button class="btn btn-ghost admin-btn" id="btn-clear-lib" data-i18n="settings_clear_lib" disabled>Hapus Cache Library</button>
-        <button class="btn btn-danger btn-sm admin-btn" id="btn-clear-all" data-i18n="settings_clear_all" disabled>Hapus Semua Cache</button>
-      </div>
-    </div>
+      <!-- ╔══════════════════════════════════════
+           ║  PAGE: ARCHIVE (#archive)
+           ╚══════════════════════════════════════ -->
+      <section id="page-archive" class="page" data-page="archive" aria-label="Arsip koleksi">
+        <div class="page-pad">
 
-    <!-- Versi -->
-    <div class="settings-section">
-      <div class="settings-section-label">Tentang</div>
-      <div class="settings-row">
-        <span class="settings-row-label">Versi</span>
-        <span class="settings-row-val ver">v2.1.0</span>
-      </div>
-      <div class="settings-row">
-        <span class="settings-row-label">Server</span>
-        <span class="settings-row-val ver" id="info-version">—</span>
-      </div>
-    </div>
+          <!-- Archive Header -->
+          <div style="margin-bottom:var(--sp-4)">
+            <div class="flex items-center justify-between" style="margin-bottom:var(--sp-4)">
+              <div>
+                <h2 class="font-display fw-700" style="font-size:var(--text-xl)">Arsip Koleksi</h2>
+                <p class="text-2 text-sm" style="margin-top:4px">
+                  <span id="archive-total">0</span> judul tersedia
+                </p>
+              </div>
+              <!-- Sort dropdown -->
+              <div class="flex gap-2 items-center">
+                <label class="sr-only" for="archive-sort">Urutkan</label>
+                <select id="archive-sort" aria-label="Urutan" style="
+                  background:var(--surface);
+                  border:1px solid var(--border-2);
+                  color:var(--text-1);
+                  padding:8px 12px;
+                  border-radius:var(--r-lg);
+                  font-size:var(--text-sm);
+                  cursor:pointer;
+                ">
+                  <option value="title_asc">Judul A–Z</option>
+                  <option value="title_desc">Judul Z–A</option>
+                  <option value="year_desc">Terbaru</option>
+                  <option value="year_asc">Terlama</option>
+                  <option value="rating_desc">Rating ↓</option>
+                  <option value="eps_desc">Episode ↓</option>
+                </select>
+              </div>
+            </div>
 
+            <!-- Type filter chips -->
+            <div class="filter-bar" id="archive-type-filter" role="group" aria-label="Filter tipe">
+              <!-- Generated by JS -->
+            </div>
+
+            <!-- Genre filter chips -->
+            <div class="filter-bar" id="archive-genre-filter" role="group" aria-label="Filter genre" style="margin-top:var(--sp-2)">
+              <!-- Generated by JS -->
+            </div>
+          </div>
+
+          <!-- Archive grid -->
+          <div id="archive-grid" class="anime-grid">
+            <!-- Generated by JS -->
+          </div>
+
+          <!-- Pagination / Load more -->
+          <div id="archive-pagination" style="text-align:center;margin-top:var(--sp-8)">
+            <button class="btn btn-secondary" id="archive-loadmore" style="display:none">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Muat Lebih Banyak
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ╔══════════════════════════════════════
+           ║  PAGE: CATEGORY (#category)
+           ╚══════════════════════════════════════ -->
+      <section id="page-category" class="page" data-page="category" aria-label="Kategori genre">
+        <div class="page-pad">
+
+          <h2 class="font-display fw-700" style="font-size:var(--text-xl);margin-bottom:var(--sp-2)">Kategori</h2>
+          <p class="text-2 text-sm" style="margin-bottom:var(--sp-5)">Jelajahi koleksi berdasarkan genre</p>
+
+          <!-- Category grid -->
+          <div class="category-grid" id="category-grid">
+            <!-- Generated by JS -->
+          </div>
+
+          <!-- Category detail (inline, shown when genre clicked) -->
+          <div id="category-detail" style="display:none;margin-top:var(--sp-8)">
+            <div class="flex items-center gap-3" style="margin-bottom:var(--sp-4)">
+              <button class="back-btn" id="category-back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+                Kembali
+              </button>
+              <h3 class="font-display fw-700 text-xl" id="category-detail-title">—</h3>
+              <span class="badge badge-tv" id="category-detail-count">0</span>
+            </div>
+            <div class="anime-grid" id="category-detail-grid"></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ╔══════════════════════════════════════
+           ║  PAGE: DETAILS (#details/ID)
+           ╚══════════════════════════════════════ -->
+      <section id="page-details" class="page" data-page="details" aria-label="Detail anime">
+
+        <!-- Back button (mobile) -->
+        <div class="page-pad" style="padding-bottom:0">
+          <button class="back-btn" id="details-back">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+            Kembali
+          </button>
+        </div>
+
+        <!-- Banner -->
+        <div class="details-hero" id="details-hero">
+          <img class="details-banner" id="details-banner" src="" alt="" loading="lazy" />
+          <div class="details-banner-grad"></div>
+        </div>
+
+        <!-- Main info -->
+        <div class="details-main">
+          <div class="details-card">
+
+            <!-- Poster -->
+            <div class="details-poster">
+              <img id="details-poster" src="" alt="" loading="lazy" />
+            </div>
+
+            <!-- Info -->
+            <div class="details-info">
+              <div class="flex gap-2" style="flex-wrap:wrap;margin-bottom:var(--sp-2)">
+                <span class="badge" id="details-type-badge">TV</span>
+                <span class="badge" id="details-status-badge">—</span>
+              </div>
+              <h1 class="details-title" id="details-title">—</h1>
+              <p class="details-title-ja" id="details-title-ja"></p>
+
+              <div class="details-stats">
+                <span class="stat-item stat-rating" id="details-rating">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  —
+                </span>
+                <span class="stat-item" id="details-year">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  —
+                </span>
+                <span class="stat-item" id="details-eps">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  —
+                </span>
+                <span class="stat-item" id="details-studio">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                  —
+                </span>
+              </div>
+
+              <div class="details-genres" id="details-genres"></div>
+
+              <div class="hero-actions" style="gap:10px">
+                <button class="btn btn-primary" id="details-play-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  Tonton
+                </button>
+                <a id="details-mal-link" href="#" target="_blank" rel="noopener" class="btn btn-secondary" style="display:none">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  MAL
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Description tabs (id / en / ja) -->
+          <div>
+            <div class="desc-tabs" id="desc-tabs" role="tablist">
+              <button class="desc-tab active" data-lang="id" role="tab" aria-selected="true">Indonesia</button>
+              <button class="desc-tab" data-lang="en" role="tab" aria-selected="false">English</button>
+              <button class="desc-tab" data-lang="ja" role="tab" aria-selected="false">日本語</button>
+            </div>
+            <div class="desc-content active" id="desc-id" role="tabpanel"></div>
+            <div class="desc-content" id="desc-en" role="tabpanel"></div>
+            <div class="desc-content" id="desc-ja" role="tabpanel"></div>
+          </div>
+
+          <!-- Additional info -->
+          <div class="divider"></div>
+          <div id="details-extra-info" style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3)">
+            <!-- Extra fields: aired, source, demographics, themes etc -->
+          </div>
+
+          <!-- Episode list -->
+          <div class="episode-list-wrap" id="episode-list-wrap" style="display:none">
+            <div class="divider"></div>
+            <div class="section-header" style="margin-bottom:var(--sp-4)">
+              <h3 class="section-title">
+                <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                Episode
+                <span class="title-badge" id="ep-count-badge">0</span>
+              </h3>
+              <!-- Search episodes -->
+              <div class="search-bar" style="width:180px">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input type="search" class="search-input" id="ep-search" placeholder="Cari episode..." />
+              </div>
+            </div>
+            <div id="episode-list" class="episode-list"></div>
+            <div id="ep-loading" style="display:none;text-align:center;padding:var(--sp-8)">
+              <div class="spinner" style="margin:0 auto"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ╔══════════════════════════════════════
+           ║  PAGE: WATCH (#watch/ID/EP)
+           ╚══════════════════════════════════════ -->
+      <section id="page-watch" class="page" data-page="watch" aria-label="Pemutar video">
+
+        <!-- ══ Topbar mobile ══ -->
+        <div class="watch-topbar" id="watch-topbar">
+          <button class="watch-back-btn" id="watch-back" aria-label="Kembali">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <div class="watch-topbar-info">
+            <p class="watch-topbar-series" id="watch-topbar-series">—</p>
+            <p class="watch-topbar-ep"    id="watch-topbar-ep">—</p>
+          </div>
+        </div>
+
+        <!-- ══ Root: flex row (desktop) / flex col (mobile) ══ -->
+        <div class="watch-root" id="watch-root">
+
+          <!-- ─ LEFT/TOP: Player + Controls + Episode list ─ -->
+          <div class="watch-main" id="watch-main">
+
+            <!-- Player -->
+            <div class="watch-player-wrap" id="player-wrap">
+              <div id="player-mount"></div>
+              <div class="watch-error" id="player-error" style="display:none">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(239,68,68,0.7)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <h3 class="watch-error-title">Gagal Memutar</h3>
+                <p id="player-error-msg"></p>
+                <button class="btn btn-outline btn-sm" id="player-retry-btn">Coba Lagi</button>
+              </div>
+            </div>
+
+            <!-- Controls bar -->
+            <div class="watch-controls-bar" id="watch-controls-bar">
+
+              <!-- Baris info + skip -->
+              <div class="wcb-row wcb-row-top">
+                <div class="wcb-ep-info">
+                  <p class="wcb-series"  id="now-title">—</p>
+                  <p class="wcb-episode" id="now-ep-label">—</p>
+                </div>
+                <button class="wcb-skip-btn" id="skip-intro-btn" style="display:none">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                  Lewati Intro
+                </button>
+              </div>
+
+              <!-- Baris navigasi -->
+              <div class="wcb-row wcb-row-nav">
+                <button class="wcb-nav-btn" id="watch-prev-btn" disabled>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+                  <span>Sebelumnya</span>
+                </button>
+                <!-- Next ep card (last 90s) -->
+                <div class="wcb-next-card" id="next-ep-overlay" style="display:none">
+                  <img class="wcb-next-thumb" id="next-ep-thumb" src="" alt=""/>
+                  <div class="wcb-next-info">
+                    <span class="wcb-next-label">Selanjutnya</span>
+                    <span class="wcb-next-title" id="next-ep-title">—</span>
+                    <span class="wcb-next-cd"    id="next-ep-countdown"></span>
+                  </div>
+                  <button class="wcb-nav-btn wcb-play-next" id="next-ep-card">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Putar
+                  </button>
+                </div>
+                <button class="wcb-nav-btn wcb-btn-next" id="watch-next-btn" disabled>
+                  <span>Selanjutnya</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+                <a class="wcb-nav-btn wcb-detail-link" id="watch-details-link">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                  <span class="wcb-detail-text">Detail</span>
+                </a>
+              </div>
+
+              <!-- Subtitle -->
+              <div class="wcb-row wcb-row-sub" id="subtitle-panel" style="display:none">
+                <div class="wcb-sub-header">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15h10M7 11h4"/></svg>
+                  <span>Subtitle</span>
+                  <button class="wcb-sub-off" id="sub-off-btn">Matikan</button>
+                </div>
+                <div class="subtitle-list" id="subtitle-list"></div>
+              </div>
+
+            </div><!-- /watch-controls-bar -->
+
+            <!-- ══ Episode list — langsung di bawah controls (mobile & desktop kiri) ══ -->
+            <div class="watch-eplist-section" id="watch-eplist-section">
+              <div class="watch-eplist-head">
+                <span class="watch-eplist-title">Episode</span>
+                <span class="badge badge-tv" id="watch-ep-count-badge">0</span>
+                <div class="watch-eplist-search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  <input type="search" id="watch-ep-search" placeholder="Cari episode..." autocomplete="off"/>
+                </div>
+              </div>
+              <div class="watch-ep-list" id="watch-ep-list"></div>
+            </div>
+
+          </div><!-- /watch-main -->
+
+          <!-- ─ RIGHT: Episode list (desktop sidebar only) ─ -->
+          <aside class="watch-aside" id="watch-sidebar" aria-label="Daftar episode">
+            <div class="watch-aside-head">
+              <span class="watch-aside-title">Episode</span>
+              <span class="badge badge-tv" id="watch-ep-count-badge-desk">0</span>
+            </div>
+            <div class="watch-aside-search">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input type="search" id="watch-ep-search-desk" placeholder="Cari episode..." autocomplete="off"/>
+            </div>
+            <div class="watch-ep-list" id="watch-ep-list-desk"></div>
+          </aside>
+
+        </div><!-- /watch-root -->
+
+      </section>
+
+      <!-- ╔══════════════════════════════════════
+           ║  PAGE: SETTINGS (#settings)
+           ╚══════════════════════════════════════ -->
+      <section id="page-settings" class="page" data-page="settings" aria-label="Pengaturan">
+        <div class="settings-layout">
+
+          <h2 class="font-display fw-700" style="font-size:var(--text-xl);margin-bottom:var(--sp-2)">Pengaturan</h2>
+          <p class="text-2 text-sm" style="margin-bottom:var(--sp-6)">Kustomisasi RyouStream sesuai preferensimu</p>
+
+          <!-- ─ Player Settings ─ -->
+          <div class="settings-section">
+            <div class="settings-head" data-toggle="settings-player">
+              <div class="settings-head-left">
+                <div class="settings-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                </div>
+                <div>
+                  <div class="settings-label">Player</div>
+                  <div class="settings-desc">Pengaturan pemutar video</div>
+                </div>
+              </div>
+              <svg class="settings-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+            <div class="settings-body" id="settings-player">
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Putar Otomatis</div>
+                  <div class="settings-item-sub">Mulai memutar saat halaman dibuka</div>
+                </div>
+                <label class="toggle" aria-label="Putar otomatis">
+                  <input type="checkbox" id="setting-autoplay" />
+                </label>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Lanjut Episode Otomatis</div>
+                  <div class="settings-item-sub">Putar episode berikutnya secara otomatis</div>
+                </div>
+                <label class="toggle" aria-label="Auto next">
+                  <input type="checkbox" id="setting-autonext" checked />
+                </label>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Ingat Posisi</div>
+                  <div class="settings-item-sub">Lanjutkan dari posisi terakhir</div>
+                </div>
+                <label class="toggle" aria-label="Ingat posisi">
+                  <input type="checkbox" id="setting-remember-pos" checked />
+                </label>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Subtitle Default</div>
+                  <div class="settings-item-sub">Aktifkan subtitle secara default</div>
+                </div>
+                <label class="toggle" aria-label="Subtitle default">
+                  <input type="checkbox" id="setting-subtitle" checked />
+                </label>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Volume Default</div>
+                  <div class="settings-item-sub" id="volume-display">100%</div>
+                </div>
+                <input type="range" id="setting-volume" min="0" max="100" value="100"
+                  style="width:100px;accent-color:var(--accent)" />
+              </div>
+            </div>
+          </div>
+
+          <!-- ─ Tampilan Settings ─ -->
+          <div class="settings-section">
+            <div class="settings-head" data-toggle="settings-ui">
+              <div class="settings-head-left">
+                <div class="settings-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+                </div>
+                <div>
+                  <div class="settings-label">Tampilan</div>
+                  <div class="settings-desc">Warna, bahasa deskripsi, animasi</div>
+                </div>
+              </div>
+              <svg class="settings-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+            <div class="settings-body collapsed" id="settings-ui">
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Warna Aksen</div>
+                  <div class="settings-item-sub">Warna tema utama</div>
+                </div>
+                <div class="flex gap-2">
+                  <button class="color-swatch active" data-color="#7c3aed" style="width:24px;height:24px;border-radius:50%;background:#7c3aed;border:2px solid rgba(255,255,255,0.4);cursor:pointer"></button>
+                  <button class="color-swatch" data-color="#2563eb" style="width:24px;height:24px;border-radius:50%;background:#2563eb;border:2px solid transparent;cursor:pointer"></button>
+                  <button class="color-swatch" data-color="#0891b2" style="width:24px;height:24px;border-radius:50%;background:#0891b2;border:2px solid transparent;cursor:pointer"></button>
+                  <button class="color-swatch" data-color="#059669" style="width:24px;height:24px;border-radius:50%;background:#059669;border:2px solid transparent;cursor:pointer"></button>
+                  <button class="color-swatch" data-color="#dc2626" style="width:24px;height:24px;border-radius:50%;background:#dc2626;border:2px solid transparent;cursor:pointer"></button>
+                  <button class="color-swatch" data-color="#d97706" style="width:24px;height:24px;border-radius:50%;background:#d97706;border:2px solid transparent;cursor:pointer"></button>
+                </div>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Bahasa Deskripsi</div>
+                  <div class="settings-item-sub">Bahasa untuk sinopsis anime</div>
+                </div>
+                <select id="setting-desc-lang" style="background:var(--surface);border:1px solid var(--border-2);color:var(--text-1);padding:6px 10px;border-radius:var(--r-md);font-size:var(--text-sm)">
+                  <option value="id">Indonesia</option>
+                  <option value="en">English</option>
+                  <option value="ja">日本語</option>
+                </select>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Animasi UI</div>
+                  <div class="settings-item-sub">Aktifkan animasi dan transisi</div>
+                </div>
+                <label class="toggle" aria-label="Animasi">
+                  <input type="checkbox" id="setting-animations" checked />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─ Library Settings ─ -->
+          <div class="settings-section">
+            <div class="settings-head" data-toggle="settings-library">
+              <div class="settings-head-left">
+                <div class="settings-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                </div>
+                <div>
+                  <div class="settings-label">Library</div>
+                  <div class="settings-desc">Manajemen koleksi dan cache</div>
+                </div>
+              </div>
+              <svg class="settings-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+            <div class="settings-body collapsed" id="settings-library">
+              <!-- Server info (filled by JS) -->
+              <div class="settings-item" id="server-info-wrap">
+                <div>
+                  <div class="settings-item-label">Server Backend</div>
+                  <div class="settings-item-sub" id="server-info-url">—</div>
+                </div>
+                <span class="badge badge-ongoing" id="server-info-status">—</span>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Scan Library</div>
+                  <div class="settings-item-sub" id="scan-status-text">Scan ulang koleksi dari SD card</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="settings-scan-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+                  Scan
+                </button>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Force Scan</div>
+                  <div class="settings-item-sub">Scan ulang dan hapus cache metadata</div>
+                </div>
+                <button class="btn btn-danger btn-sm" id="settings-force-scan-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.84"/></svg>
+                  Force Scan
+                </button>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Hapus Cache</div>
+                  <div class="settings-item-sub">Hapus semua cache metadata & library</div>
+                </div>
+                <div class="flex gap-2">
+                  <button class="btn btn-danger btn-sm" id="settings-clear-cache-btn">Semua</button>
+                  <button class="btn btn-secondary btn-sm" id="settings-clear-lib-btn">Library</button>
+                </div>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Statistik Library</div>
+                  <div class="settings-item-sub" id="lib-stats">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─ PWA / Install ─ -->
+          <div class="settings-section">
+            <div class="settings-head" data-toggle="settings-pwa">
+              <div class="settings-head-left">
+                <div class="settings-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                </div>
+                <div>
+                  <div class="settings-label">Aplikasi &amp; PWA</div>
+                  <div class="settings-desc">Instal sebagai aplikasi di perangkat</div>
+                </div>
+              </div>
+              <svg class="settings-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+            <div class="settings-body collapsed" id="settings-pwa">
+              <div class="settings-item" id="pwa-install-row">
+                <div>
+                  <div class="settings-item-label">Instal RyouStream</div>
+                  <div class="settings-item-sub">Tambahkan ke layar utama perangkat</div>
+                </div>
+                <button class="btn btn-primary btn-sm" id="pwa-install-btn" style="display:none">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Instal
+                </button>
+                <span id="pwa-installed-badge" class="badge badge-ongoing" style="display:none">Terinstal</span>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Mode Offline</div>
+                  <div class="settings-item-sub" id="sw-status-text">Mengecek service worker...</div>
+                </div>
+                <span class="badge" id="sw-status-badge">—</span>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div class="settings-item-label">Hapus Cache App</div>
+                  <div class="settings-item-sub">Hapus cache service worker</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="clear-sw-cache-btn">Hapus</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- About mini card -->
+          <div style="text-align:center;padding:var(--sp-8) 0 var(--sp-4);color:var(--text-3);font-size:var(--text-xs)">
+            <img src="assets/icons/logo.svg" alt="" style="height:28px;margin:0 auto var(--sp-3)" />
+            <p>RyouStream v1.1.0</p>
+            <p style="margin-top:4px">by Ryounime · <a href="#about" style="color:var(--accent-light)">Tentang Kami</a></p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ╔══════════════════════════════════════
+           ║  PAGE: ABOUT (#about)
+           ╚══════════════════════════════════════ -->
+      <section id="page-about" class="page" data-page="about" aria-label="Tentang RyouStream">
+
+        <!-- Hero -->
+        <div class="about-hero">
+          <div class="about-logo">
+            <img src="assets/icons/logo.svg" alt="RyouStream" />
+          </div>
+          <h1 class="about-tagline">Ryounime Stream Platform</h1>
+          <p class="about-desc">
+            RyouStream adalah platform streaming anime lokal yang dirancang untuk memutar koleksi animemu langsung dari perangkat penyimpanan. Nikmati anime favoritmu dengan antarmuka modern, pemutar canggih, dan pengalaman menonton yang mulus.
+          </p>
+        </div>
+
+        <!-- Feature cards -->
+        <div class="about-grid">
+          <div class="about-card">
+            <div class="about-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            </div>
+            <h3 class="font-display fw-700 text-md" style="margin-bottom:var(--sp-2)">Vidstack Player</h3>
+            <p class="text-2 text-sm" style="line-height:1.7">Pemutar video modern dengan dukungan subtitle VTT/SRT/ASS, chapter, dan kontrol lengkap.</p>
+          </div>
+          <div class="about-card">
+            <div class="about-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <h3 class="font-display fw-700 text-md" style="margin-bottom:var(--sp-2)">Metadata Lengkap</h3>
+            <p class="text-2 text-sm" style="line-height:1.7">Data anime dari MyAnimeList, TMDB, dan MyDramaList secara otomatis dengan deskripsi multibahasa.</p>
+          </div>
+          <div class="about-card">
+            <div class="about-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            </div>
+            <h3 class="font-display fw-700 text-md" style="margin-bottom:var(--sp-2)">PWA / Offline</h3>
+            <p class="text-2 text-sm" style="line-height:1.7">Dapat diinstal sebagai aplikasi native di perangkat Android/iOS/Desktop dengan dukungan mode offline.</p>
+          </div>
+          <div class="about-card">
+            <div class="about-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            </div>
+            <h3 class="font-display fw-700 text-md" style="margin-bottom:var(--sp-2)">Mobile First</h3>
+            <p class="text-2 text-sm" style="line-height:1.7">Antarmuka responsif penuh untuk semua ukuran layar dengan navigasi bottom bar yang intuitif.</p>
+          </div>
+        </div>
+
+        <!-- Tech stack -->
+        <div style="max-width:700px;margin:0 auto;padding:0 var(--sp-4) var(--sp-8)">
+          <h2 class="font-display fw-700 text-xl" style="margin-bottom:var(--sp-4);text-align:center">Teknologi</h2>
+          <div class="flex" style="flex-wrap:wrap;gap:var(--sp-2);justify-content:center" id="tech-stack-list">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+
+        <!-- Version info -->
+        <div style="text-align:center;padding:var(--sp-8) var(--sp-4);border-top:1px solid var(--border-2);color:var(--text-3)">
+          <p style="font-size:var(--text-sm)">RyouStream <span class="grad-text fw-700">v1.1.0</span></p>
+          <p style="font-size:var(--text-xs);margin-top:var(--sp-2)">Backend v1.0.1 · Python 3 · Made with ❤️ by Ryounime</p>
+          <p style="font-size:var(--text-xs);margin-top:var(--sp-1)">MIT License · 2025</p>
+        </div>
+
+      </section>
+
+    </div><!-- /pages-container -->
+
+  </main><!-- /main-content -->
+
+  <!-- ── MOBILE BOTTOM NAV ──────────────────────────────────────────────── -->
+  <nav class="bottom-nav" id="bottom-nav" role="navigation" aria-label="Navigasi bawah">
+    <!-- Generated by JS -->
+  </nav>
+
+</div><!-- /app -->
+
+<!-- ══════════════════════════════════════════════════════════════
+     TOAST CONTAINER
+══════════════════════════════════════════════════════════════ -->
+<div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PWA INSTALL PROMPT (custom banner)
+══════════════════════════════════════════════════════════════ -->
+<div id="pwa-install-banner" style="
+  position:fixed;bottom:calc(var(--bottom-nav-h) + env(safe-area-inset-bottom,0px) + 12px);left:12px;right:12px;
+  background:var(--surface);border:1px solid rgba(124,58,237,0.3);
+  border-radius:var(--r-xl);padding:16px;
+  display:none;align-items:center;gap:12px;
+  box-shadow:var(--shadow-xl);z-index:var(--z-modal);
+  animation: fadeSlideIn 0.3s ease forwards;
+  backdrop-filter: blur(16px);
+" role="dialog" aria-label="Instal RyouStream">
+  <img src="assets/icons/icon-96.svg" alt="" style="width:44px;height:44px;border-radius:10px;flex-shrink:0" />
+  <div style="flex:1;min-width:0">
+    <div style="font-weight:700;font-size:14px;color:var(--text-1)">Instal RyouStream</div>
+    <div style="font-size:12px;color:var(--text-3);margin-top:2px">Tambahkan ke layar utama untuk akses cepat</div>
   </div>
-</aside>
+  <div style="display:flex;gap:8px;flex-shrink:0">
+    <button id="pwa-banner-dismiss" class="btn btn-secondary btn-sm">Nanti</button>
+    <button id="pwa-banner-install" class="btn btn-primary btn-sm">Instal</button>
+  </div>
+</div>
 
-<!-- Toast -->
-<div id="toast-area"></div>
+<!-- ══════════════════════════════════════════════════════════════
+     CDN SCRIPTS
+══════════════════════════════════════════════════════════════ -->
 
-<!-- Footer -->
-<footer id="app-footer"></footer>
+<!-- Bootstrap 5 JS (bundle, incl. Popper) -->
+<script src="assets/api/bootstrap/bootstrap.bundle.min.js" defer></script>
 
-<!-- Scripts -->
-<script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
-<script src="/assets/swiper/swiper-bundle.min.js"></script>
-<script src="/assets/js/utils.js"></script>
-<script src="/lib/store.js"></script>
-<script src="/lib/i18n.js"></script>
-<script src="/lib/api.js"></script>
-<script src="/components/footer.js"></script>
-<script src="/components/splash.js"></script>
-<script src="/components/nav.js"></script>
-<script src="/components/carousel.js"></script>
-<script src="/components/section.js"></script>
-<script src="/components/index.js"></script>
-<script src="/res/pwa.js" defer></script>
-<script>
-  window.App = {
-    goDetail: id => location.href = `/details.html?id=${id}`,
-    goWatch : (id, ep = 1) => location.href = `/watch.html?id=${id}&ep=${ep}`,
-    goHome  : () => location.href = '/',
-  };
-  document.addEventListener('DOMContentLoaded', () => {
-    Nav.init();
-    Footer.init();
-    IndexComp.init();
-  });
+<!-- Anime.js v3 -->
+<script src="assets/api/animejs/anime.min.js"></script>
+
+<!-- Vidstack Player 1.12.13 — offline (with-layouts bundle) -->
+<script type="module">
+  // Import all web components: <media-player>, <media-provider>, <media-video-layout>, etc.
+  import '/assets/api/vidstack/vidstack.js';
 </script>
 
-<script>
-/* ── AdminLock — PIN default: 1234 (lihat README.md) ── */
-const AdminLock = (() => {
-  const PIN_KEY = 'ryou_admin_unlocked';
-  const DEFAULT_PIN = '1234';
+<!-- ── APP MODULES ──────────────────────────────────────────────────────── -->
+<script type="module" src="assets/js/config.js"></script>
+<script type="module" src="assets/js/api.js"></script>
+<script type="module" src="assets/js/utils.js"></script>
+<script type="module" src="assets/js/router.js"></script>
+<script type="module" src="assets/js/animations.js"></script>
+<script type="module" src="assets/js/pages/home.js"></script>
+<script type="module" src="assets/js/pages/search.js"></script>
+<script type="module" src="assets/js/pages/archive.js"></script>
+<script type="module" src="assets/js/pages/category.js"></script>
+<script type="module" src="assets/js/pages/details.js"></script>
+<script type="module" src="assets/js/pages/watch.js"></script>
+<script type="module" src="assets/js/pages/settings.js"></script>
+<script type="module" src="assets/js/pages/about.js"></script>
+<script type="module" src="assets/js/app.js"></script>
 
-  function _isUnlocked() {
-    return sessionStorage.getItem(PIN_KEY) === '1';
-  }
-
-  function _setUI(unlocked) {
-    const btn = document.getElementById('admin-unlock-btn');
-    const icon = document.getElementById('admin-lock-icon');
-    const label = document.getElementById('admin-lock-label');
-    document.querySelectorAll('.admin-btn').forEach(b => { b.disabled = !unlocked; });
-    if (!btn) return;
-    if (unlocked) {
-      btn.classList.add('unlocked');
-      if (icon) icon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 8.5-.5"/>';
-      if (label) label.textContent = 'Unlock';
-    } else {
-      btn.classList.remove('unlocked');
-      if (icon) icon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>';
-      if (label) label.textContent = 'Admin';
-    }
-  }
-
-  function toggle() {
-    if (_isUnlocked()) {
-      sessionStorage.removeItem(PIN_KEY);
-      _setUI(false);
-      return;
-    }
-    const pin = prompt('PIN Admin:');
-    if (pin === null) return;
-    if (pin === DEFAULT_PIN) {
-      sessionStorage.setItem(PIN_KEY, '1');
-      _setUI(true);
-    } else {
-      alert('PIN salah.');
-    }
-  }
-
-  function init() { _setUI(_isUnlocked()); }
-
-  return { toggle, init };
-})();
-
-document.addEventListener('DOMContentLoaded', () => AdminLock.init());
-</script>
 </body>
 </html>

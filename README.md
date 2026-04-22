@@ -1,139 +1,191 @@
-# ŘΨØŬ v1.0.1
+# 🎌 RyouStream v1.0.0 Epsilon
 
-Media server lokal yang jalan di **Android Termux**, frontend di **GitHub Pages**.
-
----
-
-## Arsitektur
-
-```
-[Termux] python server.py          → API server, port 37485
-[Termux] ./start_tunnel.sh         → Cloudflare Quick Tunnel
-                                     https://random.trycloudflare.com
-                                     ↓ update otomatis
-[GitHub Gist]  ryou-backend.json   → {"url":"https://random.trycloudflare.com"}
-                                     ↑ fetch sekali
-[GitHub Pages] ryou-webs.github.io → Frontend, fetch API dari tunnel URL
-```
+**Ryounime Stream Platform** — Streaming anime lokal dari koleksi pribadi di SD Card / penyimpanan internal.
 
 ---
 
-## Setup Pertama Kali
+## 📁 Struktur Folder
 
-### 1. Buat GitHub Gist
+```
+ryoustream/
+├── backend/                 ← Server Python
+│   ├── server.py            ← Entry point server
+│   ├── config.py            ← ⚠️ EDIT INI DULU sebelum jalan
+│   ├── requirements.txt     ← Dependencies Python
+│   ├── generate_cert.py     ← SSL untuk akses LAN
+│   ├── lib/
+│   │   ├── cache.py
+│   │   ├── metadata.py      ← Ambil data MAL / TMDB / MDL
+│   │   ├── scanner.py       ← Scan file video di SD Card
+│   │   └── translator.py    ← Terjemah deskripsi → Indonesia
+│   └── cache/               ← Cache metadata (auto-dibuat)
+│
+├── www/                     ← Frontend (otomatis di-serve)
+│   ├── index.html
+│   ├── manifest.json
+│   ├── sw.js
+│   └── assets/...
+│
+├── start.sh                 ← ▶ Jalankan (Linux/Mac/Termux)
+├── start.bat                ← ▶ Jalankan (Windows)
+└── README.md
+```
 
-1. Buka https://gist.github.com
-2. Nama file: `ryou-backend.json`
-3. Isi awal:
-   ```json
-   {"url":"placeholder","updated":""}
-   ```
-4. Klik **Create secret gist**
-5. Salin **Gist ID** dari URL (`gist.github.com/{username}/{GIST_ID}`)
+---
 
-### 2. Buat GitHub Personal Access Token
+## ⚙️ LANGKAH 1 — Edit Config
 
-1. GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
-2. **Generate new token** → centang scope **`gist`** saja
-3. Salin token (`ghp_xxx...`)
+Buka **`backend/config.py`** dan sesuaikan path storage kamu:
 
-### 3. Konfigurasi Backend (Termux)
+```python
+# Path SD Card / penyimpanan internal
+SDCARD_ROOT = "/storage/1A0A-2561"   # ← Ganti dengan path SD Card kamu
 
-Edit `backend/start_tunnel.sh`:
+MOVIES_PATH = os.path.join(SDCARD_ROOT, "Movies")  # Folder film
+VIDEOS_PATH = os.path.join(SDCARD_ROOT, "Videos")  # Folder serial anime
+FONTS_PATH  = os.path.join(SDCARD_ROOT, "Fonts")   # Font untuk subtitle ASS
+```
+
+**Cara cari path SD Card di Android (Termux):**
 ```bash
-GIST_ID="isi_gist_id_kamu"
-GITHUB_TOKEN="ghp_xxx..."
+ls /storage/
+# Pilih yang bukan emulated, misal: /storage/1A0A-2561
 ```
 
-### 4. Konfigurasi Frontend (GitHub Pages)
-
-Edit `www/lib/api.js`:
-```js
-const GIST_ID = 'isi_gist_id_kamu';   // sama persis dengan di start_tunnel.sh
+**Windows:**
+```python
+SDCARD_ROOT = "D:\\"           # Drive D
+MOVIES_PATH = "D:\\Movies"
+VIDEOS_PATH = "D:\\Videos"
 ```
 
-### 5. Push Frontend ke GitHub Pages
+**Linux / Mac:**
+```python
+SDCARD_ROOT = "/home/user/Anime"
+```
 
+---
+
+## 🚀 LANGKAH 2 — Jalankan Server
+
+### Android (Termux)
 ```bash
-# Buat repo bernama: ryou-webs.github.io
-# Push isi folder www/ ke branch main repo tersebut
-git init
-git remote add origin https://github.com/USERNAME/ryou-webs.github.io
-git add .
-git commit -m "init"
-git push -u origin main
+# Install Python dulu jika belum
+pkg update && pkg install python
+
+# Jalankan
+bash start.sh
 ```
 
-GitHub otomatis deploy → https://ryou-webs.github.io
-
----
-
-## Penggunaan Sehari-hari
-
+### Linux / Mac
 ```bash
-# ── Termux Sesi 1 ──────────────────────────────
-cd ~/ryou/backend
-python server.py
-# Server jalan di port 37485
-
-# ── Termux Sesi 2 (baru) ───────────────────────
-cd ~/ryou/backend
-./start_tunnel.sh
-# → cloudflared jalan
-# → URL baru terdeteksi otomatis
-# → GitHub Gist terupdate
-# → GitHub Pages langsung pakai URL baru
+chmod +x start.sh
+./start.sh
 ```
+
+### Windows
+Double-click **`start.bat`**
 
 ---
 
-## Ketika Tunnel Restart / Terputus
+## 🌐 LANGKAH 3 — Buka Browser
 
-Cukup jalankan lagi `./start_tunnel.sh` di sesi baru.  
-GitHub Pages akan otomatis pakai URL baru saat halaman di-refresh.
+Setelah server jalan, buka di browser:
 
-Atau dari browser console:
-```js
-API.refresh().then(url => console.log('URL baru:', url))
-```
+| Dari mana | URL |
+|-----------|-----|
+| Perangkat yang sama | `http://localhost:8080` |
+| Perangkat lain (LAN) | `https://192.168.x.x:8080` |
+| Android + Termux | `http://localhost:8080` |
 
----
-
-## Struktur Folder
-
-```
-ryou_fixed/
-├── backend/
-│   ├── server.py           ← API server (port 37485)
-│   ├── config.py           ← Konfigurasi path, port, API keys
-│   ├── start_tunnel.sh     ← Script tunnel + update Gist
-│   ├── generate_cert.py    ← (opsional, tidak dipakai lagi)
-│   ├── requirements.txt
-│   └── lib/
-│       ├── scanner.py
-│       ├── metadata.py
-│       ├── cache.py
-│       └── translator.py
-└── www/                    ← Push folder ini ke ryou-webs.github.io
-    ├── index.html
-    ├── details.html
-    ├── watch.html
-    ├── about.html
-    ├── manifest.json
-    ├── sw.js
-    ├── 404.html
-    ├── _config.yml
-    ├── lib/
-    │   ├── api.js          ← ⚠ Isi GIST_ID di sini
-    │   ├── store.js
-    │   └── i18n.js
-    ├── components/
-    ├── assets/
-    └── res/
-```
+> **Catatan:** Untuk akses dari perangkat lain (HP ke laptop), gunakan HTTPS. Script `start.sh` akan auto-generate SSL certificate.
 
 ---
 
-## Changelogs
+## 📂 Struktur Folder Video
 
-Lihat [changelogs.md](changelogs.md)
+Backend akan scan otomatis folder `Movies/` dan `Videos/` berdasarkan nama folder:
+
+```
+Movies/
+├── Mieruko-Chan (2025) Sub Indo.mp4
+└── Kimi no Na wa.mkv
+
+Videos/
+├── Shingeki no Kyojin [55071]/     ← folder = satu anime
+│   ├── Shingeki S1E01.mkv
+│   ├── Shingeki S1E02.mkv
+│   └── Shingeki S1E01.ass          ← subtitle (.vtt/.srt/.ass/.ssa)
+│
+└── Spy x Family [58049]/
+    ├── SpyFamily-01.mp4
+    └── SpyFamily-01.srt
+```
+
+> Nomor dalam kurung siku `[55071]` = MAL ID (opsional, tapi meningkatkan akurasi metadata).
+
+---
+
+## 🔄 Scan Library
+
+Setelah menambah file video baru:
+
+1. Buka **RyouStream** di browser
+2. Klik ikon **🔄** di pojok kanan atas (topbar), atau
+3. Buka **Pengaturan → Library → Scan**
+
+---
+
+## 📱 Install sebagai Aplikasi (PWA)
+
+1. Buka `http://localhost:8080` di Chrome / Edge
+2. Klik **"Instal"** di banner yang muncul, atau
+3. Menu browser → **"Tambahkan ke layar utama"**
+
+---
+
+## 🔧 Konfigurasi Lanjutan (`backend/config.py`)
+
+| Setting | Default | Keterangan |
+|---------|---------|-----------|
+| `PORT` | `8080` | Port server |
+| `CACHE_TTL_HOURS` | `168` | Cache metadata (7 hari) |
+| `TMDB_API_KEY` | (isi) | API key TMDB gratis dari [themoviedb.org](https://www.themoviedb.org/settings/api) |
+| `CORS_ORIGINS` | `*` | Izinkan semua origin |
+
+---
+
+## 🐛 Troubleshooting
+
+**❌ "Library kosong / Gagal memuat"**
+→ Pastikan `server.py` sudah berjalan dan URL benar.
+
+**❌ "Format video tidak didukung"**
+→ Browser tidak support `.mkv`. Gunakan Chrome terbaru, atau konversi ke `.mp4`.
+
+**❌ Subtitle tidak muncul**
+→ Backend auto-convert `.srt`/`.ass` ke `.vtt`. Cek log server untuk error.
+
+**❌ Port 8080 sudah dipakai**
+→ Ganti `PORT = 8080` di `config.py` ke port lain, misal `8181`.
+
+**❌ Error saat scan metadata**
+→ Cek koneksi internet. Backend butuh internet untuk ambil data MAL/TMDB.
+
+---
+
+## 📝 Info Proyek
+
+| | |
+|-|-|
+| **Nama** | RyouStream |
+| **Versi** | 1.0.0 Epsilon |
+| **Author** | Ryounime |
+| **Backend** | Python 3 (no framework) |
+| **Frontend** | Vanilla JS ES Modules + SPA |
+| **Player** | Vidstack Web Components |
+| **Metadata** | MyAnimeList · TMDB · MyDramaList |
+
+---
+
+*© 2025 Ryounime — MIT License*

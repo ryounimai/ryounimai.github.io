@@ -1,18 +1,97 @@
 {
-  "name": "ŘΨØŬ — Anime & Drama",
-  "short_name": "ŘΨØŬ",
-  "description": "Server media anime & drama lokal untuk Android Termux",
+  "name": "RyouStream v1.1.0 — Ryounime Stream Platform",
+  "short_name": "RyouStream",
+  "description": "Platform streaming anime lokal berbasis koleksi pribadi. Tonton anime favoritmu kapan saja.",
+  "version": "1.1.0",
   "start_url": "/",
-  "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#000020",
-  "theme_color": "#000",
-  "lang": "id",
   "scope": "/",
-  "icons": [
-    {"src":"res/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"res/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#7c3aed",
+  "background_color": "#07070d",
+  "lang": "id",
+  "dir": "ltr",
+  "categories": [
+    "entertainment",
+    "video"
   ],
-  "shortcuts": [{"name":"Beranda","url":"/","description":"Halaman utama"}],
-  "categories": ["entertainment","video"]
+  "icons": [
+    {
+      "src": "assets/icons/icon-72.svg",
+      "sizes": "72x72",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-96.svg",
+      "sizes": "96x96",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-128.svg",
+      "sizes": "128x128",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-384.svg",
+      "sizes": "384x384",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Home",
+      "short_name": "Home",
+      "description": "Halaman utama RyouStream",
+      "url": "/#home",
+      "icons": [
+        {
+          "src": "assets/icons/icon-96.svg",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "short_name": "Cari",
+      "description": "Cari anime di koleksi",
+      "url": "/#search",
+      "icons": [
+        {
+          "src": "assets/icons/icon-96.svg",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Archive",
+      "short_name": "Arsip",
+      "description": "Semua koleksi anime",
+      "url": "/#archive",
+      "icons": [
+        {
+          "src": "assets/icons/icon-96.svg",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }

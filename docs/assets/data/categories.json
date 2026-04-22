@@ -1,0 +1,62 @@
+{
+  "version": "1.0.0",
+  "updated": "2025-01-01",
+  "genres": [
+    { "id": "action",      "label": "Action",       "color": "#ef4444", "icon": "⚔️",  "keywords": ["Action","Laga","Aksi"] },
+    { "id": "adventure",   "label": "Adventure",    "color": "#f97316", "icon": "🗺️",  "keywords": ["Adventure","Petualangan"] },
+    { "id": "comedy",      "label": "Comedy",       "color": "#eab308", "icon": "😂",  "keywords": ["Comedy","Komedi"] },
+    { "id": "drama",       "label": "Drama",        "color": "#a855f7", "icon": "🎭",  "keywords": ["Drama"] },
+    { "id": "fantasy",     "label": "Fantasy",      "color": "#6366f1", "icon": "✨",  "keywords": ["Fantasy","Fantasi","Magic","Mahou"] },
+    { "id": "horror",      "label": "Horror",       "color": "#dc2626", "icon": "👻",  "keywords": ["Horror","Horor","Supernatural","Occult"] },
+    { "id": "romance",     "label": "Romance",      "color": "#ec4899", "icon": "💕",  "keywords": ["Romance","Romantis","Shoujo"] },
+    { "id": "sci-fi",      "label": "Sci-Fi",       "color": "#06b6d4", "icon": "🚀",  "keywords": ["Sci-Fi","Science Fiction","Mecha"] },
+    { "id": "slice-of-life","label":"Slice of Life","color": "#10b981", "icon": "🌸",  "keywords": ["Slice of Life","School","Isekai","Everyday"] },
+    { "id": "sports",      "label": "Sports",       "color": "#3b82f6", "icon": "⚽",  "keywords": ["Sports","Olahraga","Racing"] },
+    { "id": "thriller",    "label": "Thriller",     "color": "#78716c", "icon": "🔪",  "keywords": ["Thriller","Mystery","Misteri","Psychological"] },
+    { "id": "historical",  "label": "Historical",   "color": "#a16207", "icon": "🏯",  "keywords": ["Historical","History","Samurai","Period"] },
+    { "id": "music",       "label": "Music",        "color": "#8b5cf6", "icon": "🎵",  "keywords": ["Music","Musik","Idol"] },
+    { "id": "youth",       "label": "Youth",        "color": "#14b8a6", "icon": "🧑",  "keywords": ["Youth","Shounen","Seinen","Josei"] },
+    { "id": "other",       "label": "Lainnya",      "color": "#64748b", "icon": "📌",  "keywords": [] }
+  ],
+  "types": [
+    { "id": "all",     "label": "Semua",    "value": null },
+    { "id": "tv",      "label": "TV Series","value": "TV" },
+    { "id": "movie",   "label": "Film",     "value": "Movie" },
+    { "id": "ova",     "label": "OVA",      "value": "OVA" },
+    { "id": "special", "label": "Special",  "value": "Special" }
+  ],
+  "statuses": [
+    { "id": "all",       "label": "Semua Status" },
+    { "id": "completed", "label": "Selesai",   "value": "Completed" },
+    { "id": "ongoing",   "label": "Ongoing",   "value": "Ongoing" },
+    { "id": "upcoming",  "label": "Upcoming",  "value": "Upcoming" }
+  ],
+  "sortOptions": [
+    { "id": "title_asc",   "label": "Judul A–Z",       "field": "title",  "dir": "asc"  },
+    { "id": "title_desc",  "label": "Judul Z–A",       "field": "title",  "dir": "desc" },
+    { "id": "year_desc",   "label": "Terbaru",         "field": "year",   "dir": "desc" },
+    { "id": "year_asc",    "label": "Terlama",         "field": "year",   "dir": "asc"  },
+    { "id": "rating_desc", "label": "Rating Tertinggi","field": "rating", "dir": "desc" },
+    { "id": "rating_asc",  "label": "Rating Terendah", "field": "rating", "dir": "asc"  },
+    { "id": "eps_desc",    "label": "Episode Terbanyak","field":"episodes","dir": "desc" }
+  ],
+  "navItems": [
+    { "id": "home",     "label": "Home",    "icon": "home"   },
+    { "id": "search",   "label": "Cari",    "icon": "search" },
+    { "id": "archive",  "label": "Arsip",   "icon": "archive"},
+    { "id": "category", "label": "Genre",   "icon": "grid"   },
+    { "id": "settings", "label": "Setelan", "icon": "settings"}
+  ],
+  "sidebarItems": [
+    { "section": "Navigasi", "items": [
+      { "id": "home",     "label": "Beranda",  "icon": "home"    },
+      { "id": "search",   "label": "Pencarian","icon": "search"  },
+      { "id": "archive",  "label": "Arsip",    "icon": "archive" },
+      { "id": "category", "label": "Kategori", "icon": "grid"    }
+    ]},
+    { "section": "Info", "items": [
+      { "id": "about",    "label": "Tentang",  "icon": "info"    },
+      { "id": "settings", "label": "Setelan",  "icon": "settings"}
+    ]}
+  ]
+}

@@ -1,91 +1,222 @@
 /**
- * sw.js — ŘΨØŬ v2.1.0
- * Cache-first untuk static assets, network-first untuk API & media
+ * sw.js — RyouStream Service Worker
+ * Version: 1.1.0
+ * Author : Ryounime
+ *
+ * Strategy:
+ *  - App Shell (HTML/CSS/JS)   → Cache First (stale-while-revalidate)
+ *  - API /api/*                → Network First (with fallback)
+ *  - Images / posters          → Cache First (long TTL)
+ *  - Media /media/*            → Network Only (streaming, no cache)
  */
-const CACHE = 'ryou-v2.1.0';
-const PRECACHE = [
-  '/', '/index.html', '/details.html', '/watch.html', '/about.html',
+
+const APP_VERSION   = '1.1.0';
+const CACHE_SHELL   = `rs-shell-${APP_VERSION}`;
+const CACHE_ASSETS  = `rs-assets-${APP_VERSION}`;
+const CACHE_IMAGES  = `rs-images-${APP_VERSION}`;
+const CACHE_API     = `rs-api-${APP_VERSION}`;
+
+const SHELL_URLS = [
+  '/',
+  '/index.html',
   '/manifest.json',
-  /* Fonts */
-  '/assets/fonts/fonts.css',
-  '/assets/fonts/inter/inter-latin-400-normal.woff2',
-  '/assets/fonts/inter/inter-latin-500-normal.woff2',
-  '/assets/fonts/inter/inter-latin-600-normal.woff2',
-  '/assets/fonts/inter/inter-latin-700-normal.woff2',
-  '/assets/fonts/jetbrains-mono/jetbrains-mono-latin-400-normal.woff2',
-  '/assets/fonts/jetbrains-mono/jetbrains-mono-latin-500-normal.woff2',
-  '/assets/fonts/jetbrains-mono/jetbrains-mono-latin-700-normal.woff2',
-  /* CSS */
-  '/assets/bootstrap/bootstrap.min.css',
-  '/assets/swiper/swiper-bundle.min.css',
-  '/assets/css/vars.css',
-  '/assets/css/base.css',
-  '/assets/css/nav.css',
+  '/offline.html',
+  '/assets/css/main.css',
   '/assets/css/player.css',
-  '/assets/css/pages.css',
-  /* Vidstack v1.12.13 */
-  '/assets/vidstack/vidstack.js',
-  '/assets/vidstack/icons.js',
-  '/assets/vidstack/styles/base.css',
-  '/assets/vidstack/styles/default/theme.css',
-  '/assets/vidstack/styles/default/layouts/video.css',
-  /* JS */
-  '/assets/bootstrap/bootstrap.bundle.min.js',
-  '/assets/swiper/swiper-bundle.min.js',
+  '/assets/js/config.js',
+  '/assets/js/api.js',
+  '/assets/js/router.js',
   '/assets/js/utils.js',
-  /* Lib */
-  '/lib/store.js',
-  '/lib/i18n.js',
-  '/lib/api.js',
-  /* Components */
-  '/components/footer.js',
-  '/components/splash.js',
-  '/components/nav.js',
-  '/components/carousel.js',
-  '/components/section.js',
-  '/components/watch.js',
-  '/components/details.js',
-  '/components/index.js',
-  '/components/about.js',
-  /* Res */
-  '/res/favicon.ico',
-  '/res/icon-192.png',
-  '/res/logo.svg',
-  '/res/pwa.js',
+  '/assets/js/animations.js',
+  '/assets/js/app.js',
+  '/assets/js/pages/home.js',
+  '/assets/js/pages/archive.js',
+  '/assets/js/pages/category.js',
+  '/assets/js/pages/search.js',
+  '/assets/js/pages/details.js',
+  '/assets/js/pages/watch.js',
+  '/assets/js/pages/settings.js',
+  '/assets/js/pages/about.js',
+  '/assets/icons/logo.svg',
+  '/assets/icons/favicon.svg',
+  '/assets/icons/icon-192.svg',
+  '/assets/icons/icon-512.svg',
+  '/assets/data/categories.json',
+  '/assets/data/config.xml',
+  /* ── Offline API libs ── */
+  '/assets/api/animejs/anime.min.js',
+  '/assets/api/bootstrap/bootstrap-grid.min.css',
+  '/assets/api/bootstrap/bootstrap.bundle.min.js',
+  '/assets/api/fonts/fonts.css',
+  '/assets/api/vidstack/css/vidstack.css',
+  '/assets/api/vidstack/vidstack.js',
 ];
 
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE)
-      .then(c => c.addAll(PRECACHE))
-      .then(() => self.skipWaiting())
+const API_CACHE_DURATION = 5 * 60 * 1000; // 5 menit untuk API responses
+
+// ── INSTALL ──────────────────────────────────────────────────────────────────
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_SHELL).then((cache) => {
+      console.log('[SW] Pre-caching app shell...');
+      return cache.addAll(SHELL_URLS.map(url => new Request(url, { cache: 'reload' })))
+        .catch(err => console.warn('[SW] Shell cache partial fail:', err));
+    }).then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
-      .then(() => self.clients.claim())
+// ── ACTIVATE ─────────────────────────────────────────────────────────────────
+self.addEventListener('activate', (event) => {
+  const validCaches = [CACHE_SHELL, CACHE_ASSETS, CACHE_IMAGES, CACHE_API];
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys.filter(k => !validCaches.includes(k)).map(k => {
+          console.log('[SW] Deleting old cache:', k);
+          return caches.delete(k);
+        })
+      )
+    ).then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
-  // Skip: request ke domain lain (tunnel, GitHub Gist, CDN, dll)
+// ── FETCH ─────────────────────────────────────────────────────────────────────
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Skip non-GET
+  if (request.method !== 'GET') return;
+  // Skip cross-origin kecuali aset lokal
   if (url.origin !== self.location.origin) return;
-  // Skip: path API/media/font (sekarang ke tunnel, tapi just in case)
-  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/media/') || url.pathname.startsWith('/fonts/')) return;
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      if (cached) return cached;
-      return fetch(e.request).then(resp => {
-        if (resp && resp.status === 200 && resp.type !== 'opaque') {
-          const clone = resp.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-        }
-        return resp;
-      }).catch(() => caches.match('/index.html'));
+
+  const path = url.pathname;
+
+  // ── Media files: Network Only (streaming, never cache)
+  if (path.startsWith('/media/') || path.startsWith('/fonts/')) {
+    return;
+  }
+
+  // ── Vidstack chunks & icon JS: Cache First (immutable hashed filenames)
+  if (path.includes('/assets/api/vidstack/chunks/') ||
+      path.includes('/assets/api/vidstack/icons/') ||
+      path.includes('/assets/api/vidstack/providers/')) {
+    event.respondWith(cacheFirstImage(request)); // reuse cache-first strategy
+    return;
+  }
+
+  // ── Font woff2: Cache First (long TTL)
+  if (path.includes('/assets/api/fonts/') && path.endsWith('.woff2')) {
+    event.respondWith(cacheFirstImage(request));
+    return;
+  }
+
+  // ── API calls: Network First with fallback
+  if (path.startsWith('/api/')) {
+    event.respondWith(networkFirstAPI(request));
+    return;
+  }
+
+  // ── Remote images (posters from MAL/TMDB/MDL): Cache First
+  if (
+    url.hostname.includes('myanimelist.net') ||
+    url.hostname.includes('image.tmdb.org') ||
+    url.hostname.includes('mydramalist.com') ||
+    url.hostname.includes('cdn.myanimelist.net') ||
+    path.match(/\.(jpg|jpeg|png|webp|gif|avif)$/)
+  ) {
+    event.respondWith(cacheFirstImage(request));
+    return;
+  }
+
+  // ── App Shell + Static assets: Stale While Revalidate
+  event.respondWith(staleWhileRevalidate(request, CACHE_SHELL));
+});
+
+// ── STRATEGIES ───────────────────────────────────────────────────────────────
+
+async function networkFirstAPI(request) {
+  const cache = await caches.open(CACHE_API);
+  try {
+    const response = await fetch(request.clone(), { signal: AbortSignal.timeout(8000) });
+    if (response.ok) {
+      const responseClone = response.clone();
+      // Add timestamp header for TTL check
+      const headers = new Headers(responseClone.headers);
+      headers.set('sw-cached-at', Date.now().toString());
+      const modifiedResp = new Response(await responseClone.blob(), {
+        status: responseClone.status,
+        statusText: responseClone.statusText,
+        headers
+      });
+      cache.put(request, modifiedResp);
+    }
+    return response;
+  } catch {
+    const cached = await cache.match(request);
+    if (cached) {
+      const cachedAt = parseInt(cached.headers.get('sw-cached-at') || '0');
+      if (Date.now() - cachedAt < API_CACHE_DURATION) {
+        console.log('[SW] Serving API from cache (offline):', request.url);
+        return cached;
+      }
+    }
+    return new Response(JSON.stringify({
+      status: 'offline',
+      error: 'Tidak ada koneksi ke server.',
+      data: [],
+      total: 0
+    }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function cacheFirstImage(request) {
+  const cache = await caches.open(CACHE_IMAGES);
+  const cached = await cache.match(request);
+  if (cached) return cached;
+
+  try {
+    const response = await fetch(request);
+    if (response.ok) cache.put(request, response.clone());
+    return response;
+  } catch {
+    // Return a transparent 1x1 pixel as fallback
+    return new Response(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>',
+      { headers: { 'Content-Type': 'image/svg+xml' } }
+    );
+  }
+}
+
+async function staleWhileRevalidate(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+
+  const fetchPromise = fetch(request).then((response) => {
+    if (response.ok) cache.put(request, response.clone());
+    return response;
+  }).catch(() => null);
+
+  return cached || await fetchPromise || new Response('Offline', { status: 503 });
+}
+
+// ── PUSH NOTIFICATIONS (placeholder) ─────────────────────────────────────────
+self.addEventListener('push', (event) => {
+  const data = event.data?.json() ?? {};
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'RyouStream', {
+      body: data.body || 'Ada konten baru!',
+      icon: '/assets/icons/icon-192.svg',
+      badge: '/assets/icons/icon-72.svg',
+      data: { url: data.url || '/' }
     })
   );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data?.url || '/'));
 });

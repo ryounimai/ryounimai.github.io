@@ -1,0 +1,5 @@
+# ŘΨØŬ v1.0.0 — Backend Dependencies
+# Python 3.10+ required (stdlib only untuk core)
+# Opsional:
+mutagen       # baca tag file video (judul lebih akurat)
+cryptography  # untuk generate SSL cert (HTTPS/PWA)
