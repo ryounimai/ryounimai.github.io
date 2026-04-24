@@ -96,7 +96,7 @@ export function showSetupScreen() {
     position:fixed;inset:0;z-index:99999;
     background:var(--surface,#0f0f13);
     display:flex;align-items:center;justify-content:center;
-    font-family:var(--font-body,system-ui,sans-serif);padding:20px\`;
+    font-family:var(--font-body,system-ui,sans-serif);padding:20px`;
   document.body.appendChild(el);
 
   const input = document.getElementById('rs-setup-input');
