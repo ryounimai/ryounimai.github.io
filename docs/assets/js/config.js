@@ -8,54 +8,156 @@
  */
 
 // ── API Base URL ──────────────────────────────────────────────────────────────
-// Priority: localStorage override → Gist auto-detect → fallback same-origin
-// Set manual: localStorage.setItem('rs_api_base', 'https://your-tunnel.com')
+// Cara set: localStorage.setItem('rs_api_base', 'https://tunnel.url.kamu')
+//           lalu reload halaman.
+// Atau isi field setup yang muncul otomatis jika belum dikonfigurasi.
 
-const GIST_ID = '1a42e63011f4496adb0a4c7821e15bb6'; // sama dengan Alpha
+const GIST_ID = '1a42e63011f4496adb0a4c7821e15bb6';
 
 async function _resolveApiBase() {
-  // 1. Manual override (paling prioritas)
+  // 1. localStorage override — paling prioritas
   const stored = localStorage.getItem('rs_api_base');
-  if (stored) return stored.replace(/\/$/, '');
+  if (stored && stored.startsWith('http')) return stored.replace(/\/$/, '');
 
-  // 2. Auto-detect via GitHub Gist (sama seperti Alpha)
-  try {
-    const r = await fetch(
-      `https://api.github.com/gists/${GIST_ID}`,
-      { cache: 'no-store', signal: AbortSignal.timeout(4000) }
-    );
-    if (r.ok) {
-      const g = await r.json();
-      const file = Object.values(g.files)[0];
-      const url = file?.content?.trim();
-      if (url && url.startsWith('http')) return url.replace(/\/$/, '');
-    }
-  } catch { /* Gist tidak tersedia, lanjut ke fallback */ }
+  // 2. GitHub Gist raw (tidak butuh auth, tidak rate limit seperti API)
+  const GIST_URLS = [
+    `https://gist.githubusercontent.com/ryounimai/${GIST_ID}/raw`,
+    `https://gist.github.com/ryounimai/${GIST_ID}/raw`,
+  ];
+  for (const gurl of GIST_URLS) {
+    try {
+      const ctrl = new AbortController();
+      const tid  = setTimeout(() => ctrl.abort(), 5000);
+      const r    = await fetch(gurl, { cache: 'no-store', signal: ctrl.signal });
+      clearTimeout(tid);
+      if (r.ok) {
+        const text = (await r.text()).trim();
+        if (text.startsWith('http')) return text.replace(/\/$/, '');
+      }
+    } catch { /* coba URL berikutnya */ }
+  }
 
-  // 3. Fallback: same-origin port 8080
-  const { protocol, hostname } = location;
-  return `${protocol}//${hostname}:8080`;
+  // 3. Tidak ada konfigurasi valid — return null → setup screen
+  return null;
 }
 
-// Sinkron untuk import awal — akan diupdate async setelah Gist resolve
-// Default sementara pakai localStorage atau same-origin
 const _storedBase = localStorage.getItem('rs_api_base');
-export let API_BASE = _storedBase
-  ? _storedBase.replace(/\/$/, '')
-  : `${location.protocol}//${location.hostname}:8080`;
 
-// Resolve async — update API_BASE dan dispatch event agar modul lain tahu
+// Nilai sementara — null kalau belum ada, akan diisi setelah resolve
+export let API_BASE = (_storedBase && _storedBase.startsWith('http'))
+  ? _storedBase.replace(/\/$/, '')
+  : null;
+
+// Promise yang resolve dengan URL final (atau null jika perlu setup)
 export const apiBaseReady = _resolveApiBase().then(url => {
-  API_BASE = url;
-  // Update semua endpoint dinamis
-  Object.keys(API).forEach(k => {
-    if (typeof API[k] === 'string') {
-      API[k] = API[k].replace(/^https?:\/\/[^/]+/, url);
-    }
-  });
+  if (url) {
+    API_BASE = url;
+    // Update semua endpoint string di objek API
+    Object.keys(API).forEach(k => {
+      if (typeof API[k] === 'string' && API[k].includes('null/')) {
+        API[k] = API[k].replace('null/', url + '/');
+      } else if (typeof API[k] === 'string') {
+        API[k] = API[k].replace(/^https?:\/\/[^/]+/, url);
+      }
+    });
+  }
   document.dispatchEvent(new CustomEvent('rs:api-ready', { detail: { base: url } }));
   return url;
 });
+
+// ── Setup screen (muncul jika backend URL belum dikonfigurasi) ──────────────
+export function showSetupScreen() {
+  if (document.getElementById('rs-setup-screen')) return;
+  const el = document.createElement('div');
+  el.id = 'rs-setup-screen';
+  el.innerHTML = `
+    <div class="rs-setup-box">
+      <div class="rs-setup-logo">⚙️</div>
+      <h2 class="rs-setup-title">Konfigurasi Backend</h2>
+      <p class="rs-setup-desc">
+        Masukkan URL backend RyouStream kamu.<br>
+        Biasanya dari Cloudflare Tunnel atau IP lokal.
+      </p>
+      <input id="rs-setup-input" class="rs-setup-input" type="url"
+        placeholder="https://your-tunnel.trycloudflare.com"
+        autocomplete="off" spellcheck="false">
+      <div id="rs-setup-error" class="rs-setup-error" style="display:none"></div>
+      <button id="rs-setup-btn" class="rs-setup-btn">Simpan & Hubungkan</button>
+      <p class="rs-setup-hint">URL akan disimpan di browser. Hanya perlu diisi sekali.</p>
+    </div>`;
+  el.style.cssText = \`
+    position:fixed;inset:0;z-index:99999;
+    background:var(--surface,#0f0f13);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-body,system-ui,sans-serif);padding:20px\`;
+  document.body.appendChild(el);
+
+  const input = document.getElementById('rs-setup-input');
+  const btn   = document.getElementById('rs-setup-btn');
+  const err   = document.getElementById('rs-setup-error');
+
+  // Style komponen
+  Object.assign(el.querySelector('.rs-setup-box').style, {
+    background:'var(--surface-2,#1a1a24)',border:'1px solid var(--border,#2a2a3a)',
+    borderRadius:'16px',padding:'36px 28px',maxWidth:'440px',width:'100%',
+    textAlign:'center',display:'flex',flexDirection:'column',gap:'14px'
+  });
+  el.querySelector('.rs-setup-logo').style.cssText = 'font-size:40px;line-height:1';
+  el.querySelector('.rs-setup-title').style.cssText = 'font-size:20px;font-weight:700;color:var(--text-1,#fff);margin:0';
+  el.querySelector('.rs-setup-desc').style.cssText  = 'font-size:14px;color:var(--text-3,#888);margin:0;line-height:1.6';
+  Object.assign(input.style, {
+    width:'100%',padding:'12px 14px',borderRadius:'10px',border:'1.5px solid var(--border,#2a2a3a)',
+    background:'var(--surface,#0f0f13)',color:'var(--text-1,#fff)',fontSize:'14px',
+    outline:'none',boxSizing:'border-box'
+  });
+  Object.assign(btn.style, {
+    padding:'12px 20px',borderRadius:'10px',border:'none',cursor:'pointer',
+    background:'var(--accent,#7c3aed)',color:'#fff',fontSize:'15px',fontWeight:'600',
+    transition:'opacity .2s'
+  });
+  el.querySelector('.rs-setup-hint').style.cssText = 'font-size:12px;color:var(--text-3,#666);margin:0';
+
+  // Stored value pre-fill
+  const prev = localStorage.getItem('rs_api_base');
+  if (prev) input.value = prev;
+
+  async function trySave() {
+    const url = input.value.trim().replace(/\/$/, '');
+    if (!url.startsWith('http')) {
+      err.textContent = 'URL harus dimulai dengan http:// atau https://';
+      err.style.display = 'block';
+      err.style.cssText = 'color:#ef4444;font-size:13px;display:block';
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Mencoba...';
+    err.style.display = 'none';
+
+    // Tes koneksi ke backend
+    try {
+      const ctrl = new AbortController();
+      const tid  = setTimeout(() => ctrl.abort(), 6000);
+      const r    = await fetch(url + '/api/library', { signal: ctrl.signal });
+      clearTimeout(tid);
+      if (!r.ok && r.status !== 200) throw new Error('HTTP ' + r.status);
+    } catch (e) {
+      err.textContent = 'Tidak bisa terhubung ke backend. Pastikan tunnel aktif dan URL benar.';
+      err.style.cssText = 'color:#ef4444;font-size:13px;display:block';
+      btn.disabled = false;
+      btn.textContent = 'Simpan & Hubungkan';
+      return;
+    }
+
+    // Simpan dan reload
+    localStorage.setItem('rs_api_base', url);
+    btn.textContent = 'Tersambung! Memuat...';
+    setTimeout(() => location.reload(), 600);
+  }
+
+  btn.addEventListener('click', trySave);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') trySave(); });
+  input.focus();
+}
 
 // ── API Endpoints ─────────────────────────────────────────────────────────────
 export const API = {
