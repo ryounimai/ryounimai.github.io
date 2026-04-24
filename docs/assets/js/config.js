@@ -7,7 +7,7 @@
  * Di-export sebagai named exports agar bisa di-import oleh modul lain.
  */
 
-// ── API Base URL ──────────────────────────────────────────────────────────────
+// ── API Base URL ────────────────────────────────────────────────────────────
 // Cara set: localStorage.setItem('rs_api_base', 'https://tunnel.url.kamu')
 //           lalu reload halaman.
 // Atau isi field setup yang muncul otomatis jika belum dikonfigurasi.
@@ -166,7 +166,7 @@ export function showSetupScreen() {
   input.focus();
 }
 
-// ── API Endpoints ─────────────────────────────────────────────────────────────
+// ── API Endpoints ────────────────────────────────────────────────────────────
 export const API = {
   LIBRARY:     `${API_BASE}/api/library`,
   EPISODES:    (id)  => `${API_BASE}/api/episodes/${id}`,
@@ -180,7 +180,7 @@ export const API = {
   MEDIA:       (rel)  => `${API_BASE}/media/${rel}`,
 };
 
-// ── App Meta ──────────────────────────────────────────────────────────────────
+// ── App Meta ─────────────────────────────────────────────────────────────────
 export const APP = {
   NAME:    'RyouStream',
   TAGLINE: 'Ryounime Stream Platform',
@@ -189,7 +189,7 @@ export const APP = {
   AUTHOR:  'Ryounime',
 };
 
-// ── Storage Keys ──────────────────────────────────────────────────────────────
+// ── Storage Keys ─────────────────────────────────────────────────────────────
 export const STORE = {
   SETTINGS:      'rs_settings',
   WATCH_HISTORY: 'rs_watch_history',
@@ -200,7 +200,7 @@ export const STORE = {
   LIBRARY_TS:    'rs_lib_ts',
 };
 
-// ── Default Settings ──────────────────────────────────────────────────────────
+// ── Default Settings ─────────────────────────────────────────────────────────
 export const DEFAULT_SETTINGS = {
   autoplay:       false,
   autoNext:       true,
@@ -239,7 +239,7 @@ export const Settings = {
   },
 };
 
-// ── Watch Position Store ───────────────────────────────────────────────────────
+// ── Watch Position Store ─────────────────────────────────────────────────────
 export const Positions = {
   _data: (() => {
     try { return JSON.parse(localStorage.getItem(STORE.POSITIONS) || '{}'); } catch { return {}; }
@@ -259,7 +259,7 @@ export const Positions = {
   },
 };
 
-// ── Watch History ─────────────────────────────────────────────────────────────
+// ── Watch History ────────────────────────────────────────────────────────────
 export const History = {
   _data: (() => {
     try { return JSON.parse(localStorage.getItem(STORE.WATCH_HISTORY) || '[]'); } catch { return []; }
@@ -278,7 +278,7 @@ export const History = {
   },
 };
 
-// ── Library Cache ─────────────────────────────────────────────────────────────
+// ── Library Cache ────────────────────────────────────────────────────────────
 const CACHE_TTL = 5 * 60 * 1000; // 5 menit
 
 export const LibCache = {
@@ -316,7 +316,7 @@ export const LibCache = {
   isStale() { return !this._data || (Date.now() - this._ts > CACHE_TTL); },
 };
 
-// ── Accent Color Applier ──────────────────────────────────────────────────────
+// ── Accent Color Applier ─────────────────────────────────────────────────────
 export function applyAccentColor(hex) {
   document.documentElement.style.setProperty('--accent', hex);
   // Derive light/dark variants
