@@ -8,7 +8,7 @@ import { registerPage } from '../router.js';
 import {
   fetchServerSettings, triggerScan, clearCache, pollScanStatus
 } from '../api.js';
-import { Settings, LibCache, applyAccentColor } from '../config.js';
+import { Settings, LibCache, applyAccentColor, apiBaseReady } from '../config.js';
 import { $, toast } from '../utils.js';
 import { animateSettingsOpen, animatePageEnter, pulseButton } from '../animations.js';
 

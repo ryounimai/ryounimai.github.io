@@ -6,7 +6,7 @@
 
 import { registerPage, go } from '../router.js';
 import { fetchLibrary } from '../api.js';
-import { LibCache } from '../config.js';
+import { LibCache, apiBaseReady } from '../config.js';
 import {
   $, buildAnimeCard, getCategoryData,
   detailsHash, debounce, toast
@@ -169,6 +169,7 @@ function bindTopbarSearch() {
 
 // ── Load library ──────────────────────────────────────────────────────────────
 async function ensureLibrary() {
+  await apiBaseReady.catch(() => {});
   const cached = LibCache.load();
   if (cached?.length) { _library = cached; return; }
 

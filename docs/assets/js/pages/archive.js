@@ -6,7 +6,7 @@
 
 import { registerPage, go } from '../router.js';
 import { fetchLibrary } from '../api.js';
-import { LibCache } from '../config.js';
+import { LibCache, apiBaseReady } from '../config.js';
 import {
   $, $$, buildAnimeCard, getCategoryData,
   detailsHash, genreToCategory, toast,
@@ -212,6 +212,7 @@ function initLoadMore() {
 
 // ── Load library ──────────────────────────────────────────────────────────────
 async function loadArchive(params = {}) {
+  await apiBaseReady.catch(() => {});
   // Apply URL params
   if (params.type && params.type !== 'all') _activeType = params.type;
   if (params.sort)  _activeSort = params.sort;

@@ -15,7 +15,7 @@
 
 import { initRouter, go } from './router.js';
 import { pingServer, triggerScan, fetchScanStatus } from './api.js';
-import { Settings, LibCache, applyAccentColor } from './config.js';
+import { Settings, LibCache, applyAccentColor, apiBaseReady } from './config.js';
 import { $, getCategoryData, toast, debounce } from './utils.js';
 import { dismissLoader, initTopbarScroll } from './animations.js';
 
@@ -330,8 +330,13 @@ async function bootstrap() {
   // Init router (this triggers first page mount)
   initRouter();
 
-  // Server status
-  startStatusPolling();
+  // Tunggu API base URL resolved (Gist / localStorage / fallback)
+  // baru mulai polling — agar URL yang dipakai sudah benar
+  apiBaseReady.then(() => {
+    startStatusPolling();
+  }).catch(() => {
+    startStatusPolling(); // tetap poll meski Gist gagal
+  });
 
   // PWA
   initPWA();

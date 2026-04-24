@@ -6,7 +6,7 @@
 
 import { registerPage, go, updateTopbar } from '../router.js';
 import { fetchLibrary, fetchEpisodes }     from '../api.js';
-import { LibCache, Settings, Positions, History } from '../config.js';
+import { LibCache, Settings, Positions, History, apiBaseReady } from '../config.js';
 import { $, el, safeImg, toast, resolveMediaSrc, watchHash, detailsHash, FALLBACK_THUMB } from '../utils.js';
 import { animateEpisodeList, animatePageEnter } from '../animations.js';
 
@@ -28,6 +28,7 @@ const fmt = (sec) => {
 };
 
 async function getEntry(id) {
+  await apiBaseReady.catch(() => {});
   let lib = LibCache.load();
   if (!lib?.length) {
     try { const r = await fetchLibrary(); lib = r.data || []; if (lib.length) LibCache.save(lib); }

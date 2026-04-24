@@ -6,7 +6,7 @@
 
 import { registerPage, go } from '../router.js';
 import { fetchLibrary, pingServer } from '../api.js';
-import { LibCache, Settings } from '../config.js';
+import { LibCache, Settings, apiBaseReady } from '../config.js';
 import {
   $, buildAnimeCard, buildSkeletonRow,
   bannerSrc, posterSrc, fmtRating, fmtEps, getDesc,
@@ -252,11 +252,14 @@ registerPage('home', {
 
     if (!_mounted) {
       _mounted = true;
+      // Pastikan API_BASE sudah di-resolve (Gist/localStorage) sebelum fetch
+      await apiBaseReady.catch(() => {});
       await loadLibrary();
     } else if (_library.length) {
       // Already loaded, just restart hero timer
       if (_heroItems.length) startHeroTimer();
     } else {
+      await apiBaseReady.catch(() => {});
       await loadLibrary();
     }
   },

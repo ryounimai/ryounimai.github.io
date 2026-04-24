@@ -6,7 +6,7 @@
 
 import { registerPage, go, updateTopbar } from '../router.js';
 import { fetchLibrary, fetchEpisodes } from '../api.js';
-import { LibCache, Settings } from '../config.js';
+import { LibCache, Settings, apiBaseReady } from '../config.js';
 import {
   $, $$, el, safeImg, getDesc, fmtRating,
   typeBadgeClass, statusBadgeClass,
@@ -22,6 +22,7 @@ let _epQuery  = '';
 
 // ── Load entry from library ────────────────────────────────────────────────────
 async function getEntry(id) {
+  await apiBaseReady.catch(() => {});
   let lib = LibCache.load();
   if (!lib?.length) {
     const res = await fetchLibrary();

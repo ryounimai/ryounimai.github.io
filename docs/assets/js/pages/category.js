@@ -6,7 +6,7 @@
 
 import { registerPage, go } from '../router.js';
 import { fetchLibrary } from '../api.js';
-import { LibCache } from '../config.js';
+import { LibCache, apiBaseReady } from '../config.js';
 import {
   $, buildAnimeCard, getCategoryData,
   genreToCategory, detailsHash, toast
@@ -131,6 +131,7 @@ function showCategoryDetail(cat, items) {
 
 // ── Load library ──────────────────────────────────────────────────────────────
 async function loadCategories() {
+  await apiBaseReady.catch(() => {});
   let lib = LibCache.load();
 
   if (!lib?.length) {

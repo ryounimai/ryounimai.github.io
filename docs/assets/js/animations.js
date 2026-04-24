@@ -14,7 +14,9 @@ import { Settings } from './config.js';
 
 // ── Guard ─────────────────────────────────────────────────────────────────────
 function canAnimate() {
-  if (!window.anime) return false;
+  // window.anime dari UMD — harus sudah ada sebelum modules jalan
+  // Jika tidak ada, animasi skip tapi UI tetap jalan normal
+  if (typeof window.anime === 'undefined') return false;
   if (!Settings.get('animations')) return false;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
   return true;
@@ -163,7 +165,13 @@ export function animateCategoryGrid(gridEl) {
 // ── Loader dismiss ────────────────────────────────────────────────────────────
 export function dismissLoader(loaderEl) {
   if (!loaderEl) return;
-  if (!canAnimate()) { loaderEl.style.display = 'none'; return; }
+  // Loader HARUS dismiss apapun yang terjadi — jangan block di canAnimate()
+  if (!canAnimate()) {
+    loaderEl.style.opacity = '0';
+    loaderEl.style.transition = 'opacity 0.3s';
+    setTimeout(() => { loaderEl.style.display = 'none'; }, 350);
+    return;
+  }
   anim(loaderEl, {
     opacity:  [1, 0],
     duration: 400,

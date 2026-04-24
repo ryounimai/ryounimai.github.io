@@ -7,17 +7,55 @@
  * Di-export sebagai named exports agar bisa di-import oleh modul lain.
  */
 
-// ── API Base URL (auto-detect dari origin, bisa di-override) ──────────────────
-export const API_BASE = (() => {
+// ── API Base URL ──────────────────────────────────────────────────────────────
+// Priority: localStorage override → Gist auto-detect → fallback same-origin
+// Set manual: localStorage.setItem('rs_api_base', 'https://your-tunnel.com')
+
+const GIST_ID = '1a42e63011f4496adb0a4c7821e15bb6'; // sama dengan Alpha
+
+async function _resolveApiBase() {
+  // 1. Manual override (paling prioritas)
   const stored = localStorage.getItem('rs_api_base');
   if (stored) return stored.replace(/\/$/, '');
-  // Sama-origin dengan backend (default: port 8080 jika bukan 80/443)
+
+  // 2. Auto-detect via GitHub Gist (sama seperti Alpha)
+  try {
+    const r = await fetch(
+      `https://api.github.com/gists/${GIST_ID}`,
+      { cache: 'no-store', signal: AbortSignal.timeout(4000) }
+    );
+    if (r.ok) {
+      const g = await r.json();
+      const file = Object.values(g.files)[0];
+      const url = file?.content?.trim();
+      if (url && url.startsWith('http')) return url.replace(/\/$/, '');
+    }
+  } catch { /* Gist tidak tersedia, lanjut ke fallback */ }
+
+  // 3. Fallback: same-origin port 8080
   const { protocol, hostname } = location;
-  if (location.port && location.port !== '80' && location.port !== '443') {
-    return `${protocol}//${hostname}:${location.port}`;
-  }
   return `${protocol}//${hostname}:8080`;
-})();
+}
+
+// Sinkron untuk import awal — akan diupdate async setelah Gist resolve
+// Default sementara pakai localStorage atau same-origin
+const _storedBase = localStorage.getItem('rs_api_base');
+export let API_BASE = _storedBase
+  ? _storedBase.replace(/\/$/, '')
+  : `${location.protocol}//${location.hostname}:8080`;
+
+// Resolve async — update API_BASE dan dispatch event agar modul lain tahu
+export const apiBaseReady = _resolveApiBase().then(url => {
+  API_BASE = url;
+  // Update semua endpoint dinamis
+  Object.keys(API).forEach(k => {
+    if (typeof API[k] === 'string') {
+      API[k] = API[k].replace(/^https?:\/\/[^/]+/, url);
+    }
+  });
+  document.dispatchEvent(new CustomEvent('rs:api-ready', { detail: { base: url } }));
+  return url;
+});
 
 // ── API Endpoints ─────────────────────────────────────────────────────────────
 export const API = {
