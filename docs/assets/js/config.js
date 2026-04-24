@@ -92,7 +92,7 @@ export function showSetupScreen() {
       <button id="rs-setup-btn" class="rs-setup-btn">Simpan & Hubungkan</button>
       <p class="rs-setup-hint">URL akan disimpan di browser. Hanya perlu diisi sekali.</p>
     </div>`;
-  el.style.cssText = \`
+  el.style.cssText = `
     position:fixed;inset:0;z-index:99999;
     background:var(--surface,#0f0f13);
     display:flex;align-items:center;justify-content:center;
