@@ -33,7 +33,13 @@ async function _resolveApiBase() {
       clearTimeout(tid);
       if (r.ok) {
         const text = (await r.text()).trim();
+        // Support plain URL atau JSON {"url":"...","updated":"..."}
         if (text.startsWith('http')) return text.replace(/\/$/, '');
+        try {
+          const json = JSON.parse(text);
+          const url  = json.url || json.backend || json.host;
+          if (url && url.startsWith('http')) return url.replace(/\/$/, '');
+        } catch {}
       }
     } catch { /* coba URL berikutnya */ }
   }
