@@ -20,9 +20,10 @@ async function _resolveApiBase() {
   if (stored && stored.startsWith('http')) return stored.replace(/\/$/, '');
 
   // 2. GitHub Gist raw (tidak butuh auth, tidak rate limit seperti API)
+  // Raw Gist URL — public gist, tidak butuh auth dari browser
+  // Format: gist.githubusercontent.com/USER/ID/raw
   const GIST_URLS = [
-    `https://gist.githubusercontent.com/ryounimai/${GIST_ID}/raw`,
-    `https://gist.github.com/ryounimai/${GIST_ID}/raw`,
+    `https://gist.githubusercontent.com/ryounimai/${GIST_ID}/raw?t=${Date.now()}`,
   ];
   for (const gurl of GIST_URLS) {
     try {
