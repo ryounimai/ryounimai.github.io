@@ -1,7 +1,6 @@
 """
 backend/config.py — RyouStream v1.1.0 Epsilon
-Edit bagian SERVER, METADATA, dan EKSTENSI sesuai kebutuhan.
-SD Card path di-detect otomatis — tidak perlu diedit manual.
+SD Card di-detect otomatis via Termux ~/storage/external-* symlink.
 """
 
 import os, re
@@ -9,75 +8,71 @@ import os, re
 _BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
 _ROOT_DIR    = os.path.dirname(_BACKEND_DIR)
 
-# ─── AUTO-DETECT SD CARD ───────────────────────────────────────────────────────
-# Mencari /storage/XXXX-XXXX (external SD card, format hex-hex)
-# Skip: /storage/emulated (internal), /storage/self (symlink internal)
+# ─── AUTO-DETECT SD CARD ──────────────────────────────────────────────────────
+# Di Termux, setelah termux-setup-storage, symlink dibuat di ~/storage/:
+#   ~/storage/shared      → /storage/emulated/0  (internal, SKIP)
+#   ~/storage/external-1  → /storage/XXXX-XXXX   (SD card ke-1)
+#   ~/storage/external-2  → /storage/XXXX-XXXX   (SD card ke-2, jika ada)
 #
-# Contoh yang cocok   : /storage/1A0A-2561, /storage/A1B2-C3D4
-# Contoh yang di-skip : /storage/emulated/0, /storage/self
+# Python di Termux tidak bisa baca /storage/ langsung (PermissionError)
+# tapi bisa lewat symlink ~/storage/ yang dibuat Termux.
 
 _SD_PATTERN = re.compile(r'^[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}$')
 
-def _detect_sdcard() -> str | None:
-    storage = "/storage"
-    if not os.path.isdir(storage):
-        print("[Config] /storage tidak ditemukan")
-        return None
-    try:
-        entries = os.listdir(storage)
-        print(f"[Config] /storage berisi: {entries}")
-    except PermissionError:
-        print("[Config] PermissionError saat baca /storage")
-        print("[Config] Jalankan: termux-setup-storage")
-        return None
-    except Exception as e:
-        print(f"[Config] Error baca /storage: {e}")
-        return None
+def _detect_sdcard():
+    HOME          = os.path.expanduser("~")
+    termux_store  = os.path.join(HOME, "storage")
+    candidates    = []
 
-    # Cek apakah ada symlink emulated yang mengarah ke SD
-    # Beberapa device: /storage/emulated/XXXX-XXXX (bukan langsung di /storage)
-    candidates = []
-    for name in entries:
-        full = os.path.join(storage, name)
+    # ── Jalur 1: ~/storage/external-* (Termux symlink) ──
+    if os.path.isdir(termux_store):
+        try:
+            entries = sorted(os.listdir(termux_store))
+            print(f"[Config] ~/storage: {entries}")
+            for name in entries:
+                if not name.startswith("external"):
+                    continue
+                full = os.path.join(termux_store, name)
+                if os.path.isdir(full):
+                    real = os.path.realpath(full)
+                    print(f"[Config]   {name} → {real}")
+                    candidates.append(real)
+        except Exception as e:
+            print(f"[Config] ~/storage error: {e}")
 
-        # Pola XXXX-XXXX (external SD card standar)
-        if _SD_PATTERN.match(name) and os.path.isdir(full):
-            candidates.append(full)
-            continue
-
-        # Beberapa device taruh SD di /storage/emulated/XXXX-XXXX
-        if name == "emulated" and os.path.isdir(full):
-            try:
-                for sub in os.listdir(full):
-                    if _SD_PATTERN.match(sub):
-                        subpath = os.path.join(full, sub)
-                        if os.path.isdir(subpath):
-                            candidates.append(subpath)
-            except Exception:
-                pass
+    # ── Jalur 2: scan /storage/XXXX-XXXX langsung (fallback) ──
+    if not candidates:
+        try:
+            for name in os.listdir("/storage"):
+                if _SD_PATTERN.match(name):
+                    full = os.path.join("/storage", name)
+                    if os.path.isdir(full):
+                        candidates.append(full)
+        except Exception:
+            pass
 
     print(f"[Config] Kandidat SD: {candidates}")
 
-    if candidates:
-        # Prioritas: yang sudah punya folder Movies atau Videos
-        for c in candidates:
-            if os.path.isdir(os.path.join(c, "Movies")) or                os.path.isdir(os.path.join(c, "Videos")):
-                return c
-        return candidates[0]
+    if not candidates:
+        return None
 
-    return None
+    # Prioritas: yang punya folder Movies atau Videos
+    for c in candidates:
+        if os.path.isdir(os.path.join(c, "Movies")) or \
+           os.path.isdir(os.path.join(c, "Videos")):
+            return c
 
-# SDCARD_ROOT: auto-detect, fallback ke nilai manual jika tidak ditemukan
-_AUTO_SD     = _detect_sdcard()
-SDCARD_ROOT  = _AUTO_SD or "/storage/1A0A-2561"   # ← fallback manual
+    return candidates[0]
+
+
+_AUTO_SD    = _detect_sdcard()
+SDCARD_ROOT = _AUTO_SD or "/storage/1A0A-2561"   # ← ganti jika fallback salah
 
 if _AUTO_SD:
-    print(f"[Config] SD Card terdeteksi  : {SDCARD_ROOT}")
+    print(f"[Config] ✅ SD Card: {SDCARD_ROOT}")
 else:
-    print(f"[Config] SD Card tidak terdeteksi!")
-    print(f"[Config] Menggunakan fallback : {SDCARD_ROOT}")
-    print(f"[Config] Jika salah, edit SDCARD_ROOT di backend/config.py")
-    print(f"[Config] Atau jalankan: termux-setup-storage")
+    print(f"[Config] ⚠️  SD Card tidak terdeteksi, pakai fallback: {SDCARD_ROOT}")
+    print(f"[Config]    Jika salah → edit SDCARD_ROOT di backend/config.py")
 
 MOVIES_PATH = os.path.join(SDCARD_ROOT, "Movies")
 VIDEOS_PATH = os.path.join(SDCARD_ROOT, "Videos")
@@ -96,15 +91,9 @@ CACHE_DIR       = os.path.join(_BACKEND_DIR, "cache")
 CACHE_TTL_HOURS = 168  # 7 hari
 
 # ─── METADATA API ─────────────────────────────────────────────────────────────
-
-# [1] Jikan v4 — MyAnimeList (tanpa API key)
-JIKAN_BASE  = "https://api.jikan.moe/v4"
-JIKAN_DELAY = 0.4  # detik
-
-# [2] MDL Unofficial Scraper
-MDL_BASE = "https://my-drama-list-api-ten.vercel.app"
-
-# [3] TMDB — daftar key gratis di themoviedb.org/settings/api
+JIKAN_BASE    = "https://api.jikan.moe/v4"
+JIKAN_DELAY   = 0.4
+MDL_BASE      = "https://my-drama-list-api-ten.vercel.app"
 TMDB_API_KEY  = "37417939a4b0213ea809e390ab206b62"
 TMDB_BASE     = "https://api.themoviedb.org/3"
 TMDB_IMG_BASE = "https://image.tmdb.org/t/p/w500"
