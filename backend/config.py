@@ -1,72 +1,59 @@
 """
 backend/config.py — RyouStream v1.1.0 Epsilon
-SD Card di-detect otomatis via Termux ~/storage/external-* symlink.
+SD Card di-detect otomatis via `df` command.
 """
 
-import os, re
+import os, re, subprocess
 
 _BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
 _ROOT_DIR    = os.path.dirname(_BACKEND_DIR)
 
-# ─── AUTO-DETECT SD CARD ──────────────────────────────────────────────────────
-# Di Termux, setelah termux-setup-storage, symlink dibuat di ~/storage/:
-#   ~/storage/shared      → /storage/emulated/0  (internal, SKIP)
-#   ~/storage/external-1  → /storage/XXXX-XXXX   (SD card ke-1)
-#   ~/storage/external-2  → /storage/XXXX-XXXX   (SD card ke-2, jika ada)
-#
-# Python di Termux tidak bisa baca /storage/ langsung (PermissionError)
-# tapi bisa lewat symlink ~/storage/ yang dibuat Termux.
+# ─── AUTO-DETECT SD CARD via df ───────────────────────────────────────────────
+# Jalankan: df -h | grep /storage
+# Cari baris yang mount point-nya /storage/XXXX-XXXX (bukan emulated)
+# Contoh output:
+#   /dev/fuse  233G  12G  221G  5%  /storage/E9EF-CAB9   ← ini SD card
+#   /dev/fuse  228G 105G  122G 47%  /storage/emulated    ← skip
 
 _SD_PATTERN = re.compile(r'^[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}$')
 
 def _detect_sdcard():
-    HOME          = os.path.expanduser("~")
-    termux_store  = os.path.join(HOME, "storage")
-    candidates    = []
+    try:
+        result = subprocess.run(
+            ["df", "-h"],
+            capture_output=True, text=True, timeout=5
+        )
+        candidates = []
+        for line in result.stdout.splitlines():
+            # Ambil kolom terakhir (mount point)
+            parts = line.split()
+            if not parts:
+                continue
+            mount = parts[-1]
+            # Cocokkan /storage/XXXX-XXXX
+            if not mount.startswith("/storage/"):
+                continue
+            name = mount.split("/storage/")[-1].strip("/")
+            if _SD_PATTERN.match(name):
+                candidates.append(mount)
+                print(f"[Config] df detect: {mount}")
 
-    # ── Jalur 1: ~/storage/external-* (Termux symlink) ──
-    if os.path.isdir(termux_store):
-        try:
-            entries = sorted(os.listdir(termux_store))
-            print(f"[Config] ~/storage: {entries}")
-            for name in entries:
-                if not name.startswith("external"):
-                    continue
-                full = os.path.join(termux_store, name)
-                if os.path.isdir(full):
-                    real = os.path.realpath(full)
-                    print(f"[Config]   {name} → {real}")
-                    candidates.append(real)
-        except Exception as e:
-            print(f"[Config] ~/storage error: {e}")
+        if candidates:
+            # Prioritas: yang punya Movies atau Videos
+            for c in candidates:
+                if os.path.isdir(os.path.join(c, "Movies")) or \
+                   os.path.isdir(os.path.join(c, "Videos")):
+                    return c
+            return candidates[0]
 
-    # ── Jalur 2: scan /storage/XXXX-XXXX langsung (fallback) ──
-    if not candidates:
-        try:
-            for name in os.listdir("/storage"):
-                if _SD_PATTERN.match(name):
-                    full = os.path.join("/storage", name)
-                    if os.path.isdir(full):
-                        candidates.append(full)
-        except Exception:
-            pass
+    except Exception as e:
+        print(f"[Config] df error: {e}")
 
-    print(f"[Config] Kandidat SD: {candidates}")
-
-    if not candidates:
-        return None
-
-    # Prioritas: yang punya folder Movies atau Videos
-    for c in candidates:
-        if os.path.isdir(os.path.join(c, "Movies")) or \
-           os.path.isdir(os.path.join(c, "Videos")):
-            return c
-
-    return candidates[0]
+    return None
 
 
 _AUTO_SD    = _detect_sdcard()
-SDCARD_ROOT = _AUTO_SD or "/storage/1A0A-2561"   # ← ganti jika fallback salah
+SDCARD_ROOT = _AUTO_SD or "/storage/E9EF-CAB9"   # ← fallback, ganti jika beda
 
 if _AUTO_SD:
     print(f"[Config] ✅ SD Card: {SDCARD_ROOT}")
