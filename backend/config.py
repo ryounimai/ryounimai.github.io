@@ -21,26 +21,50 @@ _SD_PATTERN = re.compile(r'^[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}$')
 def _detect_sdcard() -> str | None:
     storage = "/storage"
     if not os.path.isdir(storage):
+        print("[Config] /storage tidak ditemukan")
         return None
     try:
-        candidates = []
-        for name in os.listdir(storage):
-            # Hanya ambil yang cocok format XXXX-XXXX (external SD)
-            if not _SD_PATTERN.match(name):
-                continue
-            full = os.path.join(storage, name)
-            if os.path.isdir(full):
-                candidates.append(full)
-        if candidates:
-            # Kalau lebih dari satu, ambil yang punya Movies atau Videos
-            for c in candidates:
-                if os.path.isdir(os.path.join(c, "Movies")) or \
-                   os.path.isdir(os.path.join(c, "Videos")):
-                    return c
-            # Tidak ada yang punya folder media — pakai kandidat pertama
-            return candidates[0]
+        entries = os.listdir(storage)
+        print(f"[Config] /storage berisi: {entries}")
     except PermissionError:
-        pass
+        print("[Config] PermissionError saat baca /storage")
+        print("[Config] Jalankan: termux-setup-storage")
+        return None
+    except Exception as e:
+        print(f"[Config] Error baca /storage: {e}")
+        return None
+
+    # Cek apakah ada symlink emulated yang mengarah ke SD
+    # Beberapa device: /storage/emulated/XXXX-XXXX (bukan langsung di /storage)
+    candidates = []
+    for name in entries:
+        full = os.path.join(storage, name)
+
+        # Pola XXXX-XXXX (external SD card standar)
+        if _SD_PATTERN.match(name) and os.path.isdir(full):
+            candidates.append(full)
+            continue
+
+        # Beberapa device taruh SD di /storage/emulated/XXXX-XXXX
+        if name == "emulated" and os.path.isdir(full):
+            try:
+                for sub in os.listdir(full):
+                    if _SD_PATTERN.match(sub):
+                        subpath = os.path.join(full, sub)
+                        if os.path.isdir(subpath):
+                            candidates.append(subpath)
+            except Exception:
+                pass
+
+    print(f"[Config] Kandidat SD: {candidates}")
+
+    if candidates:
+        # Prioritas: yang sudah punya folder Movies atau Videos
+        for c in candidates:
+            if os.path.isdir(os.path.join(c, "Movies")) or                os.path.isdir(os.path.join(c, "Videos")):
+                return c
+        return candidates[0]
+
     return None
 
 # SDCARD_ROOT: auto-detect, fallback ke nilai manual jika tidak ditemukan
@@ -48,9 +72,12 @@ _AUTO_SD     = _detect_sdcard()
 SDCARD_ROOT  = _AUTO_SD or "/storage/1A0A-2561"   # ← fallback manual
 
 if _AUTO_SD:
-    print(f"[Config] SD Card terdeteksi: {SDCARD_ROOT}")
+    print(f"[Config] SD Card terdeteksi  : {SDCARD_ROOT}")
 else:
-    print(f"[Config] SD Card tidak terdeteksi, pakai fallback: {SDCARD_ROOT}")
+    print(f"[Config] SD Card tidak terdeteksi!")
+    print(f"[Config] Menggunakan fallback : {SDCARD_ROOT}")
+    print(f"[Config] Jika salah, edit SDCARD_ROOT di backend/config.py")
+    print(f"[Config] Atau jalankan: termux-setup-storage")
 
 MOVIES_PATH = os.path.join(SDCARD_ROOT, "Movies")
 VIDEOS_PATH = os.path.join(SDCARD_ROOT, "Videos")
