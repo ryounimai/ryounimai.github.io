@@ -1,5 +1,5 @@
-# ŘΨØŬ v1.0.0 — Backend Dependencies
-# Python 3.10+ required (stdlib only untuk core)
-# Opsional:
-mutagen       # baca tag file video (judul lebih akurat)
-cryptography  # untuk generate SSL cert (HTTPS/PWA)
+# RyouStream v1.1.0 Epsilon — Backend Dependencies
+# Semua tersedia di Termux tanpa perlu Rust/compiler
+
+requests   # HTTP requests untuk metadata (Jikan, TMDB, MDL)
+mutagen    # baca tag file video (judul lebih akurat) — opsional

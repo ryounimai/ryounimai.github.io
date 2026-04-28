@@ -89,20 +89,26 @@ if [ -z "$CLOUDFLARED" ]; then
 fi
 
 # ── Install Python deps ────────────────────────────────────────────
-if ! "$PYTHON" -c "import requests" &>/dev/null 2>&1; then
-  echo -e "${Y}  📦 Install dependencies Python...${NC}"
-  "$PYTHON" -m pip install -r "$BACKEND_DIR/requirements.txt" --quiet
-  echo -e "${G}  ✅ Dependencies siap${NC}"
+# Install pkg deps (openssl untuk cert, curl sudah ada biasanya)
+if ! command -v openssl &>/dev/null; then
+  echo -e "${Y}  📦 Install openssl...${NC}"
+  pkg install -y openssl-tool 2>/dev/null     && echo -e "${G}  ✅ openssl siap${NC}"     || echo -e "${Y}  ⚠️  openssl gagal, HTTP saja${NC}"
 fi
+
+# Install Python deps — satu per satu agar satu gagal tidak block semua
+echo -e "${Y}  📦 Install dependencies Python...${NC}"
+for pkg_name in requests mutagen; do
+  if ! "$PYTHON" -c "import ${pkg_name//-/_}" &>/dev/null 2>&1; then
+    "$PYTHON" -m pip install "$pkg_name" --quiet 2>/dev/null       && echo -e "${G}  ✅ $pkg_name${NC}"       || echo -e "${Y}  ⚠️  $pkg_name gagal (opsional)${NC}"
+  fi
+done
 
 # ── SSL cert ───────────────────────────────────────────────────────
 CERT="$BACKEND_DIR/cert.pem"
 KEY="$BACKEND_DIR/key.pem"
 if [ ! -f "$CERT" ] || [ ! -f "$KEY" ]; then
   echo -e "${Y}  🔐 Generate SSL certificate...${NC}"
-  "$PYTHON" "$BACKEND_DIR/generate_cert.py" 2>/dev/null \
-    && echo -e "${G}  ✅ SSL cert dibuat${NC}" \
-    || echo -e "${Y}  ⚠️  SSL cert gagal (HTTP saja)${NC}"
+  "$PYTHON" "$BACKEND_DIR/generate_cert.py" 2>/dev/null     && echo -e "${G}  ✅ SSL cert dibuat${NC}"     || echo -e "${Y}  ⚠️  SSL cert gagal (HTTP saja, tunnel tetap HTTPS)${NC}"
 fi
 
 # ── Mulai Cloudflare Tunnel (background) ──────────────────────────
