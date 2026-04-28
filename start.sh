@@ -19,6 +19,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKEND_DIR="$SCRIPT_DIR/backend"
 TUNNEL_LOG="$BACKEND_DIR/tunnel.log"
 GIST_ID="1a42e63011f4496adb0a4c7821e15bb6"
+
+# ── Auto update repo ───────────────────────────────────────────────
+if [ -d "$SCRIPT_DIR/.git" ]; then
+  git -C "$SCRIPT_DIR" pull --ff-only --quiet 2>/dev/null || true
+fi
 GITHUB_TOKEN=""  # ← isi token GitHub kamu di sini (Settings → Developer → PAT)
 
 # ── Warna ──────────────────────────────────────────────────────────
@@ -95,13 +100,19 @@ if ! command -v openssl &>/dev/null; then
   pkg install -y openssl-tool 2>/dev/null     && echo -e "${G}  ✅ openssl siap${NC}"     || echo -e "${Y}  ⚠️  openssl gagal, HTTP saja${NC}"
 fi
 
-# Install Python deps — satu per satu agar satu gagal tidak block semua
-echo -e "${Y}  📦 Install dependencies Python...${NC}"
-for pkg_name in requests mutagen; do
-  if ! "$PYTHON" -c "import ${pkg_name//-/_}" &>/dev/null 2>&1; then
-    "$PYTHON" -m pip install "$pkg_name" --quiet 2>/dev/null       && echo -e "${G}  ✅ $pkg_name${NC}"       || echo -e "${Y}  ⚠️  $pkg_name gagal (opsional)${NC}"
-  fi
-done
+# Install via pkg dulu (pre-compiled, tidak butuh Rust/compiler)
+# pip hanya untuk yg tidak ada di pkg, dengan --only-binary agar tidak build
+echo -e "${Y}  📦 Install dependencies...${NC}"
+
+# requests via pkg Termux (paling aman)
+if ! "$PYTHON" -c "import requests" &>/dev/null 2>&1; then
+  pkg install -y python-requests 2>/dev/null     && echo -e "${G}  ✅ requests (pkg)${NC}"     || { "$PYTHON" -m pip install requests --only-binary=:all: --quiet 2>/dev/null          && echo -e "${G}  ✅ requests (pip)${NC}"          || echo -e "${R}  ❌ requests gagal!${NC}"; }
+fi
+
+# mutagen via pip (pure Python, tidak butuh compiler)
+if ! "$PYTHON" -c "import mutagen" &>/dev/null 2>&1; then
+  "$PYTHON" -m pip install mutagen --only-binary=:all: --quiet 2>/dev/null     && echo -e "${G}  ✅ mutagen (pip)${NC}"     || echo -e "${Y}  ⚠️  mutagen skip (opsional)${NC}"
+fi
 
 # ── SSL cert ───────────────────────────────────────────────────────
 CERT="$BACKEND_DIR/cert.pem"
