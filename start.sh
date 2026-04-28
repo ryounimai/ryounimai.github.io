@@ -93,25 +93,38 @@ if [ -z "$CLOUDFLARED" ]; then
   CLOUDFLARED=$(find_cloudflared)
 fi
 
-# ── Install Python deps ────────────────────────────────────────────
-# Install pkg deps (openssl untuk cert, curl sudah ada biasanya)
-if ! command -v openssl &>/dev/null; then
-  echo -e "${Y}  📦 Install openssl...${NC}"
-  pkg install -y openssl-tool 2>/dev/null     && echo -e "${G}  ✅ openssl siap${NC}"     || echo -e "${Y}  ⚠️  openssl gagal, HTTP saja${NC}"
-fi
-
-# Install via pkg dulu (pre-compiled, tidak butuh Rust/compiler)
-# pip hanya untuk yg tidak ada di pkg, dengan --only-binary agar tidak build
+# ── Install deps ──────────────────────────────────────────────────
 echo -e "${Y}  📦 Install dependencies...${NC}"
 
-# requests via pkg Termux (paling aman)
-if ! "$PYTHON" -c "import requests" &>/dev/null 2>&1; then
-  pkg install -y python-requests 2>/dev/null     && echo -e "${G}  ✅ requests (pkg)${NC}"     || { "$PYTHON" -m pip install requests --only-binary=:all: --quiet 2>/dev/null          && echo -e "${G}  ✅ requests (pip)${NC}"          || echo -e "${R}  ❌ requests gagal!${NC}"; }
+# openssl (untuk SSL cert)
+if ! command -v openssl &>/dev/null; then
+  pkg install -y openssl-tool 2>/dev/null     && echo -e "${G}  ✅ openssl${NC}"     || echo -e "${Y}  ⚠️  openssl tidak tersedia (HTTP saja)${NC}"
 fi
 
-# mutagen via pip (pure Python, tidak butuh compiler)
+# requests: coba pkg dulu, pip dengan --no-deps sebagai fallback
+# --no-deps PENTING: mencegah pip menarik cryptography/pyOpenSSL
+if ! "$PYTHON" -c "import requests" &>/dev/null 2>&1; then
+  _GOT=0
+  for _P in python-requests python3-requests; do
+    pkg install -y "$_P" 2>/dev/null && _GOT=1 && break
+  done
+  if [ "$_GOT" = "0" ]; then
+    "$PYTHON" -m pip install requests       --no-deps --only-binary=:all: --quiet 2>/dev/null && _GOT=1
+  fi
+  [ "$_GOT" = "1" ]     && echo -e "${G}  ✅ requests${NC}"     || echo -e "${R}  ❌ requests gagal — coba: pkg install python-requests${NC}"
+fi
+
+# charset-normalizer + certifi + idna (deps requests, no-deps tidak tarik crypto)
+for _DEP in charset-normalizer certifi idna; do
+  _MOD="${_DEP//-/_}"
+  if ! "$PYTHON" -c "import $_MOD" &>/dev/null 2>&1; then
+    "$PYTHON" -m pip install "$_DEP"       --no-deps --only-binary=:all: --quiet 2>/dev/null || true
+  fi
+done
+
+# mutagen (opsional, pure Python)
 if ! "$PYTHON" -c "import mutagen" &>/dev/null 2>&1; then
-  "$PYTHON" -m pip install mutagen --only-binary=:all: --quiet 2>/dev/null     && echo -e "${G}  ✅ mutagen (pip)${NC}"     || echo -e "${Y}  ⚠️  mutagen skip (opsional)${NC}"
+  "$PYTHON" -m pip install mutagen     --no-deps --only-binary=:all: --quiet 2>/dev/null     && echo -e "${G}  ✅ mutagen${NC}"     || echo -e "${Y}  ⚠️  mutagen skip (opsional)${NC}"
 fi
 
 # ── SSL cert ───────────────────────────────────────────────────────
