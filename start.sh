@@ -156,11 +156,10 @@ start_tunnel() {
     echo -ne "."
     if [ -f "$TUNNEL_LOG" ]; then
       # Coba berbagai pola URL yang mungkin muncul
-      URL=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' "$TUNNEL_LOG" 2>/dev/null | head -1)
-      if [ -z "$URL" ]; then
-        # Format baru: "Your quick Tunnel has been created! Visit it at..."
-        URL=$(grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$TUNNEL_LOG" 2>/dev/null | head -1)
-      fi
+      # URL tunnel asli: https://kata-kata-kata.trycloudflare.com
+      # Harus ada minimal SATU tanda hubung di subdomain
+      # Skip: api.trycloudflare.com, cdn.trycloudflare.com (tanpa hubung)
+      URL=$(grep -oE 'https://[a-z0-9]+-[a-z0-9-]+\.trycloudflare\.com' "$TUNNEL_LOG" 2>/dev/null | head -1)
       if [ -n "$URL" ]; then
         TUNNEL_URL="$URL"
         echo -e "${NC}"
@@ -176,8 +175,12 @@ start_tunnel() {
     echo -e "${Y}  Cek log: cat $TUNNEL_LOG${NC}"
     # Coba parse URL apapun yang ada di log sebagai fallback
     if [ -f "$TUNNEL_LOG" ]; then
-      FALLBACK=$(grep -oE 'https://[a-zA-Z0-9._-]+\.cloudflare[a-zA-Z0-9._/-]*' "$TUNNEL_LOG" 2>/dev/null | head -1)
-      [ -n "$FALLBACK" ] && echo -e "${Y}  Kandidat URL: $FALLBACK${NC}"
+      # Tampilkan semua URL yang ada di log untuk diagnosis
+      echo -e "${Y}  URL di log:${NC}"
+      grep -oE 'https://[a-zA-Z0-9._-]+' "$TUNNEL_LOG" 2>/dev/null | sort -u | while read -r u; do
+        echo -e "${Y}    $u${NC}"
+      done
+      echo -e "${Y}  Cek log lengkap: cat $TUNNEL_LOG${NC}"
     fi
   fi
 }
