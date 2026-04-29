@@ -59,14 +59,8 @@ export let API_BASE = (_storedBase && _storedBase.startsWith('http'))
 export const apiBaseReady = _resolveApiBase().then(url => {
   if (url) {
     API_BASE = url;
-    // Update semua endpoint string di objek API
-    Object.keys(API).forEach(k => {
-      if (typeof API[k] === 'string' && API[k].includes('null/')) {
-        API[k] = API[k].replace('null/', url + '/');
-      } else if (typeof API[k] === 'string') {
-        API[k] = API[k].replace(/^https?:\/\/[^/]+/, url);
-      }
-    });
+    // Tidak perlu update API.* — semua endpoint pakai getter,
+    // otomatis baca API_BASE terkini saat dipanggil.
   }
   document.dispatchEvent(new CustomEvent('rs:api-ready', { detail: { base: url } }));
   return url;
@@ -167,17 +161,20 @@ export function showSetupScreen() {
 }
 
 // ── API Endpoints ────────────────────────────────────────────────────────────
+// PENTING: Semua endpoint pakai getter (get ...) bukan string statis.
+// Karena API_BASE = null saat module pertama di-parse (Gist belum resolve),
+// string statis akan jadi "null/api/library" — getter selalu baca nilai terkini.
 export const API = {
-  LIBRARY:     `${API_BASE}/api/library`,
-  EPISODES:    (id)  => `${API_BASE}/api/episodes/${id}`,
-  SCAN:        `${API_BASE}/api/scan`,
-  SCAN_STATUS: `${API_BASE}/api/scan/status`,
-  SETTINGS:    `${API_BASE}/api/settings`,
-  CLEAR_CACHE: (type = 'all') => `${API_BASE}/api/clear_cache?type=${type}`,
-  DIRLIST:     (path) => `${API_BASE}/api/dirlist?path=${encodeURIComponent(path)}`,
-  CHAPTERS:    (path) => `${API_BASE}/api/chapters?path=${encodeURIComponent(path)}`,
-  FONTS:       `${API_BASE}/api/fonts`,
-  MEDIA:       (rel)  => `${API_BASE}/media/${rel}`,
+  get LIBRARY()     { return `${API_BASE}/api/library`; },
+  EPISODES:         (id)   => `${API_BASE}/api/episodes/${id}`,
+  get SCAN()        { return `${API_BASE}/api/scan`; },
+  get SCAN_STATUS() { return `${API_BASE}/api/scan/status`; },
+  get SETTINGS()    { return `${API_BASE}/api/settings`; },
+  CLEAR_CACHE:      (type = 'all') => `${API_BASE}/api/clear_cache?type=${type}`,
+  DIRLIST:          (path) => `${API_BASE}/api/dirlist?path=${encodeURIComponent(path)}`,
+  CHAPTERS:         (path) => `${API_BASE}/api/chapters?path=${encodeURIComponent(path)}`,
+  get FONTS()       { return `${API_BASE}/api/fonts`; },
+  MEDIA:            (rel)  => `${API_BASE}/media/${rel}`,
 };
 
 // ── App Meta ─────────────────────────────────────────────────────────────────
