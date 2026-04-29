@@ -195,22 +195,30 @@ update_gist() {
   [ -z "$TUNNEL_URL" ] && return
   [ -z "$GITHUB_TOKEN" ] && return
   echo -e "${B}  📝 Update Gist dengan URL baru...${NC}"
+
   local NOW
-  NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%SZ")
-  local PAYLOAD
-  PAYLOAD=$(printf '{"files":{"tunnel.json":{"content":"{\"url\":\"%s\",\"updated\":\"%s\"}"}}}' \
-    "$TUNNEL_URL" "$NOW")
+  NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null)
+
+  # Auto-detect nama file dari Gist (hindari 404 karena nama file salah)
+  local FILENAME
+  FILENAME=$(curl -s     -H "Authorization: token $GITHUB_TOKEN"     "https://api.github.com/gists/$GIST_ID" 2>/dev/null     | python3 -c "import sys,json; g=json.load(sys.stdin); print(list(g['files'].keys())[0])"     2>/dev/null)
+  [ -z "$FILENAME" ] && FILENAME="tunnel.json"
+
+  # Build JSON content
+  local CONTENT ESCAPED PAYLOAD
+  CONTENT="{"url":"$TUNNEL_URL","updated":"$NOW"}"
+  ESCAPED=$(printf '%s' "$CONTENT" | sed 's/\/\\/g; s/"/\"/g')
+  PAYLOAD="{"files":{"$FILENAME":{"content":"$ESCAPED"}}}"
+
   local HTTP_CODE
-  HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-    -X PATCH \
-    -H "Authorization: token $GITHUB_TOKEN" \
-    -H "Content-Type: application/json" \
-    -d "$PAYLOAD" \
-    "https://api.github.com/gists/$GIST_ID" 2>/dev/null)
+  HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}"     -X PATCH     -H "Authorization: token $GITHUB_TOKEN"     -H "Content-Type: application/json"     -d "$PAYLOAD"     "https://api.github.com/gists/$GIST_ID" 2>/dev/null)
+
   if [ "$HTTP_CODE" = "200" ]; then
-    echo -e "${G}  ✅ Gist diperbarui${NC}"
+    echo -e "${G}  ✅ Gist diperbarui ($FILENAME)${NC}"
   else
-    echo -e "${Y}  ⚠️  Gist update gagal (HTTP $HTTP_CODE) — set manual di browser${NC}"
+    echo -e "${Y}  ⚠️  Gist update gagal (HTTP $HTTP_CODE)${NC}"
+    echo -e "${Y}  Set manual di console browser:${NC}"
+    echo -e "${W}  localStorage.setItem('rs_api_base','$TUNNEL_URL')${NC}"
   fi
 }
 
