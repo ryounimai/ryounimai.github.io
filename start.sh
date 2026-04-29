@@ -196,35 +196,48 @@ update_gist() {
   [ -z "$GITHUB_TOKEN" ] && return
   echo -e "${B}  📝 Update Gist dengan URL baru...${NC}"
 
-  # Semua lewat Python — hindari masalah escaping URL dengan slash/karakter khusus
-  GITHUB_TOKEN="$GITHUB_TOKEN" GIST_ID="$GIST_ID" TUNNEL_URL="$TUNNEL_URL"   python3 -c "
-import urllib.request as R, json, os, time
+  GITHUB_TOKEN="$GITHUB_TOKEN" GIST_ID="$GIST_ID" TUNNEL_URL="$TUNNEL_URL" \
+  python3 << PYEOF
+import urllib.request as R, json, os, time, sys
 
-token = os.environ['GITHUB_TOKEN']
-gid   = os.environ['GIST_ID']
-url   = os.environ['TUNNEL_URL']
-hdrs  = {'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github+json'}
+token = os.environ["GITHUB_TOKEN"]
+gid   = os.environ["GIST_ID"]
+url   = os.environ["TUNNEL_URL"]
+hdrs  = {
+    "Authorization" : "token " + token,
+    "Content-Type"  : "application/json",
+    "Accept"        : "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+}
 
-# Ambil nama file
-fname = 'ryou-backend.json'
+# Cek token scope dulu
 try:
-    req  = R.Request('https://api.github.com/gists/'+gid, headers=hdrs)
-    data = json.loads(R.urlopen(req, timeout=8).read())
-    fname = list(data['files'].keys())[0]
-except: pass
+    req  = R.Request("https://api.github.com/gists/" + gid, headers=hdrs)
+    resp = R.urlopen(req, timeout=8)
+    scope = resp.headers.get("X-OAuth-Scopes", "")
+    data  = json.loads(resp.read())
+    fname = list(data["files"].keys())[0]
+    if "gist" not in scope:
+        print("  ⚠️  Token tidak punya scope 'gist'!")
+        print("  Buat token baru di: github.com/settings/tokens")
+        print("  Centang scope: gist")
+        sys.exit(1)
+except Exception as e:
+    print("  ⚠️  GET Gist gagal: " + str(e))
+    fname = "ryou-backend.json"
 
 # PATCH
-now     = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
-content = json.dumps({'url':url,'updated':now})
-payload = json.dumps({'files':{fname:{'content':content}}}).encode()
+now     = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+payload = json.dumps({"files": {fname: {"content": json.dumps({"url": url, "updated": now})}}}).encode()
 try:
-    req  = R.Request('https://api.github.com/gists/'+gid, data=payload, headers=hdrs, method='PATCH')
+    req  = R.Request("https://api.github.com/gists/" + gid, data=payload, headers=hdrs, method="PATCH")
     R.urlopen(req, timeout=8)
-    print('  ✅ Gist diperbarui ('+fname+')')
+    print("  ✅ Gist diperbarui (" + fname + "): " + url)
 except Exception as e:
-    print('  ⚠️  Gist gagal: '+str(e))
-    print('  Set manual: localStorage.setItem(chr(39)+rs_api_base+chr(39),chr(39)+url+chr(39))')
-"
+    print("  ⚠️  PATCH gagal: " + str(e))
+    print("  Set manual di browser console:")
+    print("  localStorage.setItem('rs_api_base', '" + url + "')")
+PYEOF
 }
 
 # ── Cleanup saat keluar ────────────────────────────────────────────
