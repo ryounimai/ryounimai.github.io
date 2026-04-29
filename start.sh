@@ -202,7 +202,7 @@ update_gist() {
   # Auto-detect nama file dari Gist (hindari 404 karena nama file salah)
   local FILENAME
   FILENAME=$(curl -s     -H "Authorization: token $GITHUB_TOKEN"     "https://api.github.com/gists/$GIST_ID" 2>/dev/null     | python3 -c "import sys,json; g=json.load(sys.stdin); print(list(g['files'].keys())[0])"     2>/dev/null)
-  [ -z "$FILENAME" ] && FILENAME="tunnel.json"
+  [ -z "$FILENAME" ] && FILENAME="ryou-backend.json"
 
   # Build JSON content
   local CONTENT ESCAPED PAYLOAD
