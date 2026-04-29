@@ -196,30 +196,35 @@ update_gist() {
   [ -z "$GITHUB_TOKEN" ] && return
   echo -e "${B}  📝 Update Gist dengan URL baru...${NC}"
 
-  local NOW
-  NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null)
+  # Semua lewat Python — hindari masalah escaping URL dengan slash/karakter khusus
+  GITHUB_TOKEN="$GITHUB_TOKEN" GIST_ID="$GIST_ID" TUNNEL_URL="$TUNNEL_URL"   python3 -c "
+import urllib.request as R, json, os, time
 
-  # Auto-detect nama file dari Gist (hindari 404 karena nama file salah)
-  local FILENAME
-  FILENAME=$(curl -s     -H "Authorization: token $GITHUB_TOKEN"     "https://api.github.com/gists/$GIST_ID" 2>/dev/null     | python3 -c "import sys,json; g=json.load(sys.stdin); print(list(g['files'].keys())[0])"     2>/dev/null)
-  [ -z "$FILENAME" ] && FILENAME="ryou-backend.json"
+token = os.environ['GITHUB_TOKEN']
+gid   = os.environ['GIST_ID']
+url   = os.environ['TUNNEL_URL']
+hdrs  = {'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github+json'}
 
-  # Build JSON content
-  local CONTENT ESCAPED PAYLOAD
-  CONTENT="{"url":"$TUNNEL_URL","updated":"$NOW"}"
-  ESCAPED=$(printf '%s' "$CONTENT" | sed 's/\/\\/g; s/"/\"/g')
-  PAYLOAD="{"files":{"$FILENAME":{"content":"$ESCAPED"}}}"
+# Ambil nama file
+fname = 'ryou-backend.json'
+try:
+    req  = R.Request('https://api.github.com/gists/'+gid, headers=hdrs)
+    data = json.loads(R.urlopen(req, timeout=8).read())
+    fname = list(data['files'].keys())[0]
+except: pass
 
-  local HTTP_CODE
-  HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}"     -X PATCH     -H "Authorization: token $GITHUB_TOKEN"     -H "Content-Type: application/json"     -d "$PAYLOAD"     "https://api.github.com/gists/$GIST_ID" 2>/dev/null)
-
-  if [ "$HTTP_CODE" = "200" ]; then
-    echo -e "${G}  ✅ Gist diperbarui ($FILENAME)${NC}"
-  else
-    echo -e "${Y}  ⚠️  Gist update gagal (HTTP $HTTP_CODE)${NC}"
-    echo -e "${Y}  Set manual di console browser:${NC}"
-    echo -e "${W}  localStorage.setItem('rs_api_base','$TUNNEL_URL')${NC}"
-  fi
+# PATCH
+now     = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+content = json.dumps({'url':url,'updated':now})
+payload = json.dumps({'files':{fname:{'content':content}}}).encode()
+try:
+    req  = R.Request('https://api.github.com/gists/'+gid, data=payload, headers=hdrs, method='PATCH')
+    R.urlopen(req, timeout=8)
+    print('  ✅ Gist diperbarui ('+fname+')')
+except Exception as e:
+    print('  ⚠️  Gist gagal: '+str(e))
+    print('  Set manual: localStorage.setItem(chr(39)+rs_api_base+chr(39),chr(39)+url+chr(39))')
+"
 }
 
 # ── Cleanup saat keluar ────────────────────────────────────────────
