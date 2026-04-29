@@ -142,20 +142,25 @@ start_tunnel() {
   echo -e "${B}  🌐 Memulai Cloudflare Tunnel...${NC}"
   rm -f "$TUNNEL_LOG"
 
-  # Jalankan tunnel di background, log ke file
+  # Jalankan tunnel — gabung stdout+stderr ke log
+  # cloudflared versi baru: URL muncul di stderr, bukan stdout
   "$CLOUDFLARED" tunnel --url "http://localhost:8080" \
-    --logfile "$TUNNEL_LOG" \
     --no-autoupdate \
-    2>>"$TUNNEL_LOG" &
+    > "$TUNNEL_LOG" 2>&1 &
   TUNNEL_PID=$!
 
-  # Tunggu URL tunnel muncul di log (max 20 detik)
+  # Tunggu URL tunnel muncul di log (max 30 detik)
   echo -ne "${Y}  ⏳ Menunggu URL tunnel"
-  for i in $(seq 1 40); do
+  for i in $(seq 1 60); do
     sleep 0.5
     echo -ne "."
     if [ -f "$TUNNEL_LOG" ]; then
-      URL=$(grep -oP 'https://[a-z0-9-]+\.trycloudflare\.com' "$TUNNEL_LOG" 2>/dev/null | head -1)
+      # Coba berbagai pola URL yang mungkin muncul
+      URL=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' "$TUNNEL_LOG" 2>/dev/null | head -1)
+      if [ -z "$URL" ]; then
+        # Format baru: "Your quick Tunnel has been created! Visit it at..."
+        URL=$(grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$TUNNEL_LOG" 2>/dev/null | head -1)
+      fi
       if [ -n "$URL" ]; then
         TUNNEL_URL="$URL"
         echo -e "${NC}"
@@ -167,7 +172,13 @@ start_tunnel() {
 
   if [ -z "$TUNNEL_URL" ]; then
     echo -e "${NC}"
-    echo -e "${Y}  ⚠️  Tunnel URL tidak terdeteksi. Cek $TUNNEL_LOG${NC}"
+    echo -e "${Y}  ⚠️  URL tidak terdeteksi otomatis.${NC}"
+    echo -e "${Y}  Cek log: cat $TUNNEL_LOG${NC}"
+    # Coba parse URL apapun yang ada di log sebagai fallback
+    if [ -f "$TUNNEL_LOG" ]; then
+      FALLBACK=$(grep -oE 'https://[a-zA-Z0-9._-]+\.cloudflare[a-zA-Z0-9._/-]*' "$TUNNEL_LOG" 2>/dev/null | head -1)
+      [ -n "$FALLBACK" ] && echo -e "${Y}  Kandidat URL: $FALLBACK${NC}"
+    fi
   fi
 }
 

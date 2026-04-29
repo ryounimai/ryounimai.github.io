@@ -191,8 +191,47 @@ function renderSections(lib) {
 }
 
 // ── Load Library ──────────────────────────────────────────────────────────────
+// Poll scan progress dari backend, update UI, lalu load library saat selesai
+let _scanPollTimer = null;
+async function _pollScanProgress() {
+  if (_scanPollTimer) return; // sudah polling
+
+  const statusEl = document.getElementById('scan-status-msg');
+
+  async function poll() {
+    try {
+      const { pingServer } = await import('../api.js');
+      const status = await pingServer();
+
+      if (status === 'scanning') {
+        // Ambil progress text dari /api/scan/status
+        try {
+          const { API_BASE } = await import('../config.js');
+          const r = await fetch(API_BASE + '/api/scan/status');
+          const d = await r.json();
+          const msg = d.progress || 'Scanning...';
+          toast(msg, 'info', 2500);
+          if (statusEl) statusEl.textContent = msg;
+        } catch {}
+        _scanPollTimer = setTimeout(poll, 3000);
+      } else {
+        // Scan selesai — load library
+        _scanPollTimer = null;
+        if (statusEl) statusEl.textContent = '';
+        await loadLibrary();
+      }
+    } catch {
+      _scanPollTimer = setTimeout(poll, 5000);
+    }
+  }
+
+  toast('Library kosong — scan otomatis dimulai...', 'warning', 4000);
+  _scanPollTimer = setTimeout(poll, 3000);
+}
+
 async function loadLibrary() {
-  // Try cache first
+  // Pakai cache HANYA jika ada data (length > 0)
+  // Cache kosong [] tidak dihitung — tetap fetch ke backend
   const cached = LibCache.load();
   if (cached?.length) {
     _library   = cached;
@@ -212,9 +251,8 @@ async function loadLibrary() {
   try {
     const res = await fetchLibrary();
     if (res.status === 'scanning') {
-      toast('Library sedang di-scan, harap tunggu...', 'warning', 5000);
-      // Retry after 3s
-      setTimeout(loadLibrary, 3000);
+      // Backend sedang scan — poll progress dan tampilkan ke user
+      _pollScanProgress();
       return;
     }
 
