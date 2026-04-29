@@ -24,7 +24,12 @@ GIST_ID="1a42e63011f4496adb0a4c7821e15bb6"
 if [ -d "$SCRIPT_DIR/.git" ]; then
   git -C "$SCRIPT_DIR" pull --ff-only --quiet 2>/dev/null || true
 fi
-GITHUB_TOKEN=""  # ← isi token GitHub kamu di sini (Settings → Developer → PAT)
+# Token GitHub — disimpan di ~/.ryou_token (tidak di-commit ke repo)
+# Setup sekali: echo "TOKEN_KAMU" > ~/.ryou_token
+GITHUB_TOKEN=""
+if [ -f "$HOME/.ryou_token" ]; then
+  GITHUB_TOKEN=$(cat "$HOME/.ryou_token" | tr -d '[:space:]')
+fi
 
 # ── Warna ──────────────────────────────────────────────────────────
 R='\033[0;31m' G='\033[0;32m' Y='\033[1;33m'
